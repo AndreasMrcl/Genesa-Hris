@@ -28,7 +28,7 @@ class OvertimeController extends Controller
             return redirect()->route('login');
         }
 
-        $cacheKey = 'overtimes';
+        $cacheKey = 'overtimes_' . $userCompany->id;
 
         $overtimes = Cache::remember($cacheKey, now()->addMinutes(60), function () use ($userCompany) {
             return $userCompany->overtimes()->with('employee')->get();
@@ -89,8 +89,10 @@ class OvertimeController extends Controller
     {
         Overtime::destroy($id);
 
-        Cache::forget('overtimes');
+        Cache::forget('overtimes_' . $userCompany->id);
 
         return redirect(route('overtime'))->with('success', 'Overtime successfully deleted!');
     }
+
+ 
 }

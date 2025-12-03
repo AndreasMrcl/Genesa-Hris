@@ -14,7 +14,7 @@
             <div class="w-full max-w-2xl bg-white rounded-lg shadow-lg overflow-hidden">
                 <div class="bg-indigo-600 p-6">
                     <h1 class="text-2xl font-bold text-white">Run Payroll Process</h1>
-                    <p class="text-indigo-100 mt-1">Generate salary slips for all active employees</p>
+                    <p class="text-indigo-100">Generate salary slips for all active employees</p>
                 </div>
 
                 <div class="p-8">

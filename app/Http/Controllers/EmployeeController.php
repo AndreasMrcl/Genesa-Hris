@@ -13,7 +13,7 @@ class EmployeeController extends Controller
 {
     public function index()
     {
-        if (!Auth::check()) {
+         if (!Auth::check()) {
             return redirect('/');
         }
 
@@ -21,6 +21,12 @@ class EmployeeController extends Controller
 
         if (!$userCompany) {
             return redirect()->route('addcompany');
+        }
+
+        $status = $userCompany->status;
+
+        if ($status !== 'Settlement') {
+            return redirect()->route('login');
         }
 
         $cacheKey = 'employees_' . $userCompany->id;

@@ -66,9 +66,9 @@
             </div>
 
             <!-- Table -->
-            <div class="w-full rounded-lg bg-white shadow-md">
-                <div class="p-2 overflow-auto">
-                    <table id="myTable" class="bg-gray-50 border-2 w-full">
+            <div class="w-full bg-white rounded-xl shadow-md border border-gray-100">
+                <div class="p-5 overflow-auto">
+                    <table id="myTable" class="w-full text-left">
                         <thead>
                             <tr>
                                 <th>No</th>
@@ -204,8 +204,7 @@
     <script>
         //Table
         $(document).ready(function() {
-            new DataTable('#myTable', {
-            });
+            new DataTable('#myTable', {});
 
             // Add modal
             const addModal = $('#addModal');

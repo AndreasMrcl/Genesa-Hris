@@ -28,7 +28,7 @@
                     <h1 class="font-bold text-2xl text-gray-800 flex items-center gap-2">
                         <i class="fas fa-sticky-note text-teal-600"></i> Employee Notes
                     </h1>
-                    <p class="text-sm text-gray-500 mt-1">Manage notes, warnings, and rewards</p>
+                    <p class="text-sm text-gray-500">Manage notes, warnings, and rewards</p>
                 </div>
                 <button id="addBtn" class="px-6 py-3 bg-teal-600 text-white rounded-lg shadow-md hover:bg-teal-700 transition font-semibold flex items-center gap-2">
                     <i class="fas fa-plus"></i> Add Note
@@ -36,10 +36,10 @@
             </div>
 
             <!-- Table Section -->
-            <div class="w-full bg-white rounded-xl shadow-md overflow-hidden border border-gray-100">
+            <div class="w-full bg-white rounded-xl shadow-md border border-gray-100">
                 <div class="p-5 overflow-auto">
-                    <table id="myTable" class="w-full text-left border-collapse stripe hover">
-                        <thead class="bg-gray-100 text-gray-600 uppercase text-sm leading-normal">
+                    <table id="myTable" class="w-full text-left">
+                        <thead class="bg-gray-100 text-gray-600 text-sm leading-normal">
                             <tr>
                                 <th class="p-4 font-bold rounded-tl-lg text-center" width="5%">No</th>
                                 <th class="p-4 font-bold">Date</th>
@@ -49,7 +49,7 @@
                                 <th class="p-4 font-bold text-center rounded-tr-lg" width="15%">Action</th>
                             </tr>
                         </thead>
-                        <tbody class="text-gray-700 text-sm divide-y divide-gray-200">
+                        <tbody class="text-gray-700 text-sm">
                             @php $no = 1; @endphp
                             @foreach ($notes as $item)
                                 <tr class="hover:bg-gray-50 transition duration-150">

@@ -30,7 +30,7 @@
                     <h1 class="font-bold text-2xl text-gray-800 flex items-center gap-2">
                         <i class="fas fa-plane-departure text-yellow-500"></i> Setting
                     </h1>
-                    <p class="text-sm text-gray-500 mt-1">Manage employee leave applications</p>
+                    <p class="text-sm text-gray-500">Manage employee leave applications</p>
                 </div>
                 <button id="addBtn" class="px-6 py-3 bg-yellow-500 text-white rounded-lg shadow-md hover:bg-yellow-600 transition font-semibold flex items-center gap-2">
                     <i class="fas fa-plus"></i> Add Leave
@@ -38,10 +38,10 @@
             </div>
 
             <!-- Table Section -->
-            <div class="w-full bg-white rounded-xl shadow-md overflow-hidden border border-gray-100">
+            <div class="w-full bg-white rounded-xl shadow-md border border-gray-100">
                 <div class="p-5 overflow-auto">
-                    <table id="myTable" class="w-full text-left border-collapse stripe hover">
-                        <thead class="bg-gray-100 text-gray-600 uppercase text-sm leading-normal">
+                    <table id="myTable" class="w-full text-left">
+                        <thead class="bg-gray-100 text-gray-600 text-sm leading-normal">
                             <tr>
                                 <th class="p-4 font-bold rounded-tl-lg text-center" width="5%">No</th>
                                 <th class="p-4 font-bold">bpjs_jkk_rate</th>
@@ -52,7 +52,7 @@
                                 <th class="p-4 font-bold text-center rounded-tr-lg" width="15%">Action</th>
                             </tr>
                         </thead>
-                        <tbody class="text-gray-700 text-sm divide-y divide-gray-200">
+                        <tbody class="text-gray-700 text-sm">
                             @php $no = 1; @endphp
                             @foreach ($configs as $item)
                                 <tr class="hover:bg-gray-50 transition duration-150">

@@ -41,7 +41,7 @@
                     <h1 class="font-bold text-2xl text-gray-800 flex items-center gap-2">
                         <i class="fas fa-calendar-alt text-indigo-600"></i> Shift Management
                     </h1>
-                    <p class="text-sm text-gray-500 mt-1">Manage employee shifts and schedules</p>
+                    <p class="text-sm text-gray-500">Manage employee shifts and schedules</p>
                 </div>
                 <button id="addBtn" class="px-6 py-3 bg-indigo-600 text-white rounded-lg shadow-md hover:bg-indigo-700 transition font-semibold flex items-center gap-2">
                     <i class="fas fa-plus"></i> Add Shift
@@ -57,15 +57,15 @@
                         <h2 class="font-bold text-gray-700">Shift List</h2>
                     </div>
                     <div class="p-4 overflow-auto flex-grow">
-                        <table id="myTable" class="w-full text-left border-collapse stripe hover">
-                            <thead class="bg-gray-100 text-gray-600 uppercase text-xs leading-normal">
+                        <table id="myTable" class="w-full text-left">
+                            <thead class="bg-gray-100 text-gray-600 text-xs leading-normal">
                                 <tr>
                                     <th class="p-3 font-bold rounded-tl-lg text-center" width="5%">No</th>
                                     <th class="p-3 font-bold">Employee</th>
                                     <th class="p-3 font-bold text-center rounded-tr-lg">Action</th>
                                 </tr>
                             </thead>
-                            <tbody class="text-gray-700 text-sm divide-y divide-gray-200">
+                            <tbody class="text-gray-700 text-sm">
                                 @php $no = 1; @endphp
                                 @foreach ($shifts as $item)
                                     <tr class="hover:bg-gray-50 transition duration-150">

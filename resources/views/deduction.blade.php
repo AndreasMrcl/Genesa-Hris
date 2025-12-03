@@ -27,7 +27,7 @@
                 <div>
                     <h1 class="font-bold text-2xl text-gray-800">
                         <i class="fas fa-file-invoice-dollar text-rose-600"></i> Master Deductions</h1>
-                    <p class="text-sm text-gray-500 mt-1">Define reduction types for employees</p>
+                    <p class="text-sm text-gray-500">Define reduction types for employees</p>
                 </div>
                 <button id="addBtn" class="px-6 py-3 bg-rose-500 text-white rounded-lg shadow-md hover:bg-rose-600 transition font-semibold flex items-center gap-2">
                     <i class="fas fa-plus"></i> Add Deduction
@@ -37,8 +37,8 @@
             <!-- Table -->
             <div class="w-full bg-white rounded-xl shadow-md overflow-hidden border border-gray-100">
                 <div class="p-5 overflow-auto">
-                    <table id="myTable" class="w-full text-left border-collapse stripe hover">
-                        <thead class="bg-gray-100 text-gray-600 uppercase text-sm leading-normal">
+                    <table id="myTable" class="w-full text-left">
+                        <thead class="bg-gray-100 text-gray-600 text-sm leading-normal">
                             <tr>
                                 <th class="p-4 font-bold rounded-tl-lg text-center" width="5%">No</th>
                                 <th class="p-4 font-bold">Deduction Name</th>
@@ -71,7 +71,7 @@
 
                                             <form method="post" action="{{ route('deldeduction', $item->id) }}" class="inline deleteForm">
                                                 @csrf @method('delete')
-                                                <button type="button" class="delete-confirm w-10 h-10 flex items-center justify-center bg-gray-500 text-white rounded-lg shadow hover:bg-red-600 hover:scale-105 transition" title="Delete">
+                                                <button type="button" class="delete-confirm w-9 h-9 flex items-center justify-center bg-red-500 text-white rounded-lg shadow hover:bg-red-600 hover:scale-105 transition" title="Delete">
                                                     <i class="fas fa-trash text-lg"></i>
                                                 </button>
                                             </form>

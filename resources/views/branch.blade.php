@@ -27,7 +27,7 @@
                 <div>
                     <h1 class="font-bold text-2xl text-gray-800">
                         <i class="fas fa-building text-cyan-600"></i> Branch Management</h1>
-                    <p class="text-sm text-gray-500 mt-1">Manage company locations and categories</p>
+                    <p class="text-sm text-gray-500">Manage company locations and categories</p>
                 </div>
                 <button id="addBtn" class="px-6 py-3 bg-cyan-600 text-white rounded-lg shadow-md hover:bg-cyan-700 transition font-semibold flex items-center gap-2">
                     <i class="fas fa-plus"></i> Add Branch
@@ -35,10 +35,10 @@
             </div>
 
             <!-- Table -->
-            <div class="w-full bg-white rounded-xl shadow-md overflow-hidden border border-gray-100">
+            <div class="w-full bg-white rounded-xl shadow-md border border-gray-100">
                 <div class="p-5 overflow-auto">
-                    <table id="myTable" class="w-full text-left border-collapse stripe hover">
-                        <thead class="bg-gray-100 text-gray-600 uppercase text-sm leading-normal">
+                    <table id="myTable" class="w-full text-left">
+                        <thead class="bg-gray-100 text-gray-600 text-sm leading-normal">
                             <tr>
                                 <th class="p-4 font-bold rounded-tl-lg text-center" width="5%">No</th>
                                 <th class="p-4 font-bold">Branch Name</th>
@@ -47,22 +47,22 @@
                                 <th class="p-4 font-bold text-center rounded-tr-lg" width="15%">Actions</th>
                             </tr>
                         </thead>
-                        <tbody class="text-gray-700 text-sm divide-y divide-gray-200">
+                        <tbody class="text-gray-700 text-sm">
                             @php $no = 1; @endphp
                             @foreach ($branches as $item)
                                 <tr class="hover:bg-gray-50 transition duration-150">
                                     <td class="p-4 font-medium">{{ $no++ }}</td>
-                                    <td class="p-4">
+                                    <td class="p-4 space-y-1">
                                         <div class="font-bold text-gray-900 text-base">{{ $item->name }}</div>
-                                        <div class="text-xs text-gray-400 mt-1">Created: {{ $item->created_at ? $item->created_at->format('Y-m-d') : '-' }}</div>
+                                        <div class="text-xs text-gray-400">Created: {{ $item->created_at ? $item->created_at->format('Y-m-d') : '-' }}</div>
                                     </td>
                                     <td class="p-4">
                                         <span class="bg-cyan-100 text-cyan-800 text-xs px-3 py-1 rounded-full font-bold border border-cyan-200 uppercase">
                                             {{ str_replace('_', ' ', $item->category ?? 'General') }}
                                         </span>
                                     </td>
-                                    <td class="p-4 text-xs">
-                                        <div class="flex items-center gap-2 mb-1"><i class="fas fa-phone text-gray-400 w-4"></i> {{ $item->phone }}</div>
+                                    <td class="p-4 text-xs space-y-1">
+                                        <div class="flex items-center gap-2"><i class="fas fa-phone text-gray-400 w-4"></i> {{ $item->phone }}</div>
                                         <div class="flex items-center gap-2"><i class="fas fa-map-marker-alt text-gray-400 w-4"></i> {{ \Illuminate\Support\Str::limit($item->address, 30) }}</div>
                                     </td>
                                     <td class="p-4">
@@ -79,7 +79,7 @@
 
                                             <form method="post" action="{{ route('delbranch', ['id' => $item->id]) }}" class="inline deleteForm">
                                                 @csrf @method('delete')
-                                                <button type="button" class="delete-confirm w-10 h-10 flex items-center justify-center bg-gray-500 text-white rounded-lg shadow hover:bg-red-600 hover:scale-105 transition" title="Delete">
+                                                <button type="button" class="delete-confirm w-9 h-9 flex items-center justify-center bg-red-500 text-white rounded-lg shadow hover:bg-red-600 hover:scale-105 transition" title="Delete">
                                                     <i class="fas fa-trash text-lg"></i>
                                                 </button>
                                             </form>

@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Attendance;
 use App\Models\Employee;
+use App\Models\Attendance;
+use App\Models\ActivityLog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
@@ -28,7 +29,7 @@ class AttendanceController extends Controller
             return redirect()->route('login');
         }
 
-        $cacheKey = 'attendances';
+        $cacheKey = 'attendances_' . $userCompany->id;
 
         $attendances = Cache::remember($cacheKey, now()->addMinutes(60), function () use ($userCompany) {
             return $userCompany->attendances()->with('employee')->get();
@@ -53,9 +54,11 @@ class AttendanceController extends Controller
 
         $data['compani_id'] = $userCompany->id;
 
-        Attendance::create($data);
+        $atten = Attendance::create($data);
 
-        Cache::forget('attendances');
+        $this->logActivity('Create Allowance', "Menambahkan attendance baru: {$atten->employee->name} ({$atten->status})", $userCompany->id);
+
+        Cache::forget('attendances_' . $userCompany->id);
 
         return redirect(route('attendance'))->with('success', 'Attendance successfully created!');
     }
@@ -72,23 +75,60 @@ class AttendanceController extends Controller
             'status' => 'required',
         ]);
 
-        $data = $request->only(['employee_id', 'attendance_date', 'clock_in', 'clock_out', 'status']);
+        $attendance = Attendance::findOrFail($id);
 
+        $oldEmployee = $attendance->employee->name;
+        $oldStatus   = $attendance->status;
+
+        $data = $request->only(['employee_id', 'attendance_date', 'clock_in', 'clock_out', 'status']);
         $data['compani_id'] = $userCompany->id;
 
-        Attendance::where('id', $id)->update($data);
+        $attendance->update($data);
 
-        Cache::forget('attendances');
+        // LOG UPDATE
+        $this->logActivity(
+            'Update Attendance',
+            "Mengubah attendance {$oldEmployee} dari status {$oldStatus} menjadi {$request->status}",
+            $userCompany->id
+        );
+
+        Cache::forget('attendances_' . $userCompany->id);
 
         return redirect(route('attendance'))->with('success', 'Attendance successfully updated!');
     }
 
     public function destroy($id)
     {
-        Attendance::destroy($id);
+        $attendance = Attendance::findOrFail($id);
 
-        Cache::forget('attendances');
+        $employeeName = $attendance->employee->name;
+        $status       = $attendance->status;
+        $companyId    = $attendance->compani_id;
+
+        $attendance->delete();
+
+        // LOG DELETE
+        $this->logActivity(
+            'Delete Attendance',
+            "Menghapus attendance {$employeeName} ({$status})",
+            $companyId
+        );
+
+        Cache::forget('attendances_' . $companyId);
 
         return redirect(route('attendance'))->with('success', 'Attendance successfully deleted!');
+    }
+
+    private function logActivity($type, $description, $companyId)
+    {
+        ActivityLog::create([
+            'user_id'       => Auth::id(),
+            'compani_id'    => $companyId,
+            'activity_type' => $type,
+            'description'   => $description,
+            'created_at'    => now(),
+        ]);
+
+        Cache::tags(['activities_' . $companyId])->flush();
     }
 }

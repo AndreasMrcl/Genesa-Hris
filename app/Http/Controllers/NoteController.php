@@ -13,11 +13,24 @@ class NoteController extends Controller
 {
     public function index()
     {
-        if (!Auth::check()) return redirect('/');
+         if (!Auth::check()) {
+            return redirect('/');
+        }
+
         $userCompany = Auth::user()->compani;
-        if (!$userCompany) return redirect()->route('addcompany');
+
+        if (!$userCompany) {
+            return redirect()->route('addcompany');
+        }
+
+        $status = $userCompany->status;
+
+        if ($status !== 'Settlement') {
+            return redirect()->route('login');
+        }
 
         $cacheKey = 'notes_' . $userCompany->id;
+
         $notes = Cache::remember($cacheKey, 60, function () use ($userCompany) {
             return Note::with('employee')
                 ->where('compani_id', $userCompany->id)

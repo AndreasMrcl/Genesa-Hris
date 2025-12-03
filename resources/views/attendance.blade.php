@@ -52,7 +52,7 @@
             <!-- Table Section -->
             <div class="w-full bg-white rounded-xl shadow-md overflow-hidden border border-gray-100">
                 <div class="p-5 overflow-auto">
-                    <table id="myTable" class="w-full text-left border-collapse stripe hover">
+                    <table id="myTable" class="w-full text-left">
                         <thead class="bg-gray-100 text-gray-600 uppercase text-sm leading-normal">
                             <tr>
                                 <th class="p-4 font-bold rounded-tl-lg text-center" width="5%">No</th>

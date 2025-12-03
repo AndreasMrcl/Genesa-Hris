@@ -49,10 +49,10 @@
             @endif
 
             <!-- Table -->
-            <div class="w-full bg-white rounded-xl shadow-md overflow-hidden border border-gray-100">
+            <div class="w-full bg-white rounded-xl shadow-md border border-gray-100">
                 <div class="p-5 overflow-auto">
-                    <table class="w-full text-left border-collapse">
-                        <thead class="bg-gray-100 border-b">
+                    <table class="w-full text-left">
+                        <thead class="bg-gray-100 text-gray-600 text-sm leading-normal">
                             <tr>
                                 <th class="p-4 font-semibold text-gray-700">Period</th>
                                 <th class="p-4 font-semibold text-gray-700 text-center">Total Employees</th>
@@ -61,7 +61,7 @@
                                 <th class="p-4 font-semibold text-gray-700 text-center">Action</th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-gray-200">
+                        <tbody class="text-gray-700 text-sm">
                             @forelse ($batches as $batch)
                                 <tr class="hover:bg-gray-50 transition group">
                                     <td class="p-4">
