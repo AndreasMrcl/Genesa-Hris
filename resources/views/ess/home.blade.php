@@ -2,107 +2,150 @@
 <html lang="en">
 
 <head>
-    <title>Home</title>
+    <title>ESS | Home</title>
     @include('ess.layout.head')
-    <style>
-        .slider-container {
-            position: relative;
-            width: 100%;
-            overflow: hidden;
-        }
-
-        .slider-wrapper {
-            display: flex;
-            transition: transform 0.5s ease-in-out;
-            gap: 20px;
-        }
-
-        .slider-slide {
-            min-width: 100%;
-            box-sizing: border-box;
-        }
-
-        .slider-slide img {
-            width: 100%;
-            height: auto;
-            border-radius: 10px;
-        }
-
-        /* Automatic sliding effect using keyframes */
-        @keyframes slideAnimation {
-            0% {
-                transform: translateX(0);
-            }
-
-            33% {
-                transform: translateX(-100%);
-            }
-
-            66% {
-                transform: translateX(-200%);
-            }
-
-            100% {
-                transform: translateX(0);
-            }
-        }
-
-        .slider-wrapper {
-            animation: slideAnimation 10s infinite;
-        }
-    </style>
 </head>
 
-<body class="font-poppins bg-gray-50 w-full md:max-w-sm mx-auto  ">
-    <div class=''>
-        <div class="space-y-2">
-            <div class="grid grid-cols-4 bg-sky-800 p-4 shadow-xl rounded-b-[20px]">
-                <div class="space-y-2 col-span-3">
-                    <div class="my-auto">
-                        <h1 class="text-2xl text-white font-bold">{{ $userCompany->company }}</h1>
-                    </div>
-                    <div>
-                        <div class="my-auto">
-                            <h1 class="text-sm text-white font-light line-clamp-2">{{ $userCompany->location }}
-                            </h1>
-                        </div>
-                    </div>
-                    <div class="flex justify-between">
-                        <div class="space-y-2">
-                            <h1 class="font-base text-white text-sm">Hi, {{ auth()->user()->name }}</h1>
-                        </div>
-                    </div>
-                </div>
-                <div class="flex flex-col items-end justify-end my-auto ">
-                    <form action="{{ route('logout') }}" method="POST">
-                        @csrf
-                        <div class="my-auto bg-white p-1.5 rounded-md">
-                            <button type="submit">
-                                <i class="material-icons font-extrabold rotate-180 text-black">logout
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-            <div class="p-4 space-y-6">
+<body class="bg-gray-50 font-sans w-full md:max-w-sm mx-auto">
 
-                <div class="grid grid-cols-3 gap-6">
-                </div>
+    <!-- HEADER -->
+    <div class="bg-sky-800 p-5 rounded-b-3xl shadow-md">
+        <div class="flex justify-between items-center">
+            <div. class="space-y-4">
+                <h1 class="text-2xl font-bold text-white flex items-center gap-2">
+                    <i class="fas fa-building text-white"></i>
+                    {{ $userCompany->company }}
+                </h1>
+                <p class="text-lg text-white/80">Hi, {{ auth()->user()->name }}</p>
+            </div.>
 
-                <div class="grid grid-cols-2 gap-2">
-
-                </div>
-
-            </div>
-
+            <form action="{{ route('logout') }}" method="POST">
+                @csrf
+                <button class="bg-white p-2 rounded-lg shadow hover:bg-gray-100 transition">
+                    <i class="material-icons text-black rotate-180">logout</i>
+                </button>
+            </form>
         </div>
     </div>
-    <!-- ✅ Footer -->
-    <div class="p-4 ">
-        <div class="">
-            <h1 class="text-black text-sm my-auto">Powered by</h1>
+
+    <!-- QUICK MENU -->
+    <div class="p-4">
+        <div class="bg-white p-5 rounded-xl shadow-md border border-gray-100">
+            <h2 class="text-lg font-bold text-gray-800 mb-3">Quick Menu</h2>
+
+            <div class="grid grid-cols-4 gap-4 text-center">
+                <a href="" class="flex flex-col items-center gap-2">
+                    <div
+                        class="w-14 h-14 flex items-center justify-center bg-cyan-100 text-cyan-600 rounded-xl shadow-sm">
+                        <i class="fas fa-fingerprint text-xl"></i>
+                    </div>
+                    <p class="text-xs font-semibold text-gray-600">Attendance</p>
+                </a>
+
+                <a href="" class="flex flex-col items-center gap-2">
+                    <div
+                        class="w-14 h-14 flex items-center justify-center bg-sky-100 text-sky-600 rounded-xl shadow-sm">
+                        <i class="fas fa-calendar-check text-xl"></i>
+                    </div>
+                    <p class="text-xs font-semibold text-gray-600">Leave</p>
+                </a>
+
+                <a href="" class="flex flex-col items-center gap-2">
+                    <div
+                        class="w-14 h-14 flex items-center justify-center bg-indigo-100 text-indigo-600 rounded-xl shadow-sm">
+                        <i class="fas fa-money-check text-xl"></i>
+                    </div>
+                    <p class="text-xs font-semibold text-gray-600">Payroll</p>
+                </a>
+
+                <a href="" class="flex flex-col items-center gap-2">
+                    <div
+                        class="w-14 h-14 flex items-center justify-center bg-emerald-100 text-emerald-600 rounded-xl shadow-sm">
+                        <i class="fas fa-user text-xl"></i>
+                    </div>
+                    <p class="text-xs font-semibold text-gray-600">Profile</p>
+                </a>
+
+                <a href="" class="flex flex-col items-center gap-2">
+                    <div
+                        class="w-14 h-14 flex items-center justify-center bg-emerald-100 text-emerald-600 rounded-xl shadow-sm">
+                        <i class="fas fa-user text-xl"></i>
+                    </div>
+                    <p class="text-xs font-semibold text-gray-600">Profile</p>
+                </a>
+
+                <a href="" class="flex flex-col items-center gap-2">
+                    <div
+                        class="w-14 h-14 flex items-center justify-center bg-emerald-100 text-emerald-600 rounded-xl shadow-sm">
+                        <i class="fas fa-user text-xl"></i>
+                    </div>
+                    <p class="text-xs font-semibold text-gray-600">Profile</p>
+                </a>
+
+                <a href="" class="flex flex-col items-center gap-2">
+                    <div
+                        class="w-14 h-14 flex items-center justify-center bg-emerald-100 text-emerald-600 rounded-xl shadow-sm">
+                        <i class="fas fa-user text-xl"></i>
+                    </div>
+                    <p class="text-xs font-semibold text-gray-600">Profile</p>
+                </a>
+            </div>
         </div>
     </div>
+
+    <!-- TODAY STATUS -->
+    <div class="p-4">
+        <div class="bg-white p-5 rounded-xl shadow-md border border-gray-100">
+            <h2 class="text-lg font-bold text-gray-800 mb-3">Today's Status</h2>
+
+            <div class="space-y-3">
+                <div class="flex justify-between">
+                    <span class="text-sm text-gray-500">Clock In</span>
+                    {{-- <span class="font-semibold">
+                        {{ $today?->clock_in ? $today->clock_in : '-' }}
+                    </span> --}}
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-sm text-gray-500">Clock Out</span>
+                    {{-- <span class="font-semibold">
+                        {{ $today?->clock_out ? $today->clock_out : '-' }}
+                    </span> --}}
+                </div>
+
+                <div class="mt-4">
+                    {{-- <span class="px-4 py-2 rounded-lg text-sm font-bold
+                        @if (!$today?->clock_in) bg-red-100 text-red-600
+                        @elseif($today?->clock_in && !$today?->clock_out) bg-yellow-100 text-yellow-700
+                        @else bg-emerald-100 text-emerald-700
+                        @endif">
+                        @if (!$today?->clock_in) Not Checked In
+                        @elseif($today?->clock_in && !$today?->clock_out) Working
+                        @else Finished
+                        @endif
+                    </span> --}}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ANNOUNCEMENT -->
+    <div class="p-4 pb-24">
+        <div class="bg-white p-5 rounded-xl shadow-md border border-gray-100">
+            <h2 class="text-lg font-bold text-gray-800 mb-4">Announcements</h2>
+
+            {{-- @forelse($announcements as $a)
+                <div class="p-4 mb-3 bg-gray-50 rounded-lg border border-gray-200 hover:bg-gray-100 transition">
+                    <h3 class="font-semibold text-gray-700">{{ $a->title }}</h3>
+                    <p class="text-sm text-gray-500 mt-1">{{ $a->description }}</p>
+                    <p class="text-xs text-gray-400 mt-2">{{ $a->created_at->format('d M Y') }}</p>
+                </div>
+            @empty
+                <p class="text-sm text-gray-500">No announcements yet.</p>
+            @endforelse --}}
+        </div>
+    </div>
+
+    @include('layout.loading')
 
 </body>
 

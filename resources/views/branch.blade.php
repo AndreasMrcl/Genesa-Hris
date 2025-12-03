@@ -5,9 +5,7 @@
     <title>Branch Management</title>
     @include('layout.head')
     <link href="//cdn.datatables.net/2.0.2/css/dataTables.dataTables.min.css" rel="stylesheet" />
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
-    
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>    
     <style>
         .dataTables_wrapper .dataTables_length select { padding-right: 2rem; border-radius: 0.5rem; }
         .dataTables_wrapper .dataTables_filter input { padding: 0.5rem; border-radius: 0.5rem; border: 1px solid #d1d5db; }
