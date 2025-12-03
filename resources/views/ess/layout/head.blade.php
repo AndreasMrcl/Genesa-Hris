@@ -7,7 +7,7 @@
 <link rel="icon" sizes="76x76" href="{{ asset('beil.svg') }}" />
 <link rel="icon" type="image/png" href="{{ asset('beil.svg') }}" />
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
-<script src="https://kit.fontawesome.com/87ef1d53fb.js" crossorigin="anonymous"></script>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
 <!-- PWA -->
 <meta name="theme-color" content="#ffffff"/>

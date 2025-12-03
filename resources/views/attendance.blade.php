@@ -41,7 +41,7 @@
                     <h1 class="font-bold text-2xl text-gray-800 flex items-center gap-2">
                         <i class="fas fa-clock text-indigo-600"></i> Attendance
                     </h1>
-                    <p class="text-sm text-gray-500 mt-1">Manage daily attendance records</p>
+                    <p class="text-sm text-gray-500">Manage daily attendance records</p>
                 </div>
                 <button id="addBtn"
                     class="px-6 py-3 bg-indigo-600 text-white rounded-lg shadow-md hover:bg-indigo-700 transition font-semibold flex items-center gap-2">
