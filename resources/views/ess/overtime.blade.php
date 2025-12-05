@@ -41,8 +41,6 @@
                             <th class="p-4 font-bold text-center">Start</th>
                             <th class="p-4 font-bold text-center">End</th>
                             <th class="p-4 font-bold text-center">Status</th>
-                            <th class="p-4 font-bold text-right">Pay</th>
-                            <th class="p-4 font-bold text-center rounded-tr-lg" width="15%">Action</th>
                         </tr>
                     </thead>
 
@@ -82,35 +80,6 @@
                                         {{ $item->status }}
                                     </span>
                                 </td>
-                                <td class="p-4 text-right font-bold text-gray-700">
-                                    Rp {{ number_format($item->overtime_pay, 0, ',', '.') }}
-                                </td>
-                                <td class="p-4">
-                                    <div class="flex justify-center items-center gap-2">
-                                        {{-- Edit Button --}}
-                                        <button
-                                            class="editBtn w-9 h-9 flex items-center justify-center bg-blue-500 text-white rounded-lg shadow hover:bg-blue-600 hover:scale-105 transition"
-                                            data-id="{{ $item->id }}" data-employee="{{ $item->employee_id }}"
-                                            data-overtime_date="{{ $item->overtime_date }}"
-                                            data-start_time="{{ $item->start_time }}"
-                                            data-end_time="{{ $item->end_time }}" data-status="{{ $item->status }}"
-                                            data-overtime_pay="{{ $item->overtime_pay }}" title="Edit">
-                                            <i class="fas fa-edit"></i>
-                                        </button>
-
-                                        {{-- Delete Button --}}
-                                        <form method="post" action="{{ route('delovertime', ['id' => $item->id]) }}"
-                                            class="inline deleteForm">
-                                            @csrf
-                                            @method('delete')
-                                            <button type="button"
-                                                class="delete-confirm w-9 h-9 flex items-center justify-center bg-red-500 text-white rounded-lg shadow hover:bg-red-600 hover:scale-105 transition"
-                                                title="Delete">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
-                                        </form>
-                                    </div>
-                                </td>
                             </tr>
                         @endforeach
                     </tbody>
@@ -128,6 +97,59 @@
         </button>
     </div>
 
+    <!-- ADD MODAL -->
+    <div id="addModal"
+        class="hidden fixed inset-0 bg-gray-900/60 backdrop-blur-sm flex items-center justify-center z-50 overflow-y-auto px-4 py-6">
+        <div class="bg-white rounded-2xl p-8 w-full max-w-lg shadow-2xl relative transform transition-all scale-100">
+            <button id="closeAddModal" class="absolute top-5 right-5 text-gray-400 hover:text-gray-600 transition">
+                <i class="fas fa-times text-xl"></i>
+            </button>
+            <h2 class="text-2xl font-bold mb-6 text-gray-800 flex items-center gap-2">
+                <i class="fas fa-business-time text-purple-600"></i> Add Overtime
+            </h2>
+
+            <form id="addForm" method="post" action="{{ route('req-overtime') }}" enctype="multipart/form-data"
+                class="space-y-2">
+                @csrf
+                @method('post')
+
+                <!-- AUTO-FILLED EMPLOYEE -->
+                <input type="hidden" name="employee_id" value="{{ Auth::guard('employee')->id() }}">
+
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">Employee</label>
+                    <input type="text" value="{{ Auth::guard('employee')->user()->name }}"
+                        class="w-full rounded-lg bg-gray-100 border-gray-300 shadow-sm p-2.5 border" disabled>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">Date</label>
+                    <input type="date" name="overtime_date"
+                        class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-purple-500"
+                        required>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">Start Time</label>
+                    <input type="time" name="start_time"
+                        class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-purple-500"
+                        required>
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">End Time</label>
+                    <input type="time" name="end_time"
+                        class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-purple-500"
+                        required>
+                </div>
+
+                <button type="submit"
+                    class="w-full py-3 bg-purple-600 text-white font-bold rounded-lg shadow-md hover:bg-purple-700 transition flex justify-center items-center gap-2">
+                    <i class="fas fa-check"></i> Submit
+                </button>
+            </form>
+        </div>
+    </div>
+
     <!-- SCRIPTS -->
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"
         integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
@@ -137,6 +159,13 @@
         $(document).ready(function() {
             // Init DataTable
             new DataTable('#myTable', {});
+
+            // Modal Logic
+            const addModal = $('#addModal');
+
+            $('#addBtn').click(() => addModal.removeClass('hidden'));
+            $('#closeAddModal').click(() => addModal.addClass('hidden'));
+
         });
     </script>
 </body>

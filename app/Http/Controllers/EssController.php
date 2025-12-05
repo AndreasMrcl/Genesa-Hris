@@ -59,7 +59,6 @@ class EssController extends Controller
             'end_date' => 'required',
             'type' => 'required',
             'reason' => 'required',
-            'status' => 'required',
         ]);
 
         $data['compani_id'] = $userCompany->id;
@@ -68,7 +67,7 @@ class EssController extends Controller
 
         Cache::forget('leaves');
 
-        return redirect(route('ess-leave'))->with('success', 'Leave successfully created!');
+        return redirect(route('ess-leave'));
     }
 
 
@@ -93,8 +92,6 @@ class EssController extends Controller
             'overtime_date' => 'required',
             'start_time' => 'required',
             'end_time' => 'required',
-            'status' => 'required',
-            'overtime_pay' => 'required',
         ]);
 
         $data['compani_id'] = $userCompany->id;
@@ -103,7 +100,7 @@ class EssController extends Controller
 
         Cache::forget('overtimes');
 
-        return redirect(route('ess-leave'))->with('success', 'Leave successfully created!');
+        return redirect(route('ess-overtime'));
     }
 
 

@@ -126,15 +126,6 @@
                     <p class="text-xs font-semibold text-gray-600">Note</p>
                 </a>
 
-                <!-- Payroll -->
-                <a href="{{ route('ess-payroll') }}" class="flex flex-col items-center gap-2">
-                    <div
-                        class="w-14 h-14 flex items-center justify-center bg-indigo-100 text-indigo-600 rounded-xl shadow-sm">
-                        <i class="fas fa-wallet text-xl"></i>
-                    </div>
-                    <p class="text-xs font-semibold text-gray-600">Payroll</p>
-                </a>
-
                 <!-- Organization -->
                 <a href="{{ route('ess-organization') }}" class="flex flex-col items-center gap-2">
                     <div
@@ -144,13 +135,22 @@
                     <p class="text-xs font-semibold text-gray-600">Organization</p>
                 </a>
 
+                <!-- Payroll -->
+                <a href="{{ route('ess-payroll') }}" class="flex flex-col items-center gap-2">
+                    <div
+                        class="w-14 h-14 flex items-center justify-center bg-indigo-100 text-indigo-600 rounded-xl shadow-sm">
+                        <i class="fas fa-wallet text-xl"></i>
+                    </div>
+                    <p class="text-xs font-semibold text-gray-600">Payroll</p>
+                </a>
+
             </div>
 
         </div>
     </div>
 
     <!-- TODAY STATUS -->
-    <div class="p-2 pb-20">
+    {{-- <div class="p-2 pb-20">
         <div class="bg-white p-5 rounded-xl shadow-md border border-gray-100">
             <h2 class="text-lg font-bold text-gray-800 mb-3">Today's Status</h2>
 
@@ -189,7 +189,7 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div> --}}
 
     <!-- BOTTOM BAR -->
     <div class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-lg md:max-w-sm mx-auto">

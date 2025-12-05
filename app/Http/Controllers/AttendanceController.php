@@ -72,7 +72,7 @@ class AttendanceController extends Controller
                 ->keyBy('employee_id');
         }
 
-        return view('manageattendance', compact('start', 'end', 'employees', 'attendances'));
+        return view('manageAttendance', compact('start', 'end', 'employees', 'attendances'));
     }
 
     public function storeBatch(Request $request)

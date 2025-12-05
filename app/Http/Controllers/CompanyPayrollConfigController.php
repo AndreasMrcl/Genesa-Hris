@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\ActivityLog;
+use App\Models\ActivityLog;
 use App\Models\CompanyPayrollConfig;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
@@ -43,7 +44,7 @@ class CompanyPayrollConfigController extends Controller
             $config->infaq_percent = 1.25;
         }
 
-        return view('companyconfig', compact('config'));
+        return view('companyConfig', compact('config'));
     }
 
     public function update(Request $request)

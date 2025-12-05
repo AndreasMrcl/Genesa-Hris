@@ -135,7 +135,7 @@
                         class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-yellow-500"
                         required>
                 </div>
-                
+
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-1">End Date</label>
                     <input type="date" name="end_date"
@@ -154,18 +154,6 @@
                         <option value="maternity">Maternity</option>
                         <option value="unpaid">Unpaid</option>
                         <option value="other">Other</option>
-                    </select>
-                </div>
-
-                <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-1">Status</label>
-                    <select name="status"
-                        class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-yellow-500"
-                        required>
-                        <option value="pending">Pending</option>
-                        <option value="approved">Approved</option>
-                        <option value="rejected">Rejected</option>
-                        <option value="cancelled">Cancelled</option>
                     </select>
                 </div>
 
@@ -201,6 +189,8 @@
 
         });
     </script>
+
+    @include('layout.loading')
 
 </body>
 

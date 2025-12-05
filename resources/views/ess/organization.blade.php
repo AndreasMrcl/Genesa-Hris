@@ -21,9 +21,16 @@
     <!-- ORGANIZATION -->
     <div class="p-2">
         <!-- Back Button -->
-        <div class="bg-white rounded-xl shadow-md border border-gray-100 p-5">
+        <div class="bg-white rounded-xl shadow-md border border-gray-100 p-5 space-y-4">
+            
+            <!-- Header Section -->
+            <div>
+                <h1 class="font-bold text-2xl text-gray-800 flex items-center gap-2">
+                    <i class="fas fa-building text-sky-600"></i> Organization
+                </h1>
+                <p class="text-sm text-gray-500">Manage notes, warnings, and rewards</p>
+            </div>
             <!-- Table Section -->
-            <h2 class="text-lg font-bold text-gray-800 mb-3">Organization</h2>
             <div class="overflow-auto">
 
             </div>

@@ -20,7 +20,6 @@ return new class extends Migration
             $table->date('end_shift');
             $table->time('start_time');
             $table->time('end_time');
-            // Keterangan opsional
             $table->text('description')->nullable();
             $table->timestamps();
         });
