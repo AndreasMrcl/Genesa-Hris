@@ -4,92 +4,103 @@
 <head>
     <title>Profile</title>
     @include('layout.head')
-    <!-- Leaflet CSS -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css">
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
 </head>
 
-<body class="bg-gray-50">
+<body class="bg-gray-100">
 
     @include('layout.sidebar')
+
     <main class="md:ml-64 xl:ml-72 2xl:ml-72">
         @include('layout.navbar')
-        <div class="p-5">
-            <div class="w-full rounded-lg bg-white h-fit mx-auto">
-                <div class="grid grid-cols-1">
-                    <div class="p-3">
-                        <h1 class="font-extrabold text-3xl">Profil</h1>
-                    </div>
-                    <div class="p-2">
-                        <!-- User Information -->
-                        <div class="p-2 space-y-4">
-                            <div class="flex justify-between">
-                                <h1 class="text-base md:text-xl font-light">Name:</h1>
-                                <h1 class="text-base md:text-xl font-bold">{{ auth()->user()->name }}</h1>
-                            </div>
-                            <div class="flex justify-between">
-                                <h1 class="text-base md:text-xl font-light">Email:</h1>
-                                <h1 class="text-base md:text-xl font-bold">{{ auth()->user()->email }}</h1>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Store Information -->
-                    <div>
-                        <div class="p-2.5">
-                            <div class="">
-                                <h1 class="font-extrabold text-3xl">Company</h1>
-                            </div>
-                        </div>
-                        <div class="p-2">
-                            <div class="p-2 space-y-4">
-                                <div class="flex justify-between">
-                                    <h1 class="text-base md:text-xl font-light">Name:</h1>
-                                    <h1 class="text-base md:text-xl font-bold">{{ $userCompany->company }}</h1>
-                                </div>
-                                <div class="flex justify-between">
-                                    <h1 class="text-base md:text-xl font-light">Bank:</h1>
-                                    <h1 class="text-base md:text-xl font-bold">{{ $userCompany->bank }}</h1>
-                                </div>
-                                <div class="flex justify-between">
-                                    <h1 class="text-base md:text-xl font-light">No Rekening:</h1>
-                                    <h1 class="text-base md:text-xl font-bold">{{ $userCompany->no_rek }}</h1>
-                                </div>
-                                <div class="flex justify-between">
-                                    <h1 class="text-base md:text-xl font-light">Address:</h1>
-                                    <h1 class="text-base md:text-xl font-bold">{{ $userCompany->location }}</h1>
-                                </div>
+        <div class="p-6 space-y-6">
 
-                                <div id="map" class="w-full h-64 rounded-lg z-10"></div>
+            {{-- HEADER --}}
+            <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-100">
+                    <h1 class="font-bold text-2xl text-gray-800 flex items-center gap-2">
+                    <i class="fa-solid fa-user-gear text-gray-800"></i>
+                    Profile
+                </h1>
+                <p class="text-sm text-gray-500">Manage your profile and company information</p>
+            </div>
 
-                                <div class="w-full p-4 bg-blue-500 rounded-lg text-center">
-                                    <a class=" text-white hover:text-black text-center" href="">Edit store</a>
-                                </div>
-                            </div>
+            {{-- MAIN CARD --}}
+            <div class="w-full rounded-xl bg-white shadow-sm mx-auto p-6 space-y-10 border border-gray-200">
+
+                {{-- PROFILE --}}
+                <section>
+                    <h2 class="font-bold text-xl mb-4 text-gray-800">Personal Info</h2>
+
+                    <div class="space-y-4 p-5 bg-gray-50 border border-gray-200 rounded-xl">
+                        <div class="flex justify-between">
+                            <span class="text-gray-500 font-medium">Name</span>
+                            <span class="text-gray-900 font-semibold">{{ auth()->user()->name }}</span>
+                        </div>
+
+                        <div class="flex justify-between">
+                            <span class="text-gray-500 font-medium">Email</span>
+                            <span class="text-gray-900 font-semibold">{{ auth()->user()->email }}</span>
                         </div>
                     </div>
-                </div>
+                </section>
+
+                {{-- COMPANY --}}
+                <section>
+                    <h2 class="font-bold text-xl mb-4 text-gray-800">Company</h2>
+
+                    <div class="space-y-4 p-5 bg-gray-50 border border-gray-200 rounded-xl">
+
+                        <div class="flex justify-between">
+                            <span class="text-gray-500 font-medium">Name</span>
+                            <span class="text-gray-900 font-semibold">{{ $userCompany->company }}</span>
+                        </div>
+
+                        <div class="flex justify-between">
+                            <span class="text-gray-500 font-medium">Bank</span>
+                            <span class="text-gray-900 font-semibold">{{ $userCompany->bank }}</span>
+                        </div>
+
+                        <div class="flex justify-between">
+                            <span class="text-gray-500 font-medium">No Rekening</span>
+                            <span class="text-gray-900 font-semibold">{{ $userCompany->no_rek }}</span>
+                        </div>
+
+                        <div class="flex justify-between">
+                            <span class="text-gray-500 font-medium">Address</span>
+                            <span class="text-gray-900 font-semibold">{{ $userCompany->location }}</span>
+                        </div>
+
+                        {{-- MAP AREA --}}
+                        <div id="map"
+                            class="w-full h-64 rounded-xl overflow-hidden shadow-sm border border-gray-300"></div>
+
+                        {{-- EDIT BUTTON --}}
+                        <a href=""
+                            class="block text-center mt-3 px-4 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl transition shadow-sm">
+                            Edit Company
+                        </a>
+                    </div>
+                </section>
+
             </div>
         </div>
     </main>
+
     @include('sweetalert::alert')
 
-
-    <!-- Map Script -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Encode the address for use in a URL
             var address = encodeURIComponent("{{ $userCompany->location }}");
 
-            // Geocode the address using Nominatim
             fetch(`https://nominatim.openstreetmap.org/search?q=${address}&format=json&limit=1`)
                 .then(response => response.json())
                 .then(data => {
                     if (data.length > 0) {
-                        // Retrieve latitude and longitude from the geocoding response
                         var latitude = data[0].lat;
                         var longitude = data[0].lon;
 
-                        // Initialize the Leaflet map with the obtained coordinates
                         var map = L.map('map').setView([latitude, longitude], 13);
 
                         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -97,17 +108,15 @@
                             attribution: '© OpenStreetMap'
                         }).addTo(map);
 
-                        // Add a marker at the obtained coordinates
                         L.marker([latitude, longitude]).addTo(map)
                             .bindPopup('<b>{{ $userCompany->company }}</b><br>{{ $userCompany->location }}')
                             .openPopup();
-                    } else {
-                        console.warn('No coordinates found for the provided address.');
                     }
                 })
-                .catch(error => console.error('Error fetching coordinates:', error));
+                .catch(err => console.error("Map error:", err));
         });
     </script>
+
 </body>
 
 </html>

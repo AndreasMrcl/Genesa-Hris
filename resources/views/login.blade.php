@@ -4,7 +4,6 @@
 <head>
     <title>Login</title>
     @include('layout.head')
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
     <style>
         .password-container {
@@ -14,59 +13,81 @@
         .toggle-password {
             position: absolute;
             top: 50%;
-            right: 10px;
+            right: 14px;
             transform: translateY(-50%);
             cursor: pointer;
+            color: #555;
         }
     </style>
-
 </head>
 
-<body>
+<body class="bg-gradient-to-b from-sky-800 to-gray-100 min-h-screen flex items-center justify-center p-4">
 
-    <div class="h-screen w-full mx-auto bg-linear-to-b from-sky-800 to-gray-100 flex items-center p-4 xl:p-0 2xl:p-0">
-        <div class="mx-auto sm:max-w-sm w-full space-y-3 p-8 bg-white rounded-xl">
-            <div class="space-y-3">
-                <div>
-                    <h1>Damelhr</h1>
-                </div>
-                <div>
-                    <h1 class="text-2xl xl:text-3xl 2xl:text-3xl font-extrabold text-black">Login</h1>
-                    <p class="text-black text-lg xl:text-xl 2xl:text-xl font-extralight">Sign in to your account</p>
+    <div class="w-full max-w-sm bg-white rounded-2xl shadow-xl p-8 space-y-6">
+
+        <!-- Logo + Title -->
+        <div class="">
+            <img class="w-fit h-32 md:w-44 md:h-fit mx-auto" src="{{ asset('logo.png') }}" alt="Logo">
+        </div>
+
+            <hr class="mx-5 shadow-2xl text-gray-100 rounded-r-xl rounded-l-xl" />
+
+        <!-- Heading -->
+        <div>
+            <h2 class="text-3xl font-extrabold text-gray-900">Login</h2>
+            <p class="text-gray-500 text-lg">Sign in to your account</p>
+        </div>
+
+        <!-- Form -->
+        <form method="POST" action="{{ route('signin') }}" class="space-y-5">
+            @csrf
+
+            <!-- Email -->
+            <div class="space-y-1">
+                <label for="email" class="text-gray-700 font-medium">Email</label>
+                <input
+                    type="email"
+                    name="email"
+                    id="email"
+                    required
+                    class="w-full p-3 bg-gray-100 rounded-xl focus:ring-2 focus:ring-sky-600 outline-none"
+                />
+            </div>
+
+            <!-- Password -->
+            <div class="space-y-1">
+                <label for="password" class="text-gray-700 font-medium">Password</label>
+
+                <div class="password-container">
+                    <input
+                        type="password"
+                        name="password"
+                        id="password"
+                        required
+                        class="w-full p-3 bg-gray-100 rounded-xl pr-12 focus:ring-2 focus:ring-sky-600 outline-none"
+                    />
+                    <i id="toggle-password" class="fas fa-eye toggle-password"></i>
                 </div>
             </div>
-            <form method="post" action="{{ route('signin') }}" class="space-y-6">
-                @csrf
-                <div class="space-y-2">
-                    <label for="email" class="text-black">Email</label>
-                    <input class="w-full p-2 bg-gray-100 rounded-xl" type="email" name="email" required />
-                </div>
-                <div class='space-y-2'>
-                    <label for="password" class='text-black'>Password</label>
-                    <div class="password-container">
-                        <input id="password" class='w-full p-2 bg-gray-100 rounded-xl pr-12' type="password"
-                            name="password" required />
-                        <i id="toggle-password" class="fas fa-eye toggle-password"></i>
-                    </div>
-                </div>
-                <div
-                    class='border-4 border-sky-700 p-2 rounded-3xl w-3/5 mx-auto hover:scale-110 duration-200 transition-all'>
-                    <button name="submit" type="submit"
-                        class='flex mx-auto text-black text-xl xl:text-2xl 2xl:text-2xl font-semibold'>
-                        Login
-                    </button>
-                </div>
-            </form>
-        </div>
+
+            <!-- Submit Button -->
+            <button
+                type="submit"
+                class="w-full py-3 text-white text-lg font-semibold bg-sky-700 rounded-xl shadow hover:bg-sky-800 hover:scale-[1.02] transition-all">
+                Login
+            </button>
+        </form>
+
     </div>
+
     @include('sweetalert::alert')
 
     <script>
-        // Password Visibility Toggle for Login
-        document.getElementById('toggle-password').addEventListener('click', function() {
-            const passwordField = document.getElementById('password');
-            const type = passwordField.type === 'password' ? 'text' : 'password';
-            passwordField.type = type;
+        // Password Visibility Toggle
+        document.getElementById('toggle-password').addEventListener('click', function () {
+            const pw = document.getElementById('password');
+            const type = pw.type === 'password' ? 'text' : 'password';
+            pw.type = type;
 
             this.classList.toggle('fa-eye-slash');
         });

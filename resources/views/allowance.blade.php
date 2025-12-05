@@ -6,7 +6,6 @@
     @include('layout.head')
     <link href="//cdn.datatables.net/2.0.2/css/dataTables.dataTables.min.css" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
     
     <style>
         .dataTables_wrapper .dataTables_length select { padding-right: 2rem; border-radius: 0.5rem; }
@@ -27,7 +26,7 @@
                 <div>
                     <h1 class="font-bold text-2xl text-gray-800">
                         <i class="fas fa-hand-holding-dollar text-emerald-600"></i> Master Allowances</h1>
-                    <p class="text-sm text-gray-500 mt-1">Define earning types for employees</p>
+                    <p class="text-sm text-gray-500">Define earning types for employees</p>
                 </div>
                 <button id="addBtn" class="px-6 py-3 bg-emerald-500 text-white rounded-lg shadow-md hover:bg-emerald-600 transition font-semibold flex items-center gap-2">
                     <i class="fas fa-plus"></i> Add Allowance

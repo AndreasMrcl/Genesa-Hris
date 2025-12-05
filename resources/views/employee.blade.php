@@ -6,7 +6,6 @@
     @include('layout.head')
     <link href="//cdn.datatables.net/2.0.2/css/dataTables.dataTables.min.css" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
 
     <style>
         .dataTables_wrapper .dataTables_length select {
@@ -105,7 +104,6 @@
                                                 data-position="{{ $item->position }}"
                                                 data-base-salary="{{ $item->base_salary }}"
                                                 data-join="{{ $item->join_date }}" data-status="{{ $item->status }}"
-                                                data-level="{{ $item->level }}"
                                                 data-ptkp="{{ $item->ptkp_status ?? 'TK/0' }}"
                                                 data-part-kes="{{ $item->participates_bpjs_kes }}"
                                                 data-part-tk="{{ $item->participates_bpjs_tk }}"
@@ -265,17 +263,6 @@
                                     required>
                                     <option value="full_time">Full Time</option>
                                     <option value="part_time">Part Time</option>
-                                </select>
-                            </div>
-                            <div class="md:col-span-1">
-                                <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Access Level <span
-                                        class="text-red-500">*</span></label>
-                                <select name="level"
-                                    class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-indigo-500"
-                                    required>
-                                    <option value="user">User</option>
-                                    <option value="admin">Admin</option>
-                                    <option value="super">Super Admin</option>
                                 </select>
                             </div>
                         </div>
@@ -492,16 +479,6 @@
                                     <option value="part_time">Part Time</option>
                                 </select>
                             </div>
-                            <div class="md:col-span-1">
-                                <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Access
-                                    Level</label>
-                                <select id="editLevel" name="level"
-                                    class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border" required>
-                                    <option value="user">User</option>
-                                    <option value="admin">Admin</option>
-                                    <option value="super">Super Admin</option>
-                                </select>
-                            </div>
                         </div>
                     </div>
 
@@ -671,7 +648,6 @@
                 $('#editPosition').val(btn.data('position'));
                 $('#editJoinDate').val(btn.data('join'));
                 $('#editStatus').val(btn.data('status'));
-                $('#editLevel').val(btn.data('level'));
                 $('#editKtp').val(btn.data('ktp'));
 
                 let rawSalary = btn.data('base-salary');

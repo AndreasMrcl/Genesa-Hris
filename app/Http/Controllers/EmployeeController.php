@@ -60,7 +60,6 @@ class EmployeeController extends Controller
             'position' => 'required|string',
             'join_date' => 'required|date',
             'status' => 'required|in:full_time,part_time',
-            'level' => 'required|in:user,admin,super',
             
             // Data Payroll & Pajak (Baru)
             'base_salary' => 'required|numeric|min:0',
@@ -113,7 +112,6 @@ class EmployeeController extends Controller
             'position' => 'required|string',
             'join_date' => 'required|date',
             'status' => 'required|in:full_time,part_time',
-            'level' => 'required|in:user,admin,super',
             'password' => 'nullable|min:6', // Boleh kosong saat update
             
             // Payroll Update
@@ -148,7 +146,7 @@ class EmployeeController extends Controller
             ->where('compani_id', $userCompany->id)
             ->firstOrFail();
 
-        $fieldsToTrack = ['name', 'position', 'base_salary', 'status', 'level', 'branch_id'];
+        $fieldsToTrack = ['name', 'position', 'base_salary', 'status', 'branch_id'];
         $oldData = $employee->only($fieldsToTrack);
 
         $employee->update($data);

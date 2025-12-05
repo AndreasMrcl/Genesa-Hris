@@ -143,4 +143,21 @@ Route::middleware('auth:web')->group(function () {
 
 Route::middleware('auth:employee')->group(function () {
     Route::get('/ess-home', [EssController::class, 'home'])->name('ess-home');
+
+    Route::get('/ess-attendance', [EssController::class, 'attendance'])->name('ess-attendance');
+
+    Route::get('/ess-leave', [EssController::class, 'leave'])->name('ess-leave');
+    Route::post('/req-leave', [EssController::class, 'reqLeave'])->name('req-leave');
+
+    Route::get('/ess-overtime', [EssController::class, 'overtime'])->name('ess-overtime');
+
+    Route::get('/ess-note', [EssController::class, 'note'])->name('ess-note');
+
+    Route::get('/ess-payroll', [EssController::class, 'payroll'])->name('ess-payroll');
+
+    Route::get('/ess-organization', [EssController::class, 'organization'])->name('ess-organization');
+
+    Route::get('/ess-absen', [EssController::class, 'absen'])->name('ess-absen');
+    
+    Route::get('/ess-profil', [EssController::class, 'profil'])->name('ess-profil');
 });

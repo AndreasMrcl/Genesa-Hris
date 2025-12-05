@@ -15,7 +15,7 @@
         <!-- Navbar -->
         @include('layout.navbar')
         <!-- end Navbar -->
-        <div class="p-5">
+        <div class="p-6">
 
             <!-- chart section -->
             <div class="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-2 lg:grid-cols-2 ">
