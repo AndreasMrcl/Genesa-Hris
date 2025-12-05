@@ -24,7 +24,6 @@
                 </a>
             </div>
 
-
             <!-- Header: Date Selection -->
             <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-100">
                 <h2 class="font-bold text-lg text-gray-800 mb-4 flex items-center gap-2">
