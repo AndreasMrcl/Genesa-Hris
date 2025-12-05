@@ -16,6 +16,7 @@ class CompanyPayrollConfig extends Model
         'bpjs_tk_active',
         'tax_method',
         'ump_amount',
+        'infaq_percent',
     ];
     
     public function compani()

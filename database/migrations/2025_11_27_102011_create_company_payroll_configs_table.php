@@ -19,6 +19,7 @@ return new class extends Migration
             $table->boolean('bpjs_tk_active')->default(true);
             $table->enum('tax_method', ['GROSS', 'NET', 'GROSS_UP'])->default('GROSS');
             $table->decimal('ump_amount', 15, 2)->default(0);
+            $table->decimal('infaq_percent', 5, 2)->default(0);
             $table->timestamps();
         });
     }

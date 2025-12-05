@@ -18,6 +18,7 @@ use App\Http\Controllers\AllowEmpController;
 use App\Http\Controllers\DeductController;
 use App\Http\Controllers\DeductEmpController;
 use App\Http\Controllers\ActivityLogController;
+use App\Http\Controllers\CompanyPayrollConfigController;
 
 Route::get('/', [AuthController::class, 'login'])->name('login');
 Route::get('/register', [AuthController::class, 'register'])->name('register');
@@ -75,9 +76,9 @@ Route::middleware('auth:web')->group(function () {
 
     //ATTENDANCE
     Route::get('/attendance', [AttendanceController::class, 'index'])->name('attendance');
-    Route::post('/postattendance', [AttendanceController::class, 'store'])->name('postattendance');
-    Route::put('/attendance/{id}/update', [AttendanceController::class, 'update'])->name('updateattendance');
-    Route::delete('/attendance/{id}/delete', [AttendanceController::class, 'destroy'])->name('delattendance');
+    Route::get('/attendance/manage', [AttendanceController::class, 'manage'])->name('manageattendance');
+    Route::post('/attendance/store', [AttendanceController::class, 'storeBatch'])->name('postattendance');
+    Route::delete('/attendance/batch-delete', [AttendanceController::class, 'destroyPeriod'])->name('delattendance');
 
     //SHIFT
     Route::get('/shift', [ShiftController::class, 'index'])->name('shift');
@@ -135,6 +136,9 @@ Route::middleware('auth:web')->group(function () {
 
     //ACTIVITY LOG
     Route::get('/activity-logs', [ActivityLogController::class, 'index'])->name('activityLog');
+
+    Route::get('/companyconfig', [CompanyPayrollConfigController::class, 'index'])->name('companyconfig');
+    Route::put('/companyconfig/update', [CompanyPayrollConfigController::class, 'update'])->name('updatecompanyconfig');
 });
 
 Route::middleware('auth:employee')->group(function () {

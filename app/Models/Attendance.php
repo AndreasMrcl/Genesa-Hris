@@ -12,10 +12,15 @@ class Attendance extends Model
     [
         'compani_id',
         'employee_id',
-        'attendance_date',
-        'clock_in',
-        'clock_out',
-        'status',
+        'period_start',
+        'period_end',
+        'total_present',
+        'total_late',
+        'total_sick',
+        'total_permission',
+        'total_alpha',
+        'total_leave',
+        'note'
     ];
 
     public function compani()

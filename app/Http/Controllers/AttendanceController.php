@@ -8,6 +8,7 @@ use App\Models\ActivityLog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 
 class AttendanceController extends Controller
 {
@@ -29,94 +30,125 @@ class AttendanceController extends Controller
             return redirect()->route('login');
         }
 
-        $cacheKey = 'attendances_' . $userCompany->id;
+        $page = request()->get('page', 1);
 
-        $attendances = Cache::remember($cacheKey, now()->addMinutes(60), function () use ($userCompany) {
-            return $userCompany->attendances()->with('employee')->get();
+        $cacheTag = 'attendance_batches_' . $userCompany->id; 
+        $cacheKey = 'page_' . $page;
+
+        $batches = Cache::tags([$cacheTag])->remember($cacheKey, now()->addMinutes(60), function () use ($userCompany) {
+            return $userCompany->attendances()
+                ->select(
+                    'period_start', 
+                    'period_end', 
+                    DB::raw('count(*) as total_records'), 
+                    DB::raw('max(updated_at) as last_updated')
+                )
+                ->groupBy('period_start', 'period_end')
+                ->latest('last_updated')
+                ->paginate(10);
         });
 
-        $employee = $userCompany->employees()->get();
-
-        return view('attendance', compact('attendances', 'employee'));
+        return view('attendance', compact('batches'));
     }
 
-    public function store(Request $request)
+    public function manage(Request $request)
     {
-        $userCompany = auth()->user()->compani;
+        $userCompany = Auth::user()->compani;
+        
+        $start = $request->get('start');
+        $end = $request->get('end');
+        $employees = [];
+        $attendances = [];
 
-        $data = $request->validate([
-            'employee_id' => 'required',
-            'attendance_date' => 'required',
-            'clock_in' => 'required',
-            'clock_out' => 'required',
-            'status' => 'required',
-        ]);
+        if ($start && $end) {
+            $employees = Employee::where('compani_id', $userCompany->id)
+                ->orderBy('name')
+                ->get();
 
-        $data['compani_id'] = $userCompany->id;
+            $attendances = Attendance::where('compani_id', $userCompany->id)
+                ->where('period_start', $start)
+                ->where('period_end', $end)
+                ->get()
+                ->keyBy('employee_id');
+        }
 
-        $atten = Attendance::create($data);
-
-        $this->logActivity('Create Allowance', "Menambahkan attendance baru: {$atten->employee->name} ({$atten->status})", $userCompany->id);
-
-        Cache::forget('attendances_' . $userCompany->id);
-
-        return redirect(route('attendance'))->with('success', 'Attendance successfully created!');
+        return view('manageattendance', compact('start', 'end', 'employees', 'attendances'));
     }
 
-    public function update(Request $request, $id)
+    public function storeBatch(Request $request)
     {
         $userCompany = auth()->user()->compani;
 
         $request->validate([
-            'employee_id' => 'required',
-            'attendance_date' => 'required',
-            'clock_in' => 'required',
-            'clock_out' => 'required',
-            'status' => 'required',
+            'period_start' => 'required|date',
+            'period_end'   => 'required|date|after_or_equal:period_start',
+            'data'         => 'required|array',
+            'data.*.present' => 'required|integer|min:0',
         ]);
 
-        $attendance = Attendance::findOrFail($id);
+        DB::beginTransaction();
+        try {
+            foreach ($request->data as $empId => $row) {
+                Attendance::updateOrCreate(
+                    [
+                        'compani_id'   => $userCompany->id,
+                        'employee_id'  => $empId,
+                        'period_start' => $request->period_start,
+                        'period_end'   => $request->period_end,
+                    ],
+                    [
+                        'total_present'    => $row['present'] ?? 0,
+                        'total_late'       => $row['late'] ?? 0,
+                        'total_sick'       => $row['sick'] ?? 0,
+                        'total_permission' => $row['permission'] ?? 0,
+                        'total_alpha'      => $row['alpha'] ?? 0,
+                        'total_leave'      => $row['leave'] ?? 0,
+                        'note'             => $row['note'] ?? null,
+                    ]
+                );
+            }
 
-        $oldEmployee = $attendance->employee->name;
-        $oldStatus   = $attendance->status;
+            DB::commit();
 
-        $data = $request->only(['employee_id', 'attendance_date', 'clock_in', 'clock_out', 'status']);
-        $data['compani_id'] = $userCompany->id;
+            $this->logActivity(
+                'Update Attendance Batch', 
+                "Input/Update rekap absensi periode {$request->period_start} s/d {$request->period_end}", 
+                $userCompany->id
+            );
 
-        $attendance->update($data);
+            Cache::tags(['attendance_batches_' . $userCompany->id])->flush();
 
-        // LOG UPDATE
+            return redirect()->route('attendance')->with('success', 'Attendance data saved successfully!');
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->withErrors(['msg' => 'Error saving data: ' . $e->getMessage()])->withInput();
+        }
+    }
+
+    public function destroyPeriod(Request $request)
+    {
+        $userCompany = auth()->user()->compani;
+
+        $request->validate([
+            'start' => 'required|date', 
+            'end'   => 'required|date',
+        ]);
+
+        $deleted = $userCompany->attendances()
+            ->where('period_start', $request->start)
+            ->where('period_end', $request->end)
+            ->delete();
+
         $this->logActivity(
-            'Update Attendance',
-            "Mengubah attendance {$oldEmployee} dari status {$oldStatus} menjadi {$request->status}",
+            'Delete Attendance Batch', 
+            "Menghapus rekap absensi periode {$request->start} s/d {$request->end}", 
             $userCompany->id
         );
 
-        Cache::forget('attendances_' . $userCompany->id);
+        Cache::tags(['attendance_batches_' . $userCompany->id])->flush();
 
-        return redirect(route('attendance'))->with('success', 'Attendance successfully updated!');
-    }
-
-    public function destroy($id)
-    {
-        $attendance = Attendance::findOrFail($id);
-
-        $employeeName = $attendance->employee->name;
-        $status       = $attendance->status;
-        $companyId    = $attendance->compani_id;
-
-        $attendance->delete();
-
-        // LOG DELETE
-        $this->logActivity(
-            'Delete Attendance',
-            "Menghapus attendance {$employeeName} ({$status})",
-            $companyId
-        );
-
-        Cache::forget('attendances_' . $companyId);
-
-        return redirect(route('attendance'))->with('success', 'Attendance successfully deleted!');
+        return redirect()->route('attendance')->with('success', 'Attendance data deleted successfully!');
     }
 
     private function logActivity($type, $description, $companyId)

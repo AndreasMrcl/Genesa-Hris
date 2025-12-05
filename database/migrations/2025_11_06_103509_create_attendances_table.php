@@ -15,17 +15,17 @@ return new class extends Migration
             $table->id();
             $table->foreignId('compani_id')->constrained()->onUpdate('cascade')->onDelete('cascade');
             $table->foreignId('employee_id')->constrained()->onUpdate('cascade')->onDelete('cascade');
-            $table->date('attendance_date');
-            $table->time('clock_in')->nullable();
-            $table->time('clock_out')->nullable();
-            $table->enum('status', [
-                'present',   // hadir normal
-                'absent',    // tidak hadir tanpa keterangan
-                'leave',     // izin resmi
-                'sick',      // sakit
-                'off',       // libur
-            ])->default('present');
+            $table->date('period_start');
+            $table->date('period_end');
+            $table->integer('total_present')->default(0);
+            $table->integer('total_late')->default(0);
+            $table->integer('total_sick')->default(0);
+            $table->integer('total_permission')->default(0);
+            $table->integer('total_alpha')->default(0);
+            $table->integer('total_leave')->default(0);
+            $table->text('note')->nullable();
             $table->timestamps();
+            $table->index(['compani_id', 'period_start', 'period_end']);
         });
     }
 

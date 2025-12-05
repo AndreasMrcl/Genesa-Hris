@@ -84,7 +84,15 @@ class PayrollController extends Controller
     // Menampilkan Form "Run Payroll"
     public function create()
     {
-        return view('payrollCreate');
+        $userCompany = Auth::user()->compani;
+
+        $availablePeriods = $userCompany->attendances()
+            ->select('period_start', 'period_end')
+            ->distinct()
+            ->orderBy('period_end', 'desc')
+            ->get();
+
+        return view('payrollCreate', compact('availablePeriods'));
     }
 
     public function store(Request $request)
@@ -92,18 +100,19 @@ class PayrollController extends Controller
         $userCompany = Auth::user()->compani;
 
         $request->validate([
-            'pay_period_start' => 'required|date',
-            'pay_period_end'   => 'required|date|after_or_equal:pay_period_start',
+            'selected_period' => 'required|string',
         ]);
+
+        [$start, $end] = explode('|', $request->selected_period);
 
         // Cek Duplicate
         $exists = $userCompany->payrolls()
-            ->where('pay_period_start', $request->pay_period_start)
-            ->where('pay_period_end', $request->pay_period_end)
+            ->where('pay_period_start', $start)
+            ->where('pay_period_end', $end)
             ->exists();
 
         if ($exists) {
-            return back()->withErrors(['msg' => 'Payroll for this period already exists!']);
+            return back()->withErrors(['msg' => "Payroll for period $start to $end already exists!"]);
         }
 
         // LOAD CONFIGURATIONS
@@ -111,36 +120,20 @@ class PayrollController extends Controller
         $companyConfig = CompanyPayrollConfig::where('compani_id', $userCompany->id)->first();
 
         // Safety fallback jika config belum diset
-        if (!$companyConfig) {
-            $companyConfig = CompanyPayrollConfig::create([
-                'compani_id' => $userCompany->id,
-                'tax_method' => 'GROSS',
-                'bpjs_kes_active' => true,
-                'bpjs_tk_active' => true,
-                'bpjs_jkk_rate' => 0.24
-            ]);
-        }
-        if (!$globalBpjs) {
-            // Gunakan nilai default jika seeder belum jalan
-            $globalBpjs = new GlobalBpjs([
-                'kes_comp_percent' => 4.0,
-                'kes_emp_percent' => 1.0,
-                'kes_cap_amount' => 12000000,
-                'jht_comp_percent' => 3.7,
-                'jht_emp_percent' => 2.0,
-                'jp_comp_percent' => 2.0,
-                'jp_emp_percent' => 1.0,
-                'jp_cap_amount' => 10547400,
-                'jkm_comp_percent' => 0.30
-            ]);
-        }
+        if (!$companyConfig) return back()->withErrors(['msg' => 'Company Settings not found.']);
+        if (!$globalBpjs) return back()->withErrors(['msg' => 'Global BPJS Settings not found.']);
 
         $employees = $userCompany->employees()
-            ->with(['allowEmps.allow', 'deductEmps.deduct'])
+            ->whereHas('attendances', function($q) use ($start, $end) {
+                $q->where('period_start', $start)->where('period_end', $end);
+            })
+            ->with(['allowEmps.allow', 'deductEmps.deduct', 'attendances' => function($q) use ($start, $end) {
+                $q->where('period_start', $start)->where('period_end', $end);
+            }])
             ->get();
 
         if ($employees->isEmpty()) {
-            return back()->withErrors(['msg' => 'No employees found.']);
+            return back()->withErrors(['msg' => "No attendance data found for period $start to $end."]);
         }
 
         DB::beginTransaction();
@@ -151,13 +144,14 @@ class PayrollController extends Controller
 
             foreach ($employees as $emp) {
 
+                $attendanceRecord = $emp->attendances->first();
+                $daysPresent = $attendanceRecord ? $attendanceRecord->total_present : 0;
+                
                 // === A. VARIABEL DASAR ===
                 $baseSalary = $emp->base_salary ?? 0;
                 $totalAllowance = 0;
                 $totalDeduction = 0;
                 $detailsToSave = [];
-
-                // Variabel untuk Pajak
                 // taxableIncomeBase = Gaji Pokok + Tunjangan Tetap/Harian yang Kena Pajak
                 $taxableIncomeBase = $baseSalary;
 
@@ -167,13 +161,10 @@ class PayrollController extends Controller
                 foreach ($emp->allowEmps as $assign) {
                     $master = $assign->allow;
                     $amount = 0;
-                    $type = strtoupper($master->type);
 
                     if ($master->type == 'fixed') {
                         $amount = $assign->amount;
                     } elseif ($master->type == 'daily') {
-                        // TODO: Ganti 22 dengan $attendanceCount Real
-                        $daysPresent = 22;
                         $amount = $assign->amount * $daysPresent;
                     } elseif ($master->type == 'one_time') {
                         $amount = $assign->amount;
@@ -182,9 +173,7 @@ class PayrollController extends Controller
                     $totalAllowance += $amount;
 
                     // Jika Tunjangan Kena Pajak, tambahkan ke Dasar Pajak
-                    if ($master->is_taxable) {
-                        $taxableIncomeBase += $amount;
-                    }
+                    if ($master->is_taxable) $taxableIncomeBase += $amount;
 
                     $detailsToSave[] = [
                         'name' => $master->name,
@@ -333,8 +322,8 @@ class PayrollController extends Controller
                 $payroll = Payroll::create([
                     'compani_id' => $userCompany->id,
                     'employee_id' => $emp->id,
-                    'pay_period_start' => $request->pay_period_start,
-                    'pay_period_end' => $request->pay_period_end,
+                    'pay_period_start' => $start,
+                    'pay_period_end' => $end,
                     'base_salary' => $baseSalary,
                     'total_allowances' => $totalAllowance,
                     'total_deductions' => $totalDeduction,
@@ -369,7 +358,7 @@ class PayrollController extends Controller
             DB::commit();
             Cache::forget('payroll_' . $userCompany->id . '_page_1');
 
-            return redirect()->route('payroll')->with('success', "Generated $countProcessed slips.");
+            return redirect()->route('payroll')->with('success', "Generated $countProcessed slips for period $start to $end.");
         } catch (\Exception $e) {
             DB::rollBack();
             return back()->withErrors(['msg' => 'Calculation Error: ' . $e->getMessage() . ' Line: ' . $e->getLine()]);
