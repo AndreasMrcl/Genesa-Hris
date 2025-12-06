@@ -7,9 +7,15 @@
 
     <style>
         @keyframes marquee {
-            0% { transform: translateX(100%); }
-            100% { transform: translateX(-100%); }
+            0% {
+                transform: translateX(100%);
+            }
+
+            100% {
+                transform: translateX(-100%);
+            }
         }
+
         .animate-marquee {
             display: inline-block;
             animation: marquee 15s linear infinite;
@@ -33,7 +39,7 @@
                 <!-- Company -->
                 <h1 class="text-2xl font-bold text-white flex items-center gap-2 drop-shadow-md">
                     <i class="fas fa-building text-white/90"></i>
-                    {{ $employee->compani->company }}
+                    {{ $compani->company }}
                 </h1>
 
                 <!-- User Info -->
@@ -68,14 +74,16 @@
     <div class="p-2">
         <div class="bg-yellow-100 border border-yellow-300 text-yellow-800 rounded-xl p-3 shadow-sm overflow-hidden">
             <div class="animate-marquee whitespace-nowrap text-sm font-semibold">
-                📢 Pengumuman: Gajian bulan Desember dipercepat ke tanggal 27 • Libur Natal 24-26 • Meeting bulanan 15 • Mohon lengkapi approval lembur sebelum 10
+                @foreach ($announcements as $item)
+                    📢 {{ $item->content }}
+                @endforeach
             </div>
         </div>
     </div>
 
     <!-- PROFILE CARD -->
     <div class="p-2 pb-20">
-        <div class="bg-white rounded-xl shadow-md border border-gray-100 p-5 space-y-5">
+        <div class="bg-white rounded-xl shadow-md border border-gray-100 p-4 space-y-5">
 
             <!-- PERSONAL INFO -->
             <div>

@@ -46,7 +46,11 @@ class BranchController extends Controller
 
         Branch::create($data);
 
-        $this->logActivity('Create Branch', "Membuat cabang baru {$request->name} ({$request->category})", $userCompany->id);
+        $this->logActivity(
+            'Create Branch',
+            "Membuat cabang baru {$request->name} ({$request->category})",
+            $userCompany->id
+        );
 
         Cache::forget('branches_' . $userCompany->id);
 
@@ -98,7 +102,7 @@ class BranchController extends Controller
 
         if (!empty($changes)) {
             $descriptionString = "Update Branch {$branch->name}: " . implode(', ', $changes);
-            
+
             $this->logActivity('Update Branch', $descriptionString, $userCompany->id);
         }
 

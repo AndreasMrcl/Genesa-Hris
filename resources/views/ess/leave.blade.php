@@ -21,6 +21,7 @@
     <!-- LEAVE -->
     <div class="p-2">
         <div class="bg-white rounded-xl shadow-md border border-gray-100 p-5 space-y-4">
+            
             <!-- Header Section -->
             <div>
                 <h1 class="font-bold text-2xl text-gray-800 flex items-center gap-2">

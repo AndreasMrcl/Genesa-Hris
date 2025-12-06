@@ -39,7 +39,7 @@
                 <!-- Company -->
                 <h1 class="text-2xl font-bold text-white flex items-center gap-2 drop-shadow-md">
                     <i class="fas fa-building text-white/90"></i>
-                    {{ $employee->compani->company }}
+                    {{ $compani->company }}
                 </h1>
 
                 <!-- User Info -->
@@ -71,21 +71,19 @@
     </div>
 
     <!-- ANNOUNCEMENT -->
-
     <div class="p-2">
         <div class="bg-yellow-100 border border-yellow-300 text-yellow-800 rounded-xl p-3 shadow-sm overflow-hidden">
             <div class="animate-marquee whitespace-nowrap text-sm font-semibold">
-                📢 Pengumuman: Gajian bulan Desember akan dipercepat menjadi tanggal 27.
-                • Libur Natal dimulai tanggal 24–26 Desember.
-                • Meeting bulanan akan diadakan tanggal 15 pukul 09.00 WIB.
-                • Mohon lengkapi approval lembur sebelum tanggal 10.
+                @foreach ($announcements as $item)
+                    📢 {{ $item->content }}
+                @endforeach
             </div>
         </div>
     </div>
 
     <!-- QUICK MENU -->
     <div class="p-2">
-        <div class="bg-white p-5 rounded-xl shadow-md border border-gray-100">
+        <div class="bg-white p-4 rounded-xl shadow-md border border-gray-100">
             <h2 class="text-lg font-bold text-gray-800 mb-3">Quick Menu</h2>
 
             <div class="grid grid-cols-3 gap-4 text-center">

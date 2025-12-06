@@ -41,7 +41,6 @@
                             <th class="p-4 font-bold">Employee</th>
                             <th class="p-4 font-bold">Type</th>
                             <th class="p-4 font-bold">Content</th>
-                            <th class="p-4 font-bold text-center rounded-tr-lg" width="15%">Action</th>
                         </tr>
                     </thead>
                     <tbody class="text-gray-700 text-sm">
@@ -73,30 +72,6 @@
                                 </td>
                                 <td class="p-4 text-xs text-gray-600 italic max-w-xs truncate">
                                     "{{ \Illuminate\Support\Str::limit($item->content, 40) }}"
-                                </td>
-                                <td class="p-4">
-                                    <div class="flex justify-center items-center gap-2">
-                                        {{-- Edit Button --}}
-                                        <button
-                                            class="editBtn w-9 h-9 flex items-center justify-center bg-blue-500 text-white rounded-lg shadow hover:bg-blue-600 hover:scale-105 transition"
-                                            data-id="{{ $item->id }}" data-employee="{{ $item->employee_id }}"
-                                            data-date="{{ $item->note_date }}" data-type="{{ $item->type }}"
-                                            data-content="{{ $item->content }}" title="Edit">
-                                            <i class="fas fa-edit"></i>
-                                        </button>
-
-                                        {{-- Delete Button --}}
-                                        <form method="post" action="{{ route('delnote', ['id' => $item->id]) }}"
-                                            class="inline deleteForm">
-                                            @csrf
-                                            @method('delete')
-                                            <button type="button"
-                                                class="delete-confirm w-9 h-9 flex items-center justify-center bg-red-500 text-white rounded-lg shadow hover:bg-red-600 hover:scale-105 transition"
-                                                title="Delete">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
-                                        </form>
-                                    </div>
                                 </td>
                             </tr>
                         @endforeach

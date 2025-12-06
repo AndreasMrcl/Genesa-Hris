@@ -19,11 +19,17 @@ class EssController extends Controller
 
         $employee = Auth::guard('employee')->user();
 
+        $compani = $employee->compani;
+
+        $announcements = $compani->announcements;
+
         $attendance = Attendance::where('employee_id', $employee->id)
             ->latest()
             ->first();
 
-        return view('ess.home', compact('employee', 'attendance'));
+
+
+        return view('ess.home', compact('employee', 'compani', 'announcements',  'attendance'));
     }
 
     public function attendance()
@@ -103,7 +109,6 @@ class EssController extends Controller
         return redirect(route('ess-overtime'));
     }
 
-
     public function note()
     {
         if (!Auth::guard('employee')->check()) {
@@ -141,7 +146,10 @@ class EssController extends Controller
 
         $employee = Auth::guard('employee')->user();
 
+                $compani = $employee->compani;
 
-        return view('ess.profil', compact('employee'));
+        $announcements = $compani->announcements;
+
+        return view('ess.profil', compact('employee', 'compani', 'announcements'));
     }
 }

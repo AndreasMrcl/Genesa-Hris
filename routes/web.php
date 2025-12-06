@@ -18,6 +18,7 @@ use App\Http\Controllers\OvertimeController;
 use App\Http\Controllers\DeductEmpController;
 use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\ActivityLogController;
+use App\Http\Controllers\AnnouncementController;
 use App\Http\Controllers\CompanyPayrollConfigController;
 
 Route::get('/', [AuthController::class, 'login'])->name('login');
@@ -74,7 +75,7 @@ Route::middleware('auth:web')->group(function () {
     Route::put('/note/{id}/update', [NoteController::class, 'update'])->name('updatenote');
     Route::delete('/note/{id}/delete', [NoteController::class, 'destroy'])->name('delnote');
 
-     //ATTENDANCE
+    //ATTENDANCE
     Route::get('/attendance', [AttendanceController::class, 'index'])->name('attendance');
     Route::get('/attendance/manage', [AttendanceController::class, 'manage'])->name('manageattendance');
     Route::post('/attendance/store', [AttendanceController::class, 'storeBatch'])->name('postattendance');
@@ -85,6 +86,12 @@ Route::middleware('auth:web')->group(function () {
     Route::post('/postshift', [ShiftController::class, 'store'])->name('postshift');
     Route::put('/shift/{id}/update', [ShiftController::class, 'update'])->name('updateshift');
     Route::delete('/shift/{id}/delete', [ShiftController::class, 'destroy'])->name('delshift');
+
+    //ANNOUNCEMENT
+    Route::get('/announcement', [AnnouncementController::class, 'index'])->name('announcement');
+    Route::post('/postannouncement', [AnnouncementController::class, 'store'])->name('postannouncement');
+    Route::put('/announcement/{id}/update', [AnnouncementController::class, 'update'])->name('updateannouncement');
+    Route::delete('/announcement/{id}/delete', [AnnouncementController::class, 'destroy'])->name('delannouncement');            
 
     //PAYROLL
     Route::get('/payroll', [PayrollController::class, 'index'])->name('payroll');
