@@ -26,7 +26,7 @@
 <body class="bg-gray-50 font-sans w-full md:max-w-sm mx-auto">
 
     <!-- HEADER -->
-    <div class="bg-gradient-to-br from-sky-800 to-sky-700 p-6 rounded-b-3xl shadow-xl relative overflow-hidden">
+    <div class="bg-linear-to-br from-sky-800 to-sky-700 p-6 rounded-b-3xl shadow-xl relative overflow-hidden">
 
         <!-- Subtle decorative circles -->
         <div class="absolute right-0 top-0 w-32 h-32 bg-white/10 rounded-full blur-2xl"></div>

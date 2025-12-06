@@ -21,7 +21,7 @@
     </style>
 </head>
 
-<body class="bg-gradient-to-b from-sky-800 to-gray-100 min-h-screen flex items-center justify-center p-4">
+<body class="bg-linear-to-b from-sky-800 to-gray-100 min-h-screen flex items-center justify-center p-4">
 
     <div class="w-full max-w-sm bg-white rounded-2xl shadow-xl p-8 space-y-6">
 
@@ -30,7 +30,7 @@
             <img class="h-full w-full md:h-fit" src="{{ asset('logo.png') }}" alt="Logo">
         </div>
 
-            <hr class="mx-5 shadow-2xl text-gray-100 rounded-r-xl rounded-l-xl" />
+        <hr class="mx-5 shadow-2xl text-gray-100 rounded-r-xl rounded-l-xl" />
 
         <!-- Heading -->
         <div>
@@ -45,13 +45,8 @@
             <!-- Email -->
             <div class="space-y-1">
                 <label for="email" class="text-gray-700 font-medium">Email</label>
-                <input
-                    type="email"
-                    name="email"
-                    id="email"
-                    required
-                    class="w-full p-3 bg-gray-100 rounded-xl focus:ring-2 focus:ring-sky-600 outline-none"
-                />
+                <input type="email" name="email" id="email" required
+                    class="w-full p-3 bg-gray-100 rounded-xl focus:ring-2 focus:ring-sky-600 outline-none" />
             </div>
 
             <!-- Password -->
@@ -59,20 +54,14 @@
                 <label for="password" class="text-gray-700 font-medium">Password</label>
 
                 <div class="password-container">
-                    <input
-                        type="password"
-                        name="password"
-                        id="password"
-                        required
-                        class="w-full p-3 bg-gray-100 rounded-xl pr-12 focus:ring-2 focus:ring-sky-600 outline-none"
-                    />
+                    <input type="password" name="password" id="password" required
+                        class="w-full p-3 bg-gray-100 rounded-xl pr-12 focus:ring-2 focus:ring-sky-600 outline-none" />
                     <i id="toggle-password" class="fas fa-eye toggle-password"></i>
                 </div>
             </div>
 
             <!-- Submit Button -->
-            <button
-                type="submit"
+            <button type="submit"
                 class="w-full py-3 text-white text-lg font-semibold bg-sky-700 rounded-xl shadow hover:bg-sky-800 hover:scale-[1.02] transition-all">
                 Login
             </button>
@@ -84,7 +73,7 @@
 
     <script>
         // Password Visibility Toggle
-        document.getElementById('toggle-password').addEventListener('click', function () {
+        document.getElementById('toggle-password').addEventListener('click', function() {
             const pw = document.getElementById('password');
             const type = pw.type === 'password' ? 'text' : 'password';
             pw.type = type;
