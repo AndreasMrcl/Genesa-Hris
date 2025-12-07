@@ -12,7 +12,7 @@ class PayrollDetail extends Model
     [
         'payroll_id',
         'name',
-        'category', // base, allowance, deduction
+        'category', // Kategori 'benefit' hanya untuk non-cash
         'amount',
     ];
 

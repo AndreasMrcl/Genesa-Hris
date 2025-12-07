@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Branch;
 use App\Models\Employee;
+use App\Models\Position;
 use App\Models\ActivityLog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -13,7 +14,7 @@ class EmployeeController extends Controller
 {
     public function index()
     {
-         if (!Auth::check()) {
+        if (!Auth::check()) {
             return redirect('/');
         }
 
@@ -32,48 +33,52 @@ class EmployeeController extends Controller
         $cacheKey = 'employees_' . $userCompany->id;
 
         $employees = Cache::remember($cacheKey, 60, function () use ($userCompany) {
-            return $userCompany->employees()->with('compani', 'branch')->get();
+            return $userCompany->employees()->with('compani', 'branch', 'position')->get();
         });
 
-        $branch = Branch::where('compani_id', $userCompany->id)->select('id', 'name')->get();
+        $branch = Branch::where('compani_id', $userCompany->id)->select('id', 'name', 'category')->get();
 
-        return view('employee', compact('employees', 'branch'));
+        $positions = $userCompany->positions()->select('id', 'name', 'category', 'base_salary_default')->get();
+
+        return view('employee', compact('employees', 'branch', 'positions'));
     }
 
     public function store(Request $request)
     {
         $userCompany = auth()->user()->compani;
 
-        // Validasi mencakup semua field baru dari View & Model
         $data = $request->validate([
             // Data Pribadi
             'name' => 'required|string',
             'branch_id' => 'required|exists:branches,id',
-            'email' => 'required|email|unique:employees,email', // Sebaiknya unik
+            'email' => 'required|email|unique:employees,email',
             'password' => 'required|min:6',
             'nik' => 'required|numeric',
             'phone' => 'required|numeric',
             'address' => 'required|string',
             'ktp' => 'nullable|numeric',
-            
+
             // Data Pekerjaan
-            'position' => 'required|string',
+            'position_id' => 'required|exists:positions,id',
+            'working_days_per_month' => 'required|integer',
             'join_date' => 'required|date',
             'status' => 'required|in:full_time,part_time',
-            
+
             // Data Payroll & Pajak (Baru)
             'base_salary' => 'required|numeric|min:0',
-            'bank_name' => 'required|string',
-            'bank_account_no' => 'required|string',
+            'payroll_method' => 'required|in:transfer,cash',
+            'bank_name' => 'nullable|string',
+            'bank_account_no' => 'nullable|numeric',
             'ptkp_status' => 'nullable|string',
             'npwp' => 'nullable|string',
             'bpjs_kesehatan_no' => 'nullable|string',
             'bpjs_ketenagakerjaan_no' => 'nullable|string',
-            
+
             // Checkbox BPJS (0 atau 1)
             'participates_bpjs_kes' => 'boolean',
             'participates_bpjs_tk' => 'boolean',
             'participates_bpjs_jp' => 'boolean',
+
         ]);
 
         $data['participates_bpjs_kes'] = $request->has('participates_bpjs_kes');
@@ -84,10 +89,11 @@ class EmployeeController extends Controller
         $data['password'] = bcrypt($data['password']);
 
         $employee = Employee::create($data);
+        $posName = $employee->position->name ?? '-';
 
         $this->logActivity(
-            'Create Employee', 
-            "Menambahkan karyawan baru: {$employee->name} (Posisi: {$employee->position})", 
+            'Create Employee',
+            "Menambahkan karyawan baru: {$employee->name} (Posisi: {$posName})",
             $userCompany->id
         );
 
@@ -109,25 +115,27 @@ class EmployeeController extends Controller
             'phone' => 'required|numeric',
             'address' => 'required|string',
             'ktp' => 'nullable|numeric',
-            'position' => 'required|string',
             'join_date' => 'required|date',
             'status' => 'required|in:full_time,part_time',
             'password' => 'nullable|min:6', // Boleh kosong saat update
-            
+            'position_id' => 'required|exists:positions,id',
+            'working_days_per_month' => 'required|integer',
+
             // Payroll Update
             'base_salary' => 'required|numeric|min:0',
+            'payroll_method' => 'required|in:transfer,cash',
             'bank_name' => 'nullable|string',
-            'bank_account_no' => 'nullable|string',
+            'bank_account_no' => 'nullable|numeric',
             'ptkp_status' => 'nullable|string',
             'npwp' => 'nullable|string',
             'bpjs_kesehatan_no' => 'nullable|string',
             'bpjs_ketenagakerjaan_no' => 'nullable|string',
-            
+
             'participates_bpjs_kes' => 'boolean',
             'participates_bpjs_tk' => 'boolean',
             'participates_bpjs_jp' => 'boolean',
         ]);
-        
+
         // Hapus password dari array jika kosong (agar tidak ter-update jadi null/kosong)
         if (empty($data['password'])) {
             unset($data['password']);

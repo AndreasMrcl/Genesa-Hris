@@ -4,32 +4,16 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use App\Models\Compani;
-use App\Models\CompanyPayrollConfig;
 use App\Models\GlobalBpjs;
 use App\Models\GlobalPtkp;
 
-class PayrollConfigSeeder extends Seeder
+class BpjsSeeder extends Seeder
 {
     /**
      * Run the database seeds.
      */
     public function run(): void
     {
-
-        // Buat Config Payroll untuk perusahaan tersebut
-        CompanyPayrollConfig::updateOrCreate(
-            ['compani_id' => 1], // Kunci pencarian
-            [
-                'bpjs_jkk_rate' => 0.24,       // JKK 0.24% (Low Risk)
-                'bpjs_kes_active' => true,     // Ikut BPJS Kesehatan
-                'bpjs_tk_active' => true,      // Ikut BPJS Ketenagakerjaan
-                'tax_method' => 'GROSS_UP',    // Metode Pajak: GROSS UP
-                'ump_amount' => 3454827,       // UMP: 3.454.827
-            ]
-        );
-
-
         GlobalBpjs::updateOrCreate(
             ['id' => 1], 
             [

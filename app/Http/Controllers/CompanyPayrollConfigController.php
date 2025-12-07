@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\ActivityLog;
-use App\Models\ActivityLog;
 use App\Models\CompanyPayrollConfig;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
@@ -52,10 +51,10 @@ class CompanyPayrollConfigController extends Controller
         $userCompany = Auth::user()->compani;
 
         $request->validate([
-            'bpjs_jkk_rate'   => 'required|numeric|min:0|max:100',
+            'bpjs_jkk_rate'   => 'required|numeric|min:0',
             'tax_method'      => 'required|in:GROSS,NET,GROSS_UP',
             'ump_amount'      => 'required|numeric|min:0',
-            'infaq_percent'   => 'nullable|numeric|min:0|max:100',
+            'infaq_percent'   => 'nullable|numeric|min:0',
         ]);
 
         $config = $userCompany->companyPayrollConfig()->updateOrCreate(

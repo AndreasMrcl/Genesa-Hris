@@ -80,60 +80,65 @@
                         
                         <!-- Earnings Column -->
                         <div>
-                            <h3 class="text-sm font-bold text-gray-400 uppercase tracking-wider mb-4 border-b pb-2">Earnings</h3>
-                            <div class="space-y-3">
-                                {{-- Loop hanya yang allowance/base --}}
-                                @foreach($payroll->payrollDetails as $detail)
-                                    @if(in_array($detail->category, ['base', 'allowance']))
-                                        <div class="flex justify-between items-center">
-                                            <div>
-                                                <p class="text-gray-700 font-medium">{{ $detail->name }}</p>
-                                                @if($detail->calculation_note)
-                                                    <p class="text-xs text-gray-400">{{ $detail->calculation_note }}</p>
-                                                @endif
-                                            </div>
-                                            <p class="text-gray-800">Rp {{ number_format($detail->amount, 0, ',', '.') }}</p>
+                            <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-4 border-b-2 border-gray-100 pb-2">Earnings (Pendapatan)</h3>
+                            <div class="space-y-3 text-sm">
+                                @foreach($payroll->payrollDetails->whereIn('category', ['base', 'allowance']) as $item)
+                                    <div class="flex justify-between items-start">
+                                        <div>
+                                            <p class="text-gray-700 font-medium">{{ $item->name }}</p>
                                         </div>
-                                    @endif
+                                        <p class="text-gray-900 font-semibold">Rp {{ number_format($item->amount, 0, ',', '.') }}</p>
+                                    </div>
                                 @endforeach
                             </div>
                             
                             <!-- Total Earnings -->
-                            <div class="mt-6 pt-4 border-t border-gray-200 flex justify-between items-center">
-                                <p class="text-gray-600 font-semibold">Total Earnings</p>
-                                <p class="text-gray-800 font-bold">Rp {{ number_format($payroll->base_salary + $payroll->total_allowances, 0, ',', '.') }}</p>
+                            <div class="mt-6 pt-3 border-t border-gray-200 flex justify-between items-center bg-gray-50 p-3 rounded-lg">
+                                <p class="text-gray-600 font-bold text-sm">Total Gross Pay</p>
+                                <p class="text-gray-900 font-bold">Rp {{ number_format($payroll->base_salary + $payroll->total_allowances, 0, ',', '.') }}</p>
                             </div>
                         </div>
 
                         <!-- Deductions Column -->
                         <div>
-                            <h3 class="text-sm font-bold text-gray-400 uppercase tracking-wider mb-4 border-b pb-2">Deductions</h3>
-                            <div class="space-y-3">
-                                @php $hasDeduction = false; @endphp
-                                @foreach($payroll->payrollDetails as $detail)
-                                    @if($detail->category == 'deduction')
-                                        @php $hasDeduction = true; @endphp
-                                        <div class="flex justify-between items-center">
-                                            <div>
-                                                <p class="text-gray-700 font-medium">{{ $detail->name }}</p>
-                                            </div>
-                                            <p class="text-red-600">- Rp {{ number_format($detail->amount, 0, ',', '.') }}</p>
-                                        </div>
-                                    @endif
+                            <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-4 border-b-2 border-gray-100 pb-2">Deductions (Potongan)</h3>
+                            <div class="space-y-3 text-sm">
+                                @foreach($payroll->payrollDetails->where('category', 'deduction') as $item)
+                                    <div class="flex justify-between items-center">
+                                        <div><p class="text-gray-700 font-medium">{{ $item->name }}</p></div>
+                                        <p class="text-red-600 font-medium">- Rp {{ number_format($item->amount, 0, ',', '.') }}</p>
+                                    </div>
                                 @endforeach
-
-                                @if(!$hasDeduction)
-                                    <p class="text-gray-400 italic text-sm">No deductions</p>
-                                @endif
                             </div>
-
-                            <!-- Total Deductions -->
-                            <div class="mt-6 pt-4 border-t border-gray-200 flex justify-between items-center">
-                                <p class="text-gray-600 font-semibold">Total Deductions</p>
+                            <div class="mt-6 pt-3 border-t border-gray-200 flex justify-between items-center bg-gray-50 p-3 rounded-lg">
+                                <p class="text-gray-600 font-bold text-sm">Total Deductions</p>
                                 <p class="text-red-600 font-bold">- Rp {{ number_format($payroll->total_deductions, 0, ',', '.') }}</p>
                             </div>
                         </div>
                     </div>
+                    
+                    @php
+                        $benefits = $payroll->benefits;
+                    @endphp
+
+                    @if($benefits->count() > 0)
+                        <div class="mt-10 pt-6 border-t border-dashed border-gray-300">
+                            <h3 class="text-[11px] font-bold text-gray-400 uppercase tracking-wider mb-4 flex items-center gap-2">
+                                <i class="fas fa-info-circle"></i> Company Paid Benefits (Non-Cash)
+                            </h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-2 text-xs">
+                                @foreach($benefits as $item)
+                                    <div class="flex justify-between items-center p-2 hover:bg-gray-50 rounded">
+                                        <p class="text-gray-500 font-medium">{{ $item->name }}</p>
+                                        <p class="text-gray-600 font-bold">Rp {{ number_format($item->amount, 0, ',', '.') }}</p>
+                                    </div>
+                                @endforeach
+                            </div>
+                            <p class="text-[10px] text-gray-400 mt-3 italic border-l-2 border-gray-300 pl-2 ml-1">
+                                * Benefit ini dibayarkan perusahaan (Asuransi/Pajak) dan tidak mengurangi gaji bersih Anda.
+                            </p>
+                        </div>
+                    @endif             
                 </div>
 
                 <!-- NET PAY (Bottom Bar) -->

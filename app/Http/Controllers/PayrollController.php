@@ -42,15 +42,14 @@ class PayrollController extends Controller
         $cacheKey = 'payroll_' . $userCompany->id . '_page_' . $page;
 
         $batches = Cache::remember($cacheKey, now()->addMinutes(60), function () use ($userCompany) {
-            // Query Grouping: Mengelompokkan berdasarkan tanggal start & end
             return $userCompany->payrolls()
                 ->select(
                     'pay_period_start',
                     'pay_period_end',
                     DB::raw('count(*) as total_employees'),
                     DB::raw('sum(net_salary) as total_spent'),
-                    DB::raw('max(status) as status'), // Ambil salah satu status
-                    DB::raw('max(created_at) as created_at') // Untuk sorting
+                    DB::raw('max(status) as status'),
+                    DB::raw('max(created_at) as created_at')
                 )
                 ->groupBy('pay_period_start', 'pay_period_end')
                 ->latest('created_at')
@@ -81,7 +80,6 @@ class PayrollController extends Controller
         return view('payrollPeriod', compact('payrolls', 'start', 'end'));
     }
 
-    // Menampilkan Form "Run Payroll"
     public function create()
     {
         $userCompany = Auth::user()->compani;
@@ -105,7 +103,6 @@ class PayrollController extends Controller
 
         [$start, $end] = explode('|', $request->selected_period);
 
-        // Cek Duplicate
         $exists = $userCompany->payrolls()
             ->where('pay_period_start', $start)
             ->where('pay_period_end', $end)
@@ -115,19 +112,18 @@ class PayrollController extends Controller
             return back()->withErrors(['msg' => "Payroll for period $start to $end already exists!"]);
         }
 
-        // LOAD CONFIGURATIONS
         $globalBpjs = GlobalBpjs::first();
         $companyConfig = CompanyPayrollConfig::where('compani_id', $userCompany->id)->first();
 
-        // Safety fallback jika config belum diset
         if (!$companyConfig) return back()->withErrors(['msg' => 'Company Settings not found.']);
+        if ($companyConfig->ump_amount <= 0) return back()->withErrors(['msg' => 'Regional Minimum Wage (UMP) is not set or 0.']);
         if (!$globalBpjs) return back()->withErrors(['msg' => 'Global BPJS Settings not found.']);
 
         $employees = $userCompany->employees()
-            ->whereHas('attendances', function($q) use ($start, $end) {
+            ->whereHas('attendances', function ($q) use ($start, $end) {
                 $q->where('period_start', $start)->where('period_end', $end);
             })
-            ->with(['allowEmps.allow', 'deductEmps.deduct', 'attendances' => function($q) use ($start, $end) {
+            ->with(['allowEmps.allow', 'deductEmps.deduct', 'attendances' => function ($q) use ($start, $end) {
                 $q->where('period_start', $start)->where('period_end', $end);
             }])
             ->get();
@@ -135,6 +131,19 @@ class PayrollController extends Controller
         if ($employees->isEmpty()) {
             return back()->withErrors(['msg' => "No attendance data found for period $start to $end."]);
         }
+
+        $bpjsBase = $companyConfig->ump_amount;
+        $bpjsKes = min($bpjsBase, $globalBpjs->kes_cap_amount);
+
+        $bpjsKesEmp  = $bpjsKes * ($globalBpjs->kes_emp_percent / 100);
+        $bpjsKesComp = $bpjsKes * ($globalBpjs->kes_comp_percent / 100);
+        $bpjsJkk = $bpjsBase * ($companyConfig->bpjs_jkk_rate / 100);
+        $bpjsJkm = $bpjsBase * ($globalBpjs->jkm_comp_percent / 100);
+        $bpjsJhtEmp  = $bpjsBase * ($globalBpjs->jht_emp_percent / 100);
+        $bpjsJhtComp = $bpjsBase * ($globalBpjs->jht_comp_percent / 100);
+        $baseJp = min($bpjsBase, $globalBpjs->jp_cap_amount);
+        $bpjsJpEmp  = $baseJp * ($globalBpjs->jp_emp_percent / 100);
+        $bpjsJpComp = $baseJp * ($globalBpjs->jp_comp_percent / 100);
 
         DB::beginTransaction();
 
@@ -144,20 +153,22 @@ class PayrollController extends Controller
 
             foreach ($employees as $emp) {
 
-                $attendanceRecord = $emp->attendances->first();
-                $daysPresent = $attendanceRecord ? $attendanceRecord->total_present : 0;
-                
-                // === A. VARIABEL DASAR ===
+                $attendance = $emp->attendances->first();
+                $daysPresent = $attendance ? $attendance->total_present : 0;
+                $totalLate = $attendance ? $attendance->total_late : 0;
+                $totalAlpha = $attendance ? $attendance->total_alpha : 0;
+                $totalPermission = $attendance ? $attendance->total_permission : 0;
+
+                // === BASE ===
                 $baseSalary = $emp->base_salary ?? 0;
                 $totalAllowance = 0;
                 $totalDeduction = 0;
-                $detailsToSave = [];
-                // taxableIncomeBase = Gaji Pokok + Tunjangan Tetap/Harian yang Kena Pajak
                 $taxableIncomeBase = $baseSalary;
+                $detailsToSave = [];
 
                 $detailsToSave[] = ['name' => 'Base Salary', 'category' => 'base', 'amount' => $baseSalary];
 
-                // === B. HITUNG ALLOWANCES (TUNJANGAN) ===
+                // === ALLOWANCES ===
                 foreach ($emp->allowEmps as $assign) {
                     $master = $assign->allow;
                     $amount = 0;
@@ -172,7 +183,6 @@ class PayrollController extends Controller
 
                     $totalAllowance += $amount;
 
-                    // Jika Tunjangan Kena Pajak, tambahkan ke Dasar Pajak
                     if ($master->is_taxable) $taxableIncomeBase += $amount;
 
                     $detailsToSave[] = [
@@ -182,88 +192,63 @@ class PayrollController extends Controller
                     ];
                 }
 
-                // === C. HITUNG BPJS (Sesuai Referensi Talenta) ===
-                $bpjsBasis = $baseSalary;
+                // === BPJS ===
+                $bpjsEmpDeduction = 0;
+                $companyBenefit = 0;
 
-                $bpjsEmpDeduction = 0; // Potongan Gaji Karyawan (Kurangi THP)
-                $companyBenefit = 0;   // Tunjangan Perusahaan (Menambah Bruto Pajak)
-
-                // Cek kepesertaan (Default true jika null)
                 $partKes = $emp->participates_bpjs_kes ?? true;
                 $partTk  = $emp->participates_bpjs_tk ?? true;
                 $partJp  = $emp->participates_bpjs_jp ?? true;
 
-                // 1. BPJS Kesehatan
                 if ($companyConfig->bpjs_kes_active && $partKes) {
-                    $basisKes = min($bpjsBasis, $globalBpjs->kes_cap_amount);
+                    $bpjsEmpDeduction += $bpjsKesEmp;
+                    $companyBenefit   += $bpjsKesComp;
 
-                    // Emp (1%) -> Potong Gaji
-                    $kesEmp = $basisKes * ($globalBpjs->kes_emp_percent / 100);
-                    $bpjsEmpDeduction += $kesEmp;
-                    $detailsToSave[] = ['name' => 'BPJS Kesehatan (1%)', 'category' => 'deduction', 'amount' => $kesEmp];
-
-                    // Comp (4%) -> Menambah Pajak (Benefit)
-                    $kesComp = $basisKes * ($globalBpjs->kes_comp_percent / 100);
-                    $companyBenefit += $kesComp;
+                    $detailsToSave[] = ['name' => 'BPJS Kes', 'category' => 'deduction', 'amount' => $bpjsKesEmp];
+                    $detailsToSave[] = ['name' => 'Tunj. BPJS Kes', 'category' => 'benefit', 'amount' => $bpjsKesComp];
                 }
 
-                // 2. BPJS TK (JHT, JKK, JKM)
                 if ($companyConfig->bpjs_tk_active && $partTk) {
-                    // JKK (Perusahaan) -> Menambah Pajak
-                    $jkk = $bpjsBasis * ($companyConfig->bpjs_jkk_rate / 100);
-                    $companyBenefit += $jkk;
+                    $companyBenefit += ($bpjsJkk + $bpjsJkm);
+                    $bpjsEmpDeduction += $bpjsJhtEmp;
 
-                    // JKM (Perusahaan) -> Menambah Pajak
-                    $jkm = $bpjsBasis * ($globalBpjs->jkm_comp_percent / 100);
-                    $companyBenefit += $jkm;
-
-                    // JHT Employee (2%) -> Potong Gaji
-                    $jhtEmp = $bpjsBasis * ($globalBpjs->jht_emp_percent / 100);
-                    $bpjsEmpDeduction += $jhtEmp;
-                    $detailsToSave[] = ['name' => 'JHT (2%)', 'category' => 'deduction', 'amount' => $jhtEmp];
+                    $detailsToSave[] = ['name' => 'JKK', 'category' => 'benefit', 'amount' => $bpjsJkk];
+                    $detailsToSave[] = ['name' => 'JKM', 'category' => 'benefit', 'amount' => $bpjsJkm];
+                    $detailsToSave[] = ['name' => 'BPJS JHT', 'category' => 'deduction', 'amount' => $bpjsJhtEmp];
+                    $detailsToSave[] = ['name' => 'JHT', 'category' => 'benefit', 'amount' => $bpjsJhtComp];
                 }
 
-                // 3. Jaminan Pensiun
                 if ($companyConfig->bpjs_tk_active && $partJp) {
-                    $basisJp = min($bpjsBasis, $globalBpjs->jp_cap_amount);
-                    $jpEmp = $basisJp * ($globalBpjs->jp_emp_percent / 100);
-                    $bpjsEmpDeduction += $jpEmp;
-                    $detailsToSave[] = ['name' => 'Jaminan Pensiun (1%)', 'category' => 'deduction', 'amount' => $jpEmp];
+                    $bpjsEmpDeduction += $bpjsJpEmp;
+
+                    $detailsToSave[] = ['name' => 'BPJS JP', 'category' => 'deduction', 'amount' => $bpjsJpEmp];
+                    $detailsToSave[] = ['name' => 'JP', 'category' => 'benefit', 'amount' => $bpjsJpComp];
                 }
 
-                // Tambahkan total potongan BPJS ke total deduction payroll
                 $totalDeduction += $bpjsEmpDeduction;
 
-
-                // === D. HITUNG PPH 21 (TER) ===
+                // === PPH 21 (TER) ===
                 $ptkpStatus = $emp->ptkp_status ?? 'TK/0';
                 $ptkpRule = GlobalPtkp::where('code', $ptkpStatus)->first();
 
                 if ($ptkpRule) {
                     $taxMethod = $companyConfig->tax_method ?? 'GROSS';
-
-                    // Penghasilan Bruto Sebulan = (Gaji + Tunjangan) + (JKK + JKM + BPJS Kes Perusahaan)
                     $brutoDasar = $taxableIncomeBase + $companyBenefit;
 
                     if ($taxMethod == 'GROSS') {
-                        // Pajak dipotong dari gaji
                         $pph21 = $this->calculatePph21TER($brutoDasar, $ptkpRule->ter_category);
                         if ($pph21 > 0) {
                             $totalDeduction += $pph21;
                             $detailsToSave[] = ['name' => 'PPh 21 (Gross)', 'category' => 'deduction', 'amount' => $pph21];
                         }
                     } elseif ($taxMethod == 'NET') {
-                        // Pajak ditanggung perusahaan (Tampil info saja, tidak mengurangi gaji)
                         $pph21 = $this->calculatePph21TER($brutoDasar, $ptkpRule->ter_category);
                         if ($pph21 > 0) {
                             $detailsToSave[] = ['name' => 'PPh 21 (Ditanggung Perusahaan)', 'category' => 'deduction', 'amount' => 0,];
                         }
-                    } elseif ($taxMethod == 'GROSS UP') { // Perbaikan: GROSS_UP (underscore) sesuai migration
-                        // Cari Tunjangan Pajak
+                    } elseif ($taxMethod == 'GROSS UP') {
                         $tunjanganPajak = 0;
                         $iterasiBruto = $brutoDasar;
-
-                        // Iterasi mencari angka tunjangan pajak yang pas
                         for ($i = 0; $i < 50; $i++) {
                             $hitungPajak = $this->calculatePph21TER($iterasiBruto, $ptkpRule->ter_category);
                             $selisih = $hitungPajak - $tunjanganPajak;
@@ -283,9 +268,7 @@ class PayrollController extends Controller
                             $detailsToSave[] = ['name' => 'Tunjangan PPh 21', 'category' => 'allowance', 'amount' => $tunjanganPajak];
                             $detailsToSave[] = ['name' => 'Potongan PPh 21', 'category' => 'deduction', 'amount' => $tunjanganPajak];
                         }
-                    } elseif ($taxMethod == 'GROSS_UP') { // Handle jika string di DB pakai underscore
-                        // (Copy logika GROSS UP di atas kesini jika perlu, atau pastikan string enum sama)
-                        // Logika sama seperti blok GROSS UP di atas
+                    } elseif ($taxMethod == 'GROSS_UP') {
                         $tunjanganPajak = 0;
                         $iterasiBruto = $brutoDasar;
                         for ($i = 0; $i < 50; $i++) {
@@ -306,7 +289,7 @@ class PayrollController extends Controller
                     }
                 }
 
-                // === E. HITUNG POTONGAN LAINNYA ===
+                // ===  POTONGAN MANUAL ===
                 foreach ($emp->deductEmps as $assign) {
                     $master = $assign->deduct;
                     $amount = $assign->amount;
@@ -314,11 +297,59 @@ class PayrollController extends Controller
                     $detailsToSave[] = ['name' => $master->name, 'category' => 'deduction', 'amount' => $amount];
                 }
 
+                // === PENALTI ABSENSI ===
+                $dailySalary = $baseSalary / 26;
+
+                if ($totalLate > 0) {
+                    $latePenalty = $totalLate * 27300;
+                    $totalDeduction += $latePenalty;
+                    $detailsToSave[] = [
+                        'name' => 'Terlambat (' . $totalLate . ')',
+                        'category' => 'deduction',
+                        'amount' => $latePenalty,
+                    ];
+                }
+
+                if ($totalAlpha > 0) {
+                    $alphaPenalty = $totalAlpha * $dailySalary;
+                    $totalDeduction += $alphaPenalty;
+                    $detailsToSave[] = [
+                        'name' => 'Alpha (' . $totalAlpha . ')',
+                        'category' => 'deduction',
+                        'amount' => $alphaPenalty,
+                    ];
+                }
+
+                if ($totalPermission > 0) {
+                    $permissionPenalty = $totalPermission * ($dailySalary * 0.5);
+                    $totalDeduction += $permissionPenalty;
+                    $detailsToSave[] = [
+                        'name' => 'Izin (' . $totalPermission . ')',
+                        'category' => 'deduction',
+                        'amount' => $permissionPenalty,
+                    ];
+                }
+
+                // === INFAQ ===
+                $currentNet = $baseSalary + $totalAllowance - $totalDeduction;
+
+                if ($companyConfig->infaq_percent > 0) {
+                    $infaqAmount = $currentNet * ($companyConfig->infaq_percent / 100);
+
+                    if ($infaqAmount > 0) {
+                        $totalDeduction += $infaqAmount;
+                        $detailsToSave[] = [
+                            'name' => 'Infaq (' . $companyConfig->infaq_percent . '%)',
+                            'category' => 'deduction',
+                            'amount' => $infaqAmount
+                        ];
+                    }
+                }
+
                 // === F. FINALISASI ===
                 $netSalary = $baseSalary + $totalAllowance - $totalDeduction;
-                $totalExpenseForLog += $netSalary; // Tambahkan ke total expense batch
+                $totalExpenseForLog += $netSalary;
 
-                // Simpan Header
                 $payroll = Payroll::create([
                     'compani_id' => $userCompany->id,
                     'employee_id' => $emp->id,
@@ -331,7 +362,6 @@ class PayrollController extends Controller
                     'status' => 'pending',
                 ]);
 
-                // Simpan Detail
                 foreach ($detailsToSave as $detail) {
                     PayrollDetail::create([
                         'payroll_id' => $payroll->id,
@@ -344,7 +374,7 @@ class PayrollController extends Controller
                 $countProcessed++;
             }
 
-            // --- LOG ACTIVITY (TAMBAHAN) ---
+            // === LOG ===
             $formattedStart = \Carbon\Carbon::parse($request->pay_period_start)->format('d M Y');
             $formattedEnd = \Carbon\Carbon::parse($request->pay_period_end)->format('d M Y');
             $formattedExpense = number_format($totalExpenseForLog, 0, ',', '.');
@@ -365,7 +395,6 @@ class PayrollController extends Controller
         }
     }
 
-    // Helper Function
     private function calculatePph21TER($grossIncome, $category)
     {
         $rate = GlobalTerRate::where('ter_category', $category)
@@ -382,7 +411,6 @@ class PayrollController extends Controller
         return 0;
     }
 
-    // Menampilkan Detail Slip Gaji
     public function show($id)
     {
         $userCompany = Auth::user()->compani;
@@ -413,10 +441,7 @@ class PayrollController extends Controller
         $formattedEnd = \Carbon\Carbon::parse($end)->format('d M Y');
         $this->logActivity('Delete Payroll Batch', "Menghapus seluruh data gaji periode {$formattedStart} s/d {$formattedEnd}", $userCompany->id);
 
-        // Hapus Cache Index
         Cache::forget('payroll_' . $userCompany->id . '_page_1');
-
-        // Hapus Cache Detail Periode
         Cache::forget('payroll_period_' . $userCompany->id . '_' . $start . '_' . $end);
 
         return redirect()->route('payroll')->with('success', "Deleted payroll batch ($deleted records).");
@@ -427,7 +452,6 @@ class PayrollController extends Controller
         $userCompany = Auth::user()->compani;
         $payroll = $userCompany->payrolls()->with('employee')->findOrFail($id);
 
-        // Simpan info tanggal sebelum dihapus untuk clear cache periode
         $start = $payroll->pay_period_start;
         $end = $payroll->pay_period_end;
         $employeeName = $payroll->employee->name;
@@ -437,8 +461,8 @@ class PayrollController extends Controller
         $this->logActivity('Delete Payroll Slip', "Menghapus slip gaji milik {$employeeName} untuk periode {$start}", $userCompany->id);
 
         Cache::forget('payroll_' . $userCompany->id . '_page_1');
-        Cache::forget('payroll_detail_' . $id); // Cache Slip itu sendiri
-        Cache::forget('payroll_period_' . $userCompany->id . '_' . $start . '_' . $end); // Cache List Periode
+        Cache::forget('payroll_detail_' . $id);
+        Cache::forget('payroll_period_' . $userCompany->id . '_' . $start . '_' . $end);
 
         return back()->with('success', 'Single payroll record deleted.');
     }

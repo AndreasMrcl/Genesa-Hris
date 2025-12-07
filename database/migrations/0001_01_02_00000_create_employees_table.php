@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('name');
             $table->foreignId('compani_id')->constrained()->onUpdate('cascade')->onDelete('cascade');
             $table->foreignId('branch_id')->constrained()->onUpdate('cascade')->onDelete('cascade');
+            $table->foreignId('position_id')->constrained()->onUpdate('cascade')->onDelete('cascade');
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('nik', 20)->unique();
@@ -26,14 +27,15 @@ return new class extends Migration
             $table->string('ptkp_status')->default('TK/0');
             $table->string('phone');
             $table->string('address');
-            $table->string('position');
             $table->decimal('base_salary', 15, 2);
-            $table->string('bank_name');
-            $table->string('bank_account_no');
+            $table->integer('working_days')->default(26);
+            $table->enum('payroll_method', ['bank_transfer', 'cash'])->default('bank_transfer');
+            $table->string('bank_name')->nullable();
+            $table->string('bank_account_no')->nullable();
             $table->boolean('participates_bpjs_kes')->default(true);
-            $table->boolean('participates_bpjs_tk')->default(true); // JHT, JKK, JKM
+            $table->boolean('participates_bpjs_tk')->default(true);
             $table->boolean('participates_bpjs_jp')->default(true);
-            $table->date('join_date'); // tidak perlu timestamp, karena hanya tanggal
+            $table->date('join_date');
             $table->enum('status', ['full_time', 'part_time'])->default('full_time');
             $table->string('password');
             $table->rememberToken();

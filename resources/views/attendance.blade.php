@@ -65,7 +65,6 @@
                                 <tr class="hover:bg-gray-50 transition">
                                     <td class="p-4">
                                         <div class="flex flex-col">
-                                            <!-- Link untuk Mengedit Periode ini -->
                                             <a href="{{ route('manageattendance', ['start' => $batch->period_start, 'end' => $batch->period_end]) }}" 
                                                class="text-lg font-bold text-blue-600 hover:underline mb-1">
                                                 {{ \Carbon\Carbon::parse($batch->period_start)->format('d M Y') }} - 
@@ -83,7 +82,6 @@
                                     </td>
                                     <td class="p-4 text-center">
                                         <!-- Delete Batch Form -->
-                                        <!-- Karena controller butuh start & end date, kita gunakan hidden input -->
                                         <form action="{{ route('delattendance') }}" method="POST" class="inline-block delete-batch-form">
                                             @csrf
                                             @method('DELETE')
@@ -117,7 +115,6 @@
 
     <!-- SCRIPTS -->
     <script>
-        // SweetAlert untuk Delete Batch
         document.querySelectorAll('.delete-confirm').forEach(button => {
             button.addEventListener('click', function(e) {
                 e.preventDefault();

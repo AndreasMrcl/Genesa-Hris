@@ -12,9 +12,15 @@ class BranchController extends Controller
 {
     public function index()
     {
-        if (!Auth::check()) return redirect('/');
+        if (!Auth::check()) {
+            return redirect('/');
+        }
+
         $userCompany = Auth::user()->compani;
-        if (!$userCompany) return redirect()->route('addcompany');
+
+        if (!$userCompany) {
+            return redirect()->route('addcompany');
+        }
 
         $status = $userCompany->status;
 

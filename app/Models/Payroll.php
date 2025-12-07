@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Support\Collection;
+use stdClass;
 
 class Payroll extends Model
 {
@@ -35,5 +37,30 @@ class Payroll extends Model
     public function payrollDetails()
     {
         return $this->hasMany(PayrollDetail::class);
+    }
+
+    public function getBenefitsAttribute()
+    {
+        $allBenefits = $this->payrollDetails->where('category', 'benefit');
+
+        $tkComponents = ['JKK', 'JKM', 'JHT', 'JP'];
+
+        $bpjsTkItems = $allBenefits->whereIn('name', $tkComponents);
+        $otherItems  = $allBenefits->whereNotIn('name', $tkComponents);
+
+        $finalBenefits = $otherItems->values();
+
+        $totalTk = $bpjsTkItems->sum('amount');
+
+        if ($totalTk > 0) {
+            $dummy = new stdClass();
+            $dummy->name = 'Tunj. BPJS TK';
+            $dummy->amount = $totalTk;
+            $dummy->category = 'benefit';
+
+            $finalBenefits->push($dummy);
+        }
+
+        return $finalBenefits;
     }
 }

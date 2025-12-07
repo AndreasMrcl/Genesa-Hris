@@ -72,6 +72,8 @@ class AttendanceController extends Controller
                 ->keyBy('employee_id');
         }
 
+        Cache::tags(['attendance_batches_' . $userCompany->id])->flush();
+
         return view('manageAttendance', compact('start', 'end', 'employees', 'attendances'));
     }
 
@@ -101,6 +103,7 @@ class AttendanceController extends Controller
                         'total_late'       => $row['late'] ?? 0,
                         'total_sick'       => $row['sick'] ?? 0,
                         'total_permission' => $row['permission'] ?? 0,
+                        'total_permission_letter' => $row['permission_letter'] ?? 0,
                         'total_alpha'      => $row['alpha'] ?? 0,
                         'total_leave'      => $row['leave'] ?? 0,
                         'note'             => $row['note'] ?? null,

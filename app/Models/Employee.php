@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+
 class Employee extends Authenticatable
 {
     use HasFactory, HasApiTokens, Notifiable;
@@ -15,6 +16,7 @@ class Employee extends Authenticatable
         'name',
         'compani_id',
         'branch_id',
+        'position_id',
         'email',
         'nik',
         'npwp',
@@ -23,8 +25,9 @@ class Employee extends Authenticatable
         'bpjs_ketenagakerjaan_no',
         'phone',
         'address',
-        'position',
         'base_salary',
+        'working_days',
+        'payroll_method',
         'bank_name',
         'bank_account_no',
         'participates_bpjs_kes',
@@ -47,6 +50,11 @@ class Employee extends Authenticatable
     public function branch()
     {
         return $this->belongsTo(Branch::class);
+    }
+
+    public function position()
+    {
+        return $this->belongsTo(Position::class);
     }
 
     public function attendances()
@@ -83,7 +91,7 @@ class Employee extends Authenticatable
     {
         return $this->hasMany(AllowEmp::class);
     }
-    
+
     public function deductEmps()
     {
         return $this->hasMany(DeductEmp::class);

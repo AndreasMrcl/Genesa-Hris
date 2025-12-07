@@ -21,6 +21,7 @@ return new class extends Migration
             $table->integer('total_late')->default(0);
             $table->integer('total_sick')->default(0);
             $table->integer('total_permission')->default(0);
+            $table->integer('total_permission_letter')->default(0);
             $table->integer('total_alpha')->default(0);
             $table->integer('total_leave')->default(0);
             $table->text('note')->nullable();

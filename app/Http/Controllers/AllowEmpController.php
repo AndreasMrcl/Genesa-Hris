@@ -14,21 +14,31 @@ class AllowEmpController extends Controller
 {
     public function index($employeeId)
     {
+        if (!Auth::check()) {
+            return redirect('/');
+        }
+
         $userCompany = Auth::user()->compani;
 
-        $employee = Employee::where('id', $employeeId)
-            ->where('compani_id', $userCompany->id)
-            ->firstOrFail();
+        if (!$userCompany) {
+            return redirect()->route('addcompany');
+        }
+
+        $status = $userCompany->status;
+
+        if ($status !== 'Settlement') {
+            return redirect()->route('login');
+        }
+
+        $employee = $userCompany->employees()->findOrFail($employeeId);
 
         $cacheKey = 'allow_emp_' . $employeeId;
 
-        $employeeAllowances = Cache::remember($cacheKey, 60, function () use ($employeeId) {
-            return AllowEmp::with('allow')
-                ->where('employee_id', $employeeId)
-                ->get();
+        $employeeAllowances = Cache::remember($cacheKey, 60, function () use ($employee) {
+            return $employee->allowEmps()->with('allow')->get();
         });
 
-        $allows = Allow::where('compani_id', $userCompany->id)->get();
+        $allows = $userCompany->allows()->get(); 
 
         return view('allowEmp', compact('employee', 'employeeAllowances', 'allows'));
     }

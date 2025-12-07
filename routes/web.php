@@ -19,6 +19,7 @@ use App\Http\Controllers\DeductEmpController;
 use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\ActivityLogController;
 use App\Http\Controllers\CompanyPayrollConfigController;
+use App\Http\Controllers\PositionController;
 
 Route::get('/', [AuthController::class, 'login'])->name('login');
 Route::get('/register', [AuthController::class, 'register'])->name('register');
@@ -137,8 +138,15 @@ Route::middleware('auth:web')->group(function () {
     //ACTIVITY LOG
     Route::get('/activity-logs', [ActivityLogController::class, 'index'])->name('activityLog');
 
+    // COMPANY PAYROLL CONFIG
     Route::get('/companyconfig', [CompanyPayrollConfigController::class, 'index'])->name('companyconfig');
     Route::put('/companyconfig/update', [CompanyPayrollConfigController::class, 'update'])->name('updatecompanyconfig');
+
+    //POSITION
+    Route::get('/position', [PositionController::class, 'index'])->name('position');
+    Route::post('/position', [PositionController::class, 'store'])->name('postposition');
+    Route::put('/position/{id}/update', [PositionController::class, 'update'])->name('updateposition');
+    Route::delete('/position/{id}/delete', [PositionController::class, 'destroy'])->name('desposition');
 });
 
 Route::middleware('auth:employee')->group(function () {

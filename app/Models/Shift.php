@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Shift extends Model
 {
-     use HasFactory;
+    use HasFactory;
     protected $fillable =
     [
         'compani_id',

@@ -18,6 +18,7 @@ class Attendance extends Model
         'total_late',
         'total_sick',
         'total_permission',
+        'total_permission_letter',
         'total_alpha',
         'total_leave',
         'note'

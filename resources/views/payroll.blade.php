@@ -18,7 +18,7 @@
             <!-- Header -->
             <div class="flex justify-between items-center bg-white p-5 rounded-xl shadow-sm border border-gray-100">
                 <div>
-                    <h1 class="font-semibold text-2xl text-black">
+                    <h1 class="font-bold text-2xl text-black">
                         <i class="fas fa-money-check-alt text-indigo-600"></i> Payroll History
                     </h1>
                     <p class="text-sm text-gray-500">List of generated payroll periods</p>
