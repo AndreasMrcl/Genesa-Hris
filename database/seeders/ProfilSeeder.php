@@ -14,21 +14,21 @@ class ProfilSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::firstOrCreate(
-        //     ['email' => 'admin@gmail.com'],
-        //     [
-        //         'name' => 'Admin',
-        //         'password' => bcrypt('123456'),
-        //     ]
-        // );
-
         User::firstOrCreate(
-            ['email' => 'adi@gmail.com'],
+            ['email' => 'admin@gmail.com'],
             [
-                'name' => 'Adi',
+                'name' => 'Admin',
                 'password' => bcrypt('123456'),
             ]
         );
+
+        // User::firstOrCreate(
+        //     ['email' => 'adi@gmail.com'],
+        //     [
+        //         'name' => 'Adi',
+        //         'password' => bcrypt('123456'),
+        //     ]
+        // );
 
         // Employee::firstOrCreate(
         //     ['email' => 'afyww18@gmail.com'],

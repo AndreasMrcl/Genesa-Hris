@@ -9,79 +9,112 @@
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
 </head>
 
-<body class="bg-gray-100">
+<body class="bg-gray-50">
 
     @include('layout.sidebar')
 
     <main class="md:ml-64 xl:ml-72 2xl:ml-72">
         @include('layout.navbar')
+
         <div class="p-6 space-y-6">
 
-            {{-- HEADER --}}
-            <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-100">
+            <!-- HEADER -->
+            <div class="flex justify-between items-center bg-white p-5 rounded-xl shadow-sm border border-gray-100">
+                <div>
                     <h1 class="font-bold text-2xl text-gray-800 flex items-center gap-2">
-                    <i class="fa-solid fa-user-gear text-gray-800"></i>
-                    Profile
-                </h1>
-                <p class="text-sm text-gray-500">Manage your profile and company information</p>
+                        <i class="fa-solid fa-user-gear text-slate-600"></i> Profile Settings
+                    </h1>
+                    <p class="text-sm text-gray-500 mt-1">Manage your personal profile and company information</p>
+                </div>
             </div>
 
-            {{-- MAIN CARD --}}
-            <div class="w-full rounded-xl bg-white shadow-sm mx-auto p-6 space-y-10 border border-gray-200">
+            <!-- SUCCESS ALERT -->
+            @if(session('success'))
+                <div class="p-4 mb-4 text-sm text-green-800 rounded-lg bg-green-50 flex items-center gap-2">
+                    <i class="fas fa-check-circle"></i> {{ session('success') }}
+                </div>
+            @endif
 
-                {{-- PROFILE --}}
+            <!-- MAIN CARD -->
+            <div class="w-full bg-white rounded-xl shadow-md overflow-hidden border border-gray-100 p-6 space-y-10">
+
+                <!-- PERSONAL INFO -->
                 <section>
-                    <h2 class="font-bold text-xl mb-4 text-gray-800">Personal Info</h2>
+                    <h2 class="font-bold text-sm text-indigo-600 uppercase tracking-wider mb-4 border-b pb-2">
+                        <i class="fa-solid fa-user mr-1"></i> Personal Information
+                    </h2>
 
-                    <div class="space-y-4 p-5 bg-gray-50 border border-gray-200 rounded-xl">
-                        <div class="flex justify-between">
-                            <span class="text-gray-500 font-medium">Name</span>
-                            <span class="text-gray-900 font-semibold">{{ auth()->user()->name }}</span>
-                        </div>
+                    <div class="space-y-6">
 
-                        <div class="flex justify-between">
-                            <span class="text-gray-500 font-medium">Email</span>
-                            <span class="text-gray-900 font-semibold">{{ auth()->user()->email }}</span>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-1">Name</label>
+                                <input type="text" name="name" value="{{ auth()->user()->name }}"
+                                    class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-indigo-500" readonly>
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-1">Email</label>
+                                <input type="email" name="email" value="{{ auth()->user()->email }}"
+                                    class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-indigo-500" readonly
+                                    >
+                            </div>
+
                         </div>
                     </div>
                 </section>
 
-                {{-- COMPANY --}}
+                <!-- COMPANY INFO -->
                 <section>
-                    <h2 class="font-bold text-xl mb-4 text-gray-800">Company</h2>
+                    <h2 class="font-bold text-sm text-emerald-600 uppercase tracking-wider mb-4 border-b pb-2">
+                        <i class="fa-solid fa-building mr-1"></i> Company Information
+                    </h2>
 
-                    <div class="space-y-4 p-5 bg-gray-50 border border-gray-200 rounded-xl">
+                    <form action="" method="POST" class="space-y-6">
+                        @csrf
+                        @method('PUT')
 
-                        <div class="flex justify-between">
-                            <span class="text-gray-500 font-medium">Name</span>
-                            <span class="text-gray-900 font-semibold">{{ $userCompany->company }}</span>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-1">Company Name</label>
+                                <input type="text" name="company" value="{{ $userCompany->company }}"
+                                    class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-emerald-500" required>
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-1">Bank</label>
+                                <input type="text" name="bank" value="{{ $userCompany->bank }}"
+                                    class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-emerald-500">
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-1">No Rekening</label>
+                                <input type="text" name="no_rek" value="{{ $userCompany->no_rek }}"
+                                    class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-emerald-500">
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-1">Address</label>
+                                <textarea name="location"
+                                    class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-emerald-500"
+                                    rows="3">{{ $userCompany->location }}</textarea>
+                            </div>
+
                         </div>
 
-                        <div class="flex justify-between">
-                            <span class="text-gray-500 font-medium">Bank</span>
-                            <span class="text-gray-900 font-semibold">{{ $userCompany->bank }}</span>
+                        <!-- MAP -->
+                        <div id="map" class="w-full h-64 rounded-xl overflow-hidden shadow-sm border border-gray-300"></div>
+
+                        <!-- SAVE BUTTON -->
+                        <div class="pt-4 flex justify-end border-t border-gray-100">
+                            <button type="submit"
+                                class="px-8 py-3 bg-slate-800 text-white font-bold rounded-lg shadow-lg hover:bg-slate-900 transition transform hover:-translate-y-0.5 flex items-center gap-2">
+                                <i class="fas fa-save"></i> Save Company Info
+                            </button>
                         </div>
-
-                        <div class="flex justify-between">
-                            <span class="text-gray-500 font-medium">No Rekening</span>
-                            <span class="text-gray-900 font-semibold">{{ $userCompany->no_rek }}</span>
-                        </div>
-
-                        <div class="flex justify-between">
-                            <span class="text-gray-500 font-medium">Address</span>
-                            <span class="text-gray-900 font-semibold">{{ $userCompany->location }}</span>
-                        </div>
-
-                        {{-- MAP AREA --}}
-                        <div id="map"
-                            class="w-full h-64 rounded-xl overflow-hidden shadow-sm border border-gray-300"></div>
-
-                        {{-- EDIT BUTTON --}}
-                        <a href=""
-                            class="block text-center mt-3 px-4 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl transition shadow-sm">
-                            Edit Company
-                        </a>
-                    </div>
+                    </form>
                 </section>
 
             </div>
@@ -118,5 +151,4 @@
     </script>
 
 </body>
-
 </html>

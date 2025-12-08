@@ -101,7 +101,7 @@
                                             <td class="p-4 text-center text-gray-400 font-medium">{{ $no++ }}</td>
                                             <td class="p-4 font-bold text-gray-800">
                                                 {{ $emp->name }}
-                                                <div class="text-xs text-gray-500 font-normal">{{ $emp->position }}</div>
+                                                <div class="text-xs text-gray-500 font-normal">{{ $emp->position->name }}</div>
                                             </td>
                                             
                                             <!-- Inputs -->

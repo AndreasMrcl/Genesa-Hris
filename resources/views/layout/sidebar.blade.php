@@ -58,6 +58,13 @@
                             </a>
                         </div>
                     </li>
+                    <li class="p-4 mx-2">
+                        <div class="ml-16 md:ml-14">
+                            <a href="{{ route('announcement') }}">
+                                <h1 class="text-gray-500 hover:text-black text-base font-normal">Announcement</h1>
+                            </a>
+                        </div>
+                    </li>
 
 
                     <li class="p-4 mx-2">
@@ -121,13 +128,6 @@
 
                     <hr class="mx-5 shadow-2xl text-gray-100 rounded-r-xl rounded-l-xl" />
 
-                    {{-- <li class="p-4 mx-2">
-                        <div class="ml-16 md:ml-14">
-                            <a href="{{ route('note') }}">
-                                <h1 class="text-gray-500 hover:text-black text-base font-normal">Salary</h1>
-                            </a>
-                        </div>
-                    </li> --}}
                     <li class="p-4 mx-2">
                         <div class="ml-16 md:ml-14">
                             <a href="{{ route('allowance') }}">

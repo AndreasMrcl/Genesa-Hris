@@ -113,4 +113,5 @@ class PositionController extends Controller
 
         Cache::tags(['activities_' . $companyId])->flush();
     }
+
 }

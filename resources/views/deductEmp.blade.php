@@ -19,7 +19,7 @@
             <div class="flex justify-between items-center bg-white p-5 rounded-xl shadow-sm border border-gray-100">
                 <div>
                     <h1 class="font-semibold text-2xl text-black">Assign Deduction</h1>
-                    <p class="text-gray-600 text-sm">Employee: <span class="font-bold text-red-700">{{ $employee->name }}</span> ({{ $employee->position }})</p>
+                    <p class="text-gray-600 text-sm">Employee: <span class="font-bold text-red-700">{{ $employee->name }}</span> ({{ $employee->position->name }})</p>
                 </div>
                 <a href="{{ route('employee') }}" 
                    class="p-2 px-6 bg-gray-500 text-white rounded-lg shadow hover:bg-gray-600 transition flex items-center gap-2">
