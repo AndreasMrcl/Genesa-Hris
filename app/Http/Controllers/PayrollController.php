@@ -158,6 +158,8 @@ class PayrollController extends Controller
                 $totalLate = $attendance ? $attendance->total_late : 0;
                 $totalAlpha = $attendance ? $attendance->total_alpha : 0;
                 $totalPermission = $attendance ? $attendance->total_permission : 0;
+                $workDays = $emp->working_days;
+                $payrollMethod = $emp->payroll_method;
 
                 // === BASE ===
                 $baseSalary = $emp->base_salary ?? 0;
@@ -265,7 +267,7 @@ class PayrollController extends Controller
                             $totalAllowance += $tunjanganPajak;
                             $totalDeduction += $tunjanganPajak;
 
-                            $detailsToSave[] = ['name' => 'Tunjangan PPh 21', 'category' => 'allowance', 'amount' => $tunjanganPajak];
+                            $detailsToSave[] = ['name' => 'Tunjangan PPh 21', 'category' => 'benefit', 'amount' => $tunjanganPajak];
                             $detailsToSave[] = ['name' => 'Potongan PPh 21', 'category' => 'deduction', 'amount' => $tunjanganPajak];
                         }
                     } elseif ($taxMethod == 'GROSS_UP') {
@@ -283,7 +285,7 @@ class PayrollController extends Controller
                         if ($tunjanganPajak > 0) {
                             $totalAllowance += $tunjanganPajak;
                             $totalDeduction += $tunjanganPajak;
-                            $detailsToSave[] = ['name' => 'Tunjangan PPh 21', 'category' => 'allowance', 'amount' => $tunjanganPajak];
+                            $detailsToSave[] = ['name' => 'Tunjangan PPh 21', 'category' => 'benefit', 'amount' => $tunjanganPajak];
                             $detailsToSave[] = ['name' => 'Potongan PPh 21', 'category' => 'deduction', 'amount' => $tunjanganPajak];
                         }
                     }
@@ -298,7 +300,7 @@ class PayrollController extends Controller
                 }
 
                 // === PENALTI ABSENSI ===
-                $dailySalary = $baseSalary / 26;
+                $dailySalary = $baseSalary / $workDays;
 
                 if ($totalLate > 0) {
                     $latePenalty = $totalLate * 27300;
@@ -360,6 +362,8 @@ class PayrollController extends Controller
                     'total_deductions' => $totalDeduction,
                     'net_salary' => $netSalary,
                     'status' => 'pending',
+                    'working_days' => $workDays,
+                    'payroll_method' => $payrollMethod,
                 ]);
 
                 foreach ($detailsToSave as $detail) {

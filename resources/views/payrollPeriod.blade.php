@@ -58,7 +58,7 @@
                                             </div>
                                             <div>
                                                 <div class="font-medium text-gray-900">{{ $item->employee->name }}</div>
-                                                <div class="text-xs text-gray-500">{{ $item->employee->position }}</div>
+                                                <div class="text-xs text-gray-500">{{ $item->employee->position->name  }}</div>
                                             </div>
                                         </a>
                                     </td>

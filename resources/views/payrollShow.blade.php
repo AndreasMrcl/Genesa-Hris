@@ -61,7 +61,7 @@
                         </div>
                         <div>
                             <p class="text-xs text-gray-400 uppercase tracking-wider">Position</p>
-                            <p class="text-lg font-semibold text-gray-800">{{ $payroll->employee->position }}</p>
+                            <p class="text-lg font-semibold text-gray-800">{{ $payroll->employee->position->name }}</p>
                         </div>
                         <div>
                             <p class="text-xs text-gray-400 uppercase tracking-wider">Employee ID</p>

@@ -60,13 +60,13 @@ class EmployeeController extends Controller
 
             // Data Pekerjaan
             'position_id' => 'required|exists:positions,id',
-            'working_days_per_month' => 'required|integer',
+            'working_days' => 'required|integer',
             'join_date' => 'required|date',
             'status' => 'required|in:full_time,part_time',
 
             // Data Payroll & Pajak (Baru)
             'base_salary' => 'required|numeric|min:0',
-            'payroll_method' => 'required|in:transfer,cash',
+            'payroll_method' => 'required',
             'bank_name' => 'nullable|string',
             'bank_account_no' => 'nullable|numeric',
             'ptkp_status' => 'nullable|string',
@@ -74,7 +74,6 @@ class EmployeeController extends Controller
             'bpjs_kesehatan_no' => 'nullable|string',
             'bpjs_ketenagakerjaan_no' => 'nullable|string',
 
-            // Checkbox BPJS (0 atau 1)
             'participates_bpjs_kes' => 'boolean',
             'participates_bpjs_tk' => 'boolean',
             'participates_bpjs_jp' => 'boolean',
@@ -119,11 +118,11 @@ class EmployeeController extends Controller
             'status' => 'required|in:full_time,part_time',
             'password' => 'nullable|min:6', // Boleh kosong saat update
             'position_id' => 'required|exists:positions,id',
-            'working_days_per_month' => 'required|integer',
+            'working_days' => 'required|integer',
 
             // Payroll Update
             'base_salary' => 'required|numeric|min:0',
-            'payroll_method' => 'required|in:transfer,cash',
+            'payroll_method' => 'required',
             'bank_name' => 'nullable|string',
             'bank_account_no' => 'nullable|numeric',
             'ptkp_status' => 'nullable|string',

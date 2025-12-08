@@ -11,13 +11,13 @@ export default defineConfig({
         tailwindcss(),
     ],
 
-    server: {
-        host: true,               // auto detect IP / allow LAN
-        port: 5173,               // default Vite port
-        strictPort: true,         // jangan ganti port random
-        hmr: {
-            host: '172.20.10.3',   // IP laptop/PC kamu
-            port: 5173,
-        },
-    },
+    // server: {
+    //     host: true,               // auto detect IP / allow LAN
+    //     port: 5173,               // default Vite port
+    //     strictPort: true,         // jangan ganti port random
+    //     hmr: {
+    //         host: '172.20.10.3',   // IP laptop/PC kamu
+    //         port: 5173,
+    //     },
+    // },
 });

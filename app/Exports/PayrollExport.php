@@ -16,8 +16,7 @@ class PayrollExport implements FromQuery, WithHeadings, WithMapping, WithStyles,
     protected $companyId;
     protected $start;
     protected $end;
-    
-    // Variabel untuk nomor urut
+
     private $rowNumber = 0;
 
     public function __construct($companyId, $start, $end)
@@ -42,32 +41,31 @@ class PayrollExport implements FromQuery, WithHeadings, WithMapping, WithStyles,
         return [
             'No',
             'Nama Karyawan',
-            'No. Rekening', // Format Text agar 0 di depan tidak hilang
+            'No. Rekening', 
             'Jumlah Transfer (IDR)',
-            'Bank' // Opsional: Biasanya finance butuh tahu bank-nya apa
+            'Bank'
         ];
     }
 
-    // 2. Isi Data
     public function map($payroll): array
     {
-        $this->rowNumber++; // Auto increment nomor
+        $this->rowNumber++;
 
         return [
             $this->rowNumber,
             $payroll->employee->name,
             
             // Tanda kutip satu (') memaksa Excel membaca sebagai Teks
-            // Ini penting agar nomor rekening tidak berubah jadi format scientific (1.2E+10)
+            // agar nomor rekening tidak berubah jadi format scientific (1.2E+10)
             $payroll->employee->bank_account_no ? "" . $payroll->employee->bank_account_no : '-',
             
-            $payroll->net_salary, // Jumlah bersih
+            $payroll->net_salary,
             
-            $payroll->employee->bank_name ?? '-', // Nama Bank (Opsional tapi berguna)
+            $payroll->employee->bank_name ?? '-',
         ];
     }
 
-    // 3. Styling
+
     public function styles(Worksheet $sheet)
     {
         return [
@@ -76,11 +74,10 @@ class PayrollExport implements FromQuery, WithHeadings, WithMapping, WithStyles,
         ];
     }
 
-    // 4. Format Angka (Agar kolom Gaji ada pemisah ribuan)
     public function columnFormats(): array
     {
         return [
-            'D' => '#,##0', // Kolom D (Jumlah) diformat angka currency
+            'D' => '#,##0',
         ];
     }
 }
