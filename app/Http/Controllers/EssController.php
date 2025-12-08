@@ -27,8 +27,6 @@ class EssController extends Controller
             ->latest()
             ->first();
 
-
-
         return view('ess.home', compact('employee', 'compani', 'announcements',  'attendance'));
     }
 
