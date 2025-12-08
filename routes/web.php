@@ -15,7 +15,6 @@ use App\Http\Controllers\PayrollController;
 use App\Http\Controllers\AllowEmpController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\OvertimeController;
-use App\Http\Controllers\PositionController;
 use App\Http\Controllers\DeductEmpController;
 use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\ActivityLogController;
@@ -150,7 +149,7 @@ Route::middleware('auth:web')->group(function () {
     Route::get('/companyconfig', [CompanyPayrollConfigController::class, 'index'])->name('companyconfig');
     Route::put('/companyconfig/update', [CompanyPayrollConfigController::class, 'update'])->name('updatecompanyconfig');
 
-     //POSITION
+    //POSITION
     Route::get('/position', [PositionController::class, 'index'])->name('position');
     Route::post('/position', [PositionController::class, 'store'])->name('postposition');
     Route::put('/position/{id}/update', [PositionController::class, 'update'])->name('updateposition');
