@@ -62,7 +62,7 @@ class EmployeeController extends Controller
             'position_id' => 'required|exists:positions,id',
             'working_days' => 'required|integer',
             'join_date' => 'required|date',
-            'status' => 'required|in:full_time,part_time',
+            'status' => 'required',
 
             // Data Payroll & Pajak (Baru)
             'base_salary' => 'required|numeric|min:0',
@@ -115,7 +115,7 @@ class EmployeeController extends Controller
             'address' => 'required|string',
             'ktp' => 'nullable|numeric',
             'join_date' => 'required|date',
-            'status' => 'required|in:full_time,part_time',
+            'status' => 'required',
             'password' => 'nullable|min:6', // Boleh kosong saat update
             'position_id' => 'required|exists:positions,id',
             'working_days' => 'required|integer',
@@ -141,10 +141,6 @@ class EmployeeController extends Controller
         } else {
             $data['password'] = bcrypt($data['password']);
         }
-
-        $data['participates_bpjs_kes'] = $request->has('participates_bpjs_kes');
-        $data['participates_bpjs_tk'] = $request->has('participates_bpjs_tk');
-        $data['participates_bpjs_jp'] = $request->has('participates_bpjs_jp');
 
         $data['compani_id'] = $userCompany->id;
 

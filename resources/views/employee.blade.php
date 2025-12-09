@@ -265,11 +265,12 @@
                             <div class="md:col-span-1">
                                 <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Status <span
                                         class="text-red-500">*</span></label>
-                                <select name="status"
+                                <select name="status" id="statusSelect"
                                     class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-indigo-500"
                                     required>
-                                    <option value="full_time">Full Time</option>
-                                    <option value="part_time">Part Time</option>
+                                    <option value="PKWT">PKWT</option>
+                                    <option value="PKWTT">PKWTT</option>
+                                    <option value="DAILY_WORKER">Daily Worker</option>
                                 </select>
                             </div>
                         </div>
@@ -283,7 +284,7 @@
 
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-5 mb-5">
                             <div>
-                                <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Base Salary (Rp)
+                                <label id="labelBaseSalary" class="block text-xs font-bold text-gray-600 uppercase mb-1">Base Salary (Rp)
                                     <span class="text-red-500">*</span></label>
                                 <input type="text" name="base_salary"
                                     class="currency w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-indigo-500 bg-white"
@@ -291,7 +292,7 @@
                             </div>
                             <div>
                                 <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Work Days <span class="text-red-500">*</span></label>
-                                <input type="number" name="working_days" value="26" class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-indigo-500 bg-white" required>
+                                <input type="number" name="working_days" value="27" class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-indigo-500 bg-white" required>
                             </div>
                             <div>
                                 <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Payroll Method</label>
@@ -316,7 +317,7 @@
                             </div>
                             <div>
                                 <label class="block text-xs font-bold text-gray-600 uppercase mb-1">NPWP</label>
-                                <input type="text" name="npwp"
+                                <input type="number" name="npwp"
                                     class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-indigo-500 bg-white">
                             </div>
                         </div>
@@ -325,13 +326,13 @@
                             <div>
                                 <label class="block text-xs font-bold text-gray-600 uppercase mb-1">BPJS Kesehatan
                                     No.</label>
-                                <input type="text" name="bpjs_kesehatan_no"
+                                <input type="number" name="bpjs_kesehatan_no"
                                     class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-indigo-500 bg-white">
                             </div>
                             <div>
                                 <label class="block text-xs font-bold text-gray-600 uppercase mb-1">BPJS
                                     Ketenagakerjaan No.</label>
-                                <input type="text" name="bpjs_ketenagakerjaan_no"
+                                <input type="number" name="bpjs_ketenagakerjaan_no"
                                     class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-indigo-500 bg-white">
                             </div>
                         </div>
@@ -362,7 +363,7 @@
                         </div>
 
                         <!-- ADDED: Bank Details -->
-                        <div id="bankAccountSection" class="border-t border-indigo-200 pt-4 hidden">
+                        <div id="bankAccountSection" class="border-t border-indigo-200 pt-4">
                             <span class="text-sm font-bold text-indigo-700 uppercase tracking-wider mb-4 flex items-center gap-2"><i class="ri-bank-fill"></i> Bank Account Details</span>
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                                 <div>
@@ -487,8 +488,9 @@
                                 <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Status</label>
                                 <select id="editStatus" name="status"
                                     class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border" required>
-                                    <option value="full_time">Full Time</option>
-                                    <option value="part_time">Part Time</option>
+                                    <option value="PKWT">PKWT</option>
+                                    <option value="PKWTT">PKWTT</option>
+                                    <option value="DAILY_WORKER">Daily Worker</option>
                                 </select>
                             </div>
                         </div>
@@ -536,7 +538,7 @@
                             </div>
                             <div>
                                 <label class="block text-xs font-bold text-gray-600 uppercase mb-1">NPWP</label>
-                                <input type="text" id="editNpwp" name="npwp"
+                                <input type="number" id="editNpwp" name="npwp"
                                     class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border bg-white">
                             </div>
                         </div>
@@ -545,13 +547,13 @@
                             <div>
                                 <label class="block text-xs font-bold text-gray-600 uppercase mb-1">BPJS Kesehatan
                                     No.</label>
-                                <input type="text" id="editBpjsKesNo" name="bpjs_kesehatan_no"
+                                <input type="number" id="editBpjsKesNo" name="bpjs_kesehatan_no"
                                     class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border bg-white">
                             </div>
                             <div>
                                 <label class="block text-xs font-bold text-gray-600 uppercase mb-1">BPJS
                                     Ketenagakerjaan No.</label>
-                                <input type="text" id="editBpjsTkNo" name="bpjs_ketenagakerjaan_no"
+                                <input type="number" id="editBpjsTkNo" name="bpjs_ketenagakerjaan_no"
                                     class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border bg-white">
                             </div>
                         </div>
@@ -588,7 +590,7 @@
                         </div>
 
                         <!-- ADDED: Bank Details Edit -->
-                        <div id="editBankAccountSection" class="border-t border-blue-200 pt-4 hidden">
+                        <div id="editBankAccountSection" class="border-t border-blue-200 pt-4">
                             <span class="text-sm font-bold text-indigo-700 uppercase tracking-wider mb-4 flex items-center gap-2"><i class="ri-bank-fill"></i> Bank Account Details</span>
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                                 <div>
@@ -640,14 +642,33 @@
                 $(this).val(formatCurrency(val));
             });
 
+            function toggleSalaryLabel(status, labelId) {
+                const label = $(labelId);
+                if (status === 'DAILY_WORKER') {
+                    label.html('Daily Rate (Rp) <span class="text-red-500">*</span>');
+                } else {
+                    label.html('Base Salary (Rp) <span class="text-red-500">*</span>');
+                }
+            }
+
+            $('#statusSelect').change(function() {
+                const label = $('input[name="base_salary"]').prev('label');
+                toggleSalaryLabel($(this).val(), label);
+            });
+
+            $('#editStatus').change(function() {
+                const label = $('#editBaseSalary').prev('label');
+                toggleSalaryLabel($(this).val(), label);
+            });
+
             function toggleBankDetails(payrollMethod, sectionId, inputs) {
                 const section = $(sectionId);
                 const bankInputs = $(inputs);
 
-                if (payrollMethod === 'transfer') {
-                    section.removeClass('hidden');
-                } else {
+                if (payrollMethod === 'cash') {
                     section.addClass('hidden');
+                } else {
+                    section.removeClass('hidden');
                     bankInputs.val(''); 
                 }
             }
@@ -721,8 +742,11 @@
                 $('#editPhone').val(btn.data('phone'));
                 $('#editAddress').val(btn.data('address'));
                 $('#editJoinDate').val(btn.data('join'));
-                $('#editStatus').val(btn.data('status'));
                 $('#editKtp').val(btn.data('ktp'));
+                $('#editStatus').val(btn.data('status'));
+                let status = btn.data('status');
+                const label = $('#editBaseSalary').prev('label');
+                toggleSalaryLabel(status, label);
 
                 let rawSalary = btn.data('base-salary');
                 let salaryStr = String(rawSalary).split('.')[0];

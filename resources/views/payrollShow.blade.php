@@ -38,23 +38,27 @@
                 
                 <!-- Header Slip -->
                 <div class="bg-gray-50 p-8 border-b border-gray-200">
-                    <div class="flex justify-between items-start">
-                        <div>
-                            <h1 class="text-3xl font-bold text-gray-800">SALARY SLIP</h1>
-                            <p class="text-gray-500 mt-1">Period: {{ \Carbon\Carbon::parse($payroll->pay_period_start)->format('d M Y') }} - {{ \Carbon\Carbon::parse($payroll->pay_period_end)->format('d M Y') }}</p>
+                    <div class="flex items-center justify-between">
+                        <div class="w-32 text-left">
+                            <img class="w-32 h-fit mx-auto" src="{{ asset('logo.png') }}" alt="Logo">
                         </div>
-                        <div class="text-right">
-                            <h2 class="text-xl font-bold text-indigo-700">{{ Auth::user()->compani->name ?? 'Company Name' }}</h2>
-                            <span class="inline-block mt-2 px-3 py-1 rounded-full text-xs font-bold uppercase {{ $payroll->status == 'paid' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800' }}">
-                                {{ $payroll->status }}
-                            </span>
+                        <div class="text-center">
+                            <h2 class="text-lg">Pengembangan Usaha Sultan Agung</h2>
+                            <h1 class="text-2xl font-bold text-gray-800 uppercase">{{ Auth::user()->compani->company ?? 'Company Name' }}</h1>
+                            <h2 class="text-lg">{{ Auth::user()->compani->location }}</h2>
                         </div>
+                        <div class="w-32 text-right"></div>
                     </div>
                 </div>
-
+                <div class="border-y border-gray-500">
+                    <div class="bg-gray-400">
+                        <p class="uppercase text-center text-white tracking-[10px]">Payslip Employee</p>
+                    </div>
+                </div>
+                
                 <!-- Employee Info -->
                 <div class="p-8 border-b border-gray-200">
-                    <div class="grid grid-cols-2 gap-8">
+                    <div class="grid grid-cols-3 gap-8">
                         <div>
                             <p class="text-xs text-gray-400 uppercase tracking-wider">Employee Name</p>
                             <p class="text-lg font-semibold text-gray-800">{{ $payroll->employee->name }}</p>
@@ -62,6 +66,10 @@
                         <div>
                             <p class="text-xs text-gray-400 uppercase tracking-wider">Position</p>
                             <p class="text-lg font-semibold text-gray-800">{{ $payroll->employee->position->name }}</p>
+                        </div>
+                        <div>
+                            <p class="text-xs text-gray-400 uppercase tracking-wider">Period</p>
+                            <p class="text-lg font-semibold text-gray-800">{{ \Carbon\Carbon::parse($payroll->pay_period_start)->format('d M Y') }} - {{ \Carbon\Carbon::parse($payroll->pay_period_end)->format('d M Y') }}</p>
                         </div>
                         <div>
                             <p class="text-xs text-gray-400 uppercase tracking-wider">Employee ID</p>

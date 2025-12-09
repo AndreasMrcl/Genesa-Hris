@@ -28,7 +28,7 @@ return new class extends Migration
             $table->string('phone');
             $table->string('address');
             $table->decimal('base_salary', 15, 2);
-            $table->integer('working_days')->default(26);
+            $table->integer('working_days')->default(27);
             $table->enum('payroll_method', ['transfer', 'cash'])->default('transfer');
             $table->string('bank_name')->nullable();
             $table->string('bank_account_no')->nullable();
@@ -36,7 +36,7 @@ return new class extends Migration
             $table->boolean('participates_bpjs_tk')->default(true);
             $table->boolean('participates_bpjs_jp')->default(true);
             $table->date('join_date');
-            $table->enum('status', ['full_time', 'part_time'])->default('full_time');
+            $table->enum('status', ['PKWT', 'PKWTT', 'DAILY_WORKER'])->default('PKWT');
             $table->string('password');
             $table->rememberToken();
             $table->timestamps();

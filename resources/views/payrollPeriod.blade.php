@@ -44,6 +44,7 @@
                                 <th class="p-3 font-semibold text-gray-600 text-sm uppercase">Base Salary</th>
                                 <th class="p-3 font-semibold text-gray-600 text-sm uppercase">Net Salary</th>
                                 <th class="p-3 font-semibold text-gray-600 text-sm uppercase text-center">Status</th>
+                                <th class="p-3 font-semibold text-gray-600 text-sm uppercase text-center">Method</th>
                                 <th class="p-3 font-semibold text-gray-600 text-sm uppercase text-center">Action</th>
                             </tr>
                         </thead>
@@ -85,6 +86,11 @@
                                                 <span class="w-1.5 h-1.5 rounded-full bg-yellow-600"></span> Pending
                                             </span>
                                         @endif
+                                    </td>
+                                    <td class="p-3 text-sm text-center text-gray-600">
+                                        <span class="inline-flex items-center gap-1 px-2 py-1 text-xs uppercase font-medium text-blue-700 bg-blue-50 rounded-full border border-blue-200">
+                                            {{ $item->employee->payroll_method }}
+                                        </span>
                                     </td>
                                     <td class="p-3 text-center">
                                         <div class="flex justify-center gap-2">
