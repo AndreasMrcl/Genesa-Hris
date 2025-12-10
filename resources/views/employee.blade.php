@@ -93,7 +93,7 @@
                                         <div class="flex justify-center items-center gap-2">
                                             {{-- Tombol Edit --}}
                                             <button
-                                                class="editBtn w-9 h-9 flex items-center justify-center bg-blue-500 text-white rounded-lg shadow hover:bg-blue-600 transition"
+                                                class="editBtn w-9 h-9 flex items-center justify-center bg-blue-500 text-white rounded-lg shadow hover:bg-blue-600 hover:scale-105 transition cursor-pointer"
                                                 data-id="{{ $item->id }}" 
                                                 data-name="{{ $item->name }}"
                                                 data-branch="{{ $item->branch_id }}" 
@@ -110,7 +110,7 @@
                                                 data-join="{{ $item->join_date }}" 
                                                 data-status="{{ $item->status }}"
                                                 data-ptkp="{{ $item->ptkp_status ?? 'TK/0' }}"
-                                                data-working-days="{{ $item->working_days_per_month }}"
+                                                data-working-days="{{ $item->working_days }}"
                                                 data-payroll-method="{{ $item->payroll_method }}"
                                                 data-part-kes="{{ $item->participates_bpjs_kes }}"
                                                 data-part-tk="{{ $item->participates_bpjs_tk }}"
@@ -123,14 +123,14 @@
 
                                             {{-- Tombol Allowance --}}
                                             <a href="{{ route('allowanceEmp', $item->id) }}"
-                                                class="w-9 h-9 flex items-center justify-center bg-emerald-500 text-white rounded-lg shadow hover:bg-emerald-600 transition"
+                                                class="w-9 h-9 flex items-center justify-center bg-emerald-500 text-white rounded-lg shadow hover:bg-emerald-600 hover:scale-105 transition"
                                                 title="Allowances">
                                                 <i class="fas fa-hand-holding-dollar"></i>
                                             </a>
 
                                             {{-- Tombol Deduction --}}
                                             <a href="{{ route('deductionEmp', $item->id) }}"
-                                                class="w-9 h-9 flex items-center justify-center bg-yellow-500 text-white rounded-lg shadow hover:bg-rose-600 transition"
+                                                class="w-9 h-9 flex items-center justify-center bg-yellow-500 text-white rounded-lg shadow hover:bg-yellow-600 hover:scale-105 transition"
                                                 title="Deductions">
                                                 <i class="fas fa-file-invoice-dollar"></i>
                                             </a>
@@ -140,7 +140,7 @@
                                                 action="{{ route('delemployee', ['id' => $item->id]) }}"
                                                 class="inline deleteForm">
                                                 @csrf @method('delete')
-                                                <button type="button" class="delete-confirm w-9 h-9 flex items-center justify-center bg-red-500 text-white rounded-lg shadow hover:bg-red-600 hover:scale-105 transition" title="Delete">
+                                                <button type="button" class="delete-confirm w-9 h-9 flex items-center justify-center bg-red-500 text-white rounded-lg shadow hover:bg-red-600 hover:scale-105 transition cursor-pointer" title="Delete">
                                                     <i class="fas fa-trash"></i>
                                                 </button>
                                             </form>
@@ -265,11 +265,12 @@
                             <div class="md:col-span-1">
                                 <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Status <span
                                         class="text-red-500">*</span></label>
-                                <select name="status"
+                                <select name="status" id="statusSelect"
                                     class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-indigo-500"
                                     required>
-                                    <option value="full_time">Full Time</option>
-                                    <option value="part_time">Part Time</option>
+                                    <option value="PKWT">PKWT</option>
+                                    <option value="PKWTT">PKWTT</option>
+                                    <option value="DAILY_WORKER">Daily Worker</option>
                                 </select>
                             </div>
                         </div>
@@ -283,7 +284,7 @@
 
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-5 mb-5">
                             <div>
-                                <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Base Salary (Rp)
+                                <label id="labelBaseSalary" class="block text-xs font-bold text-gray-600 uppercase mb-1">Base Salary (Rp)
                                     <span class="text-red-500">*</span></label>
                                 <input type="text" name="base_salary"
                                     class="currency w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-indigo-500 bg-white"
@@ -291,7 +292,7 @@
                             </div>
                             <div>
                                 <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Work Days <span class="text-red-500">*</span></label>
-                                <input type="number" name="working_days_per_month" value="26" class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-indigo-500 bg-white" required>
+                                <input type="number" name="working_days" value="27" class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-indigo-500 bg-white" required>
                             </div>
                             <div>
                                 <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Payroll Method</label>
@@ -316,7 +317,7 @@
                             </div>
                             <div>
                                 <label class="block text-xs font-bold text-gray-600 uppercase mb-1">NPWP</label>
-                                <input type="text" name="npwp"
+                                <input type="number" name="npwp"
                                     class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-indigo-500 bg-white">
                             </div>
                         </div>
@@ -325,13 +326,13 @@
                             <div>
                                 <label class="block text-xs font-bold text-gray-600 uppercase mb-1">BPJS Kesehatan
                                     No.</label>
-                                <input type="text" name="bpjs_kesehatan_no"
+                                <input type="number" name="bpjs_kesehatan_no"
                                     class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-indigo-500 bg-white">
                             </div>
                             <div>
                                 <label class="block text-xs font-bold text-gray-600 uppercase mb-1">BPJS
                                     Ketenagakerjaan No.</label>
-                                <input type="text" name="bpjs_ketenagakerjaan_no"
+                                <input type="number" name="bpjs_ketenagakerjaan_no"
                                     class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-indigo-500 bg-white">
                             </div>
                         </div>
@@ -362,8 +363,8 @@
                         </div>
 
                         <!-- ADDED: Bank Details -->
-                        <div class="border-t border-indigo-200 pt-4">
-                            <span class="block text-xs font-bold text-gray-600 uppercase mb-3">Bank Account Details</span>
+                        <div id="bankAccountSection" class="border-t border-indigo-200 pt-4">
+                            <span class="text-sm font-bold text-indigo-700 uppercase tracking-wider mb-4 flex items-center gap-2"><i class="ri-bank-fill"></i> Bank Account Details</span>
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                                 <div>
                                     <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Bank Name</label>
@@ -487,8 +488,9 @@
                                 <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Status</label>
                                 <select id="editStatus" name="status"
                                     class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border" required>
-                                    <option value="full_time">Full Time</option>
-                                    <option value="part_time">Part Time</option>
+                                    <option value="PKWT">PKWT</option>
+                                    <option value="PKWTT">PKWTT</option>
+                                    <option value="DAILY_WORKER">Daily Worker</option>
                                 </select>
                             </div>
                         </div>
@@ -511,7 +513,7 @@
                             </div>
                             <div>
                                 <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Work Days</label>
-                                <input type="number" id="editWorkingDays" name="working_days_per_month" class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border bg-white" required>
+                                <input type="number" id="editWorkingDays" name="working_days" class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border bg-white" required>
                             </div>
                             <div>
                                 <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Payroll Method</label>
@@ -536,7 +538,7 @@
                             </div>
                             <div>
                                 <label class="block text-xs font-bold text-gray-600 uppercase mb-1">NPWP</label>
-                                <input type="text" id="editNpwp" name="npwp"
+                                <input type="number" id="editNpwp" name="npwp"
                                     class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border bg-white">
                             </div>
                         </div>
@@ -545,13 +547,13 @@
                             <div>
                                 <label class="block text-xs font-bold text-gray-600 uppercase mb-1">BPJS Kesehatan
                                     No.</label>
-                                <input type="text" id="editBpjsKesNo" name="bpjs_kesehatan_no"
+                                <input type="number" id="editBpjsKesNo" name="bpjs_kesehatan_no"
                                     class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border bg-white">
                             </div>
                             <div>
                                 <label class="block text-xs font-bold text-gray-600 uppercase mb-1">BPJS
                                     Ketenagakerjaan No.</label>
-                                <input type="text" id="editBpjsTkNo" name="bpjs_ketenagakerjaan_no"
+                                <input type="number" id="editBpjsTkNo" name="bpjs_ketenagakerjaan_no"
                                     class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border bg-white">
                             </div>
                         </div>
@@ -588,8 +590,8 @@
                         </div>
 
                         <!-- ADDED: Bank Details Edit -->
-                        <<div class="border-t border-indigo-200 pt-4">
-                            <span class="block text-xs font-bold text-gray-600 uppercase mb-3">Bank Account Details</span>
+                        <div id="editBankAccountSection" class="border-t border-blue-200 pt-4">
+                            <span class="text-sm font-bold text-indigo-700 uppercase tracking-wider mb-4 flex items-center gap-2"><i class="ri-bank-fill"></i> Bank Account Details</span>
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                                 <div>
                                     <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Bank
@@ -627,14 +629,6 @@
             // Init DataTable
             new DataTable('#myTable', {});
 
-            // Modal Logic
-            const addModal = $('#addModal');
-            const editModal = $('#editModal');
-
-            $('#addBtn').click(() => addModal.removeClass('hidden'));
-            $('#closeAddModal, #cancelAdd').click(() => addModal.addClass('hidden'));
-            $('#closeEditModal, #closeEditModalBtn').click(() => editModal.addClass('hidden'));
-
             function formatCurrency(value) {
                 let rawValue = value.replace(/\D/g, '');
                 if (rawValue === '') return '';
@@ -647,6 +641,47 @@
                 let val = $(this).val();
                 $(this).val(formatCurrency(val));
             });
+
+            function toggleSalaryLabel(status, labelId) {
+                const label = $(labelId);
+                if (status === 'DAILY_WORKER') {
+                    label.html('Daily Rate (Rp) <span class="text-red-500">*</span>');
+                } else {
+                    label.html('Base Salary (Rp) <span class="text-red-500">*</span>');
+                }
+            }
+
+            $('#statusSelect').change(function() {
+                const label = $('input[name="base_salary"]').prev('label');
+                toggleSalaryLabel($(this).val(), label);
+            });
+
+            $('#editStatus').change(function() {
+                const label = $('#editBaseSalary').prev('label');
+                toggleSalaryLabel($(this).val(), label);
+            });
+
+            function toggleBankDetails(payrollMethod, sectionId, inputs) {
+                const section = $(sectionId);
+                const bankInputs = $(inputs);
+
+                if (payrollMethod === 'cash') {
+                    section.addClass('hidden');
+                } else {
+                    section.removeClass('hidden');
+                    bankInputs.val(''); 
+                }
+            }
+
+            $('#payrollMethod').change(function() {
+                toggleBankDetails($(this).val(), '#bankAccountSection', '#bankAccountSection input');
+            });
+
+            $('#editPayrollMethod').change(function() {
+                toggleBankDetails($(this).val(), '#editBankAccountSection', '#editBankAccountSection input');
+            });
+
+            toggleBankDetails($('#payrollMethod').val(), '#bankAccountSection', '#bankAccountSection input');
 
             const allPositions = @json($positions);
 
@@ -680,6 +715,14 @@
             $('#editBranch').change(function() {updatePositionDropdown($(this).val(), '#editPositionSelect');});
             $('#editPositionSelect').change(function() {autofillSalary('#editPositionSelect', '#editBaseSalary');});
 
+            // Modal Logic
+            const addModal = $('#addModal');
+            const editModal = $('#editModal');
+
+            $('#addBtn').click(() => addModal.removeClass('hidden'));
+            $('#closeAddModal, #cancelAdd').click(() => addModal.addClass('hidden'));
+            $('#closeEditModal, #closeEditModalBtn').click(() => editModal.addClass('hidden'));
+
             // Click outside to close
             $(window).click((e) => {
                 if (e.target === addModal[0]) addModal.addClass('hidden');
@@ -699,8 +742,11 @@
                 $('#editPhone').val(btn.data('phone'));
                 $('#editAddress').val(btn.data('address'));
                 $('#editJoinDate').val(btn.data('join'));
-                $('#editStatus').val(btn.data('status'));
                 $('#editKtp').val(btn.data('ktp'));
+                $('#editStatus').val(btn.data('status'));
+                let status = btn.data('status');
+                const label = $('#editBaseSalary').prev('label');
+                toggleSalaryLabel(status, label);
 
                 let rawSalary = btn.data('base-salary');
                 let salaryStr = String(rawSalary).split('.')[0];
@@ -714,6 +760,8 @@
                 // Bank Info
                 $('#editBankName').val(btn.data('bank-name'));
                 $('#editBankNo').val(btn.data('bank-no'));
+
+                toggleBankDetails(payrollMethod, '#editBankAccountSection', '#editBankAccountSection input');
             
                 // Checkboxes
                 $('#editBpjsKes').prop('checked', btn.data('part-kes') == 1);

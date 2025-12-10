@@ -158,15 +158,25 @@ class PayrollController extends Controller
                 $totalLate = $attendance ? $attendance->total_late : 0;
                 $totalAlpha = $attendance ? $attendance->total_alpha : 0;
                 $totalPermission = $attendance ? $attendance->total_permission : 0;
+                $workDays = $emp->working_days;
+                $payrollMethod = $emp->payroll_method;
 
                 // === BASE ===
-                $baseSalary = $emp->base_salary ?? 0;
+                $baseRate = $emp->base_salary ?? 0;
+                $calculatedBaseSalary = 0;
+
+                if ($emp->status == 'DAILY_WORKER') {
+                    $calculatedBaseSalary = $baseRate * $daysPresent;
+                } else {
+                    $calculatedBaseSalary = $baseRate;
+                }
+
                 $totalAllowance = 0;
                 $totalDeduction = 0;
-                $taxableIncomeBase = $baseSalary;
+                $taxableIncomeBase = $calculatedBaseSalary;
                 $detailsToSave = [];
 
-                $detailsToSave[] = ['name' => 'Base Salary', 'category' => 'base', 'amount' => $baseSalary];
+                $detailsToSave[] = ['name' => ($emp->status == 'DAILY_WORKER') ? 'Total Upah Harian' : 'Gaji Pokok', 'category' => 'base', 'amount' => $calculatedBaseSalary];
 
                 // === ALLOWANCES ===
                 foreach ($emp->allowEmps as $assign) {
@@ -265,7 +275,7 @@ class PayrollController extends Controller
                             $totalAllowance += $tunjanganPajak;
                             $totalDeduction += $tunjanganPajak;
 
-                            $detailsToSave[] = ['name' => 'Tunjangan PPh 21', 'category' => 'allowance', 'amount' => $tunjanganPajak];
+                            $detailsToSave[] = ['name' => 'Tunjangan PPh 21', 'category' => 'benefit', 'amount' => $tunjanganPajak];
                             $detailsToSave[] = ['name' => 'Potongan PPh 21', 'category' => 'deduction', 'amount' => $tunjanganPajak];
                         }
                     } elseif ($taxMethod == 'GROSS_UP') {
@@ -283,7 +293,7 @@ class PayrollController extends Controller
                         if ($tunjanganPajak > 0) {
                             $totalAllowance += $tunjanganPajak;
                             $totalDeduction += $tunjanganPajak;
-                            $detailsToSave[] = ['name' => 'Tunjangan PPh 21', 'category' => 'allowance', 'amount' => $tunjanganPajak];
+                            $detailsToSave[] = ['name' => 'Tunjangan PPh 21', 'category' => 'benefit', 'amount' => $tunjanganPajak];
                             $detailsToSave[] = ['name' => 'Potongan PPh 21', 'category' => 'deduction', 'amount' => $tunjanganPajak];
                         }
                     }
@@ -298,8 +308,30 @@ class PayrollController extends Controller
                 }
 
                 // === PENALTI ABSENSI ===
-                $dailySalary = $baseSalary / 26;
+                $dailySalary = ($emp->status == 'DAILY_WORKER') ? $baseRate : ($baseRate / $workDays);
 
+                if ($emp->status != 'DAILY_WORKER') {
+                    if ($totalAlpha > 0) {
+                        $alphaPenalty = $totalAlpha * $dailySalary;
+                        $totalDeduction += $alphaPenalty;
+                        $detailsToSave[] = [
+                            'name' => 'Alpha (' . $totalAlpha . ')',
+                            'category' => 'deduction',
+                            'amount' => $alphaPenalty,
+                        ];
+                    }
+
+                    if ($totalPermission > 0) {
+                        $permissionPenalty = $totalPermission * ($dailySalary * 0.5);
+                        $totalDeduction += $permissionPenalty;
+                        $detailsToSave[] = [
+                            'name' => 'Izin (' . $totalPermission . ')',
+                            'category' => 'deduction',
+                            'amount' => $permissionPenalty,
+                        ];
+                    }
+                }
+                
                 if ($totalLate > 0) {
                     $latePenalty = $totalLate * 27300;
                     $totalDeduction += $latePenalty;
@@ -309,29 +341,8 @@ class PayrollController extends Controller
                         'amount' => $latePenalty,
                     ];
                 }
-
-                if ($totalAlpha > 0) {
-                    $alphaPenalty = $totalAlpha * $dailySalary;
-                    $totalDeduction += $alphaPenalty;
-                    $detailsToSave[] = [
-                        'name' => 'Alpha (' . $totalAlpha . ')',
-                        'category' => 'deduction',
-                        'amount' => $alphaPenalty,
-                    ];
-                }
-
-                if ($totalPermission > 0) {
-                    $permissionPenalty = $totalPermission * ($dailySalary * 0.5);
-                    $totalDeduction += $permissionPenalty;
-                    $detailsToSave[] = [
-                        'name' => 'Izin (' . $totalPermission . ')',
-                        'category' => 'deduction',
-                        'amount' => $permissionPenalty,
-                    ];
-                }
-
                 // === INFAQ ===
-                $currentNet = $baseSalary + $totalAllowance - $totalDeduction;
+                $currentNet = $calculatedBaseSalary + $totalAllowance - $totalDeduction;
 
                 if ($companyConfig->infaq_percent > 0) {
                     $infaqAmount = $currentNet * ($companyConfig->infaq_percent / 100);
@@ -347,7 +358,7 @@ class PayrollController extends Controller
                 }
 
                 // === F. FINALISASI ===
-                $netSalary = $baseSalary + $totalAllowance - $totalDeduction;
+                $netSalary = $calculatedBaseSalary + $totalAllowance - $totalDeduction;
                 $totalExpenseForLog += $netSalary;
 
                 $payroll = Payroll::create([
@@ -355,11 +366,13 @@ class PayrollController extends Controller
                     'employee_id' => $emp->id,
                     'pay_period_start' => $start,
                     'pay_period_end' => $end,
-                    'base_salary' => $baseSalary,
+                    'base_salary' => $calculatedBaseSalary,
                     'total_allowances' => $totalAllowance,
                     'total_deductions' => $totalDeduction,
                     'net_salary' => $netSalary,
                     'status' => 'pending',
+                    'working_days' => $workDays,
+                    'payroll_method' => $payrollMethod,
                 ]);
 
                 foreach ($detailsToSave as $detail) {
