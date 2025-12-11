@@ -28,7 +28,7 @@ class AnnouncementController extends Controller
             return redirect()->route('login');
         }
 
-        $cacheKey = 'announcements_' . $userCompany->id;
+        $cacheKey = "announcements_{$userCompany->id}";
 
         $announcements = Cache::remember($cacheKey, 60, function () use ($userCompany) {
             return Announcement::where('compani_id', $userCompany->id)

@@ -69,7 +69,7 @@ class EssController extends Controller
 
         Leave::create($data);
 
-        Cache::forget('leaves');
+        Cache::forget("leaves_{$userCompany->id}");
 
         return redirect(route('ess-leave'));
     }
@@ -102,7 +102,7 @@ class EssController extends Controller
 
         Overtime::create($data);
 
-        Cache::forget('overtimes');
+        Cache::forget("overtimes_{$userCompany->id}");
 
         return redirect(route('ess-overtime'));
     }
@@ -144,7 +144,7 @@ class EssController extends Controller
 
         $employee = Auth::guard('employee')->user();
 
-                $compani = $employee->compani;
+        $compani = $employee->compani;
 
         $announcements = $compani->announcements;
 
