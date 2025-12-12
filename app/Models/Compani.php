@@ -90,4 +90,9 @@ class Compani extends Model
     {
         return $this->hasMany(Position::class);
     }
+
+    public function attendanceLogs()
+    {
+        return $this->hasMany(AttendanceLog::class);
+    }
 }

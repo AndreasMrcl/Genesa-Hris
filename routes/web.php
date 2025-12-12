@@ -21,6 +21,7 @@ use App\Http\Controllers\ActivityLogController;
 use App\Http\Controllers\AnnouncementController;
 use App\Http\Controllers\CompanyPayrollConfigController;
 use App\Http\Controllers\PositionController;
+use App\Http\Controllers\FingerspotController;
 
 Route::get('/', [AuthController::class, 'login'])->name('login');
 Route::get('/register', [AuthController::class, 'register'])->name('register');
@@ -130,8 +131,9 @@ Route::middleware('auth:web')->group(function () {
     Route::put('/deduction-employee/{id}/update', [DeductEmpController::class, 'update'])->name('updatedeductionEmp');
     Route::delete('/deduction-employee/{id}/delete', [DeductEmpController::class, 'destroy'])->name('deldeductionEmp');
 
-    // PAYROLL EXPORT EXCEL
+    //PAYROLL EXPORT EXCEL
     Route::get('/payrolls/export', [PayrollController::class, 'exportExcel'])->name('payrollExport');
+    Route::get('/payrolls/export-report', [PayrollController::class, 'exportReport'])->name('payrollReportExport');
 
     //PAYROLL
     Route::get('/payrolls', [PayrollController::class, 'index'])->name('payroll');
@@ -145,7 +147,7 @@ Route::middleware('auth:web')->group(function () {
     //ACTIVITY LOG
     Route::get('/activity-logs', [ActivityLogController::class, 'index'])->name('activityLog');
 
-    // COMPANY PAYROLL CONFIG
+    //COMPANY PAYROLL CONFIG
     Route::get('/companyconfig', [CompanyPayrollConfigController::class, 'index'])->name('companyconfig');
     Route::put('/companyconfig/update', [CompanyPayrollConfigController::class, 'update'])->name('updatecompanyconfig');
 
@@ -154,6 +156,9 @@ Route::middleware('auth:web')->group(function () {
     Route::post('/position', [PositionController::class, 'store'])->name('postposition');
     Route::put('/position/{id}/update', [PositionController::class, 'update'])->name('updateposition');
     Route::delete('/position/{id}/delete', [PositionController::class, 'destroy'])->name('desposition');
+
+    //FINGERSPOT SYNC
+    Route::post('/fingerspot/fetch', [FingerspotController::class, 'fetchFromApi'])->name('fingerspotFetch');
 });
 
 Route::middleware('auth:employee')->group(function () {

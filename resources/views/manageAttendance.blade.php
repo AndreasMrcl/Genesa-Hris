@@ -92,16 +92,25 @@
                                     </tr>
                                 </thead>
                                 <tbody class="text-sm divide-y divide-gray-200">
-                                    @php $no = 1; @endphp
+                                   @php $no = 1; @endphp
                                     @foreach ($employees as $emp)
                                         @php
                                             $existing = $attendances[$emp->id] ?? null;
+                                            
+                                            $machineVal = $machineData[$emp->id]['present'] ?? 0;
+                                            $machineLate = $machineData[$emp->id]['late'] ?? 0;
+                                            
+                                            $savedVal = $existing ? $existing->total_present : 0;
+                                            $savedLate = $existing ? $existing->total_late : 0;
+
+                                            $displayVal = $existing ? $savedVal : $machineVal;
+                                            $displayLate = $existing ? $savedLate : $machineLate;
                                         @endphp
                                         <tr class="hover:bg-blue-50 transition group">
                                             <td class="p-4 text-center text-gray-400 font-medium">{{ $no++ }}</td>
                                             <td class="p-4 font-bold text-gray-800">
                                                 {{ $emp->name }}
-                                                <div class="text-xs text-gray-500 font-normal">{{ $emp->position->name }}</div>
+                                                <div class="text-xs text-gray-500 font-normal">{{ $emp->position->name }} | {{ $emp->working_days }}</div>
                                             </td>
                                             
                                             <!-- Inputs -->
@@ -136,13 +145,14 @@
                                                 value="{{ $existing->total_leave ?? 0 }}" 
                                                 class="w-20 text-center text-blue-700 border-blue-300 rounded focus:ring-blue-500 p-2 border">
                                             </td>
-                                            <td class="p-2 text-center bg-green-50/30">
-                                                <input type="number" min="0" name="data[{{ $emp->id }}][present]" 
-                                                    value="{{ $existing->total_present ?? 0 }}" 
-                                                    class="w-20 text-center text-green-700 border-green-200 rounded focus:ring-green-500 p-2 border shadow-sm" required>
+                                            <td class="p-2 text-center bg-green-50/50">
+                                                <input type="number" min="0" 
+                                                    name="data[{{ $emp->id }}][present]" 
+                                                    value="{{ $displayVal }}" 
+                                                    class="w-20 text-center font-bold text-green-700 border-green-300 rounded focus:ring-green-500 p-2 border shadow-sm" required>
                                             </td>
                                             <td class="p-2">
-                                                <input type="text" name="data[{{ $emp->id }}][note]" 
+                                                    <input type="text" name="data[{{ $emp->id }}][note]" 
                                                     value="{{ $existing->note ?? '' }}" 
                                                     class="w-full text-gray-600 border-gray-200 rounded focus:ring-blue-500 p-2 border"
                                                     placeholder="Add remarks...">

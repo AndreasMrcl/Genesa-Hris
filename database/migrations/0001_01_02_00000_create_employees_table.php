@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('nik', 20)->unique();
+            $table->string('fingerprint_id')->nullable();
             $table->string('npwp', 20)->nullable();
             $table->string('ktp', 20)->unique();
             $table->string('bpjs_kesehatan_no')->nullable();

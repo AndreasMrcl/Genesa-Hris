@@ -42,6 +42,10 @@
                     </h1>
                     <p class="text-sm text-gray-500 mt-1">List of recorded attendance periods</p>
                 </div>
+                <button onclick="document.getElementById('syncModal').classList.remove('hidden')" 
+                       class="p-2 px-4 bg-white text-blue-600 border border-blue-200 rounded-lg shadow hover:bg-blue-50 transition font-semibold flex items-center gap-2">
+                        <i class="fas fa-sync-alt"></i> Sync Device
+                </button>
                 <a href="{{ route('manageattendance') }}" 
                    class="p-2 px-6 bg-green-500 text-white rounded-lg shadow hover:bg-green-600 transition font-semibold flex items-center gap-2">
                     <i class="fas fa-plus"></i> New Recap
@@ -104,6 +108,37 @@
                         </tbody>
                     </table>
                     
+                    <div id="syncModal" class="hidden fixed inset-0 bg-gray-900/60 backdrop-blur-sm flex items-center justify-center z-50 px-4">
+                        <div class="bg-white rounded-2xl p-6 w-full max-w-md shadow-2xl relative">
+                            <button onclick="document.getElementById('syncModal').classList.add('hidden')" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
+                                <i class="fas fa-times text-xl"></i>
+                            </button>
+                            
+                            <h2 class="text-xl font-bold mb-4 text-gray-800 flex items-center gap-2">
+                                <i class="fas fa-cloud-download-alt text-blue-600"></i> Sync from Cloud
+                            </h2>
+                            
+                            <p class="text-sm text-gray-500 mb-6">
+                                Pull data manually from Fingerspot Cloud if realtime webhook missed some logs.
+                            </p>
+
+                            <form action="{{ route('fingerspotFetch') }}" method="POST" class="space-y-4">
+                                @csrf
+                                <div>
+                                    <label class="block text-xs font-bold text-gray-600 uppercase mb-1">From Date</label>
+                                    <input type="date" name="start_date" class="w-full rounded-lg border-gray-300 p-2.5 border" required>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-gray-600 uppercase mb-1">To Date</label>
+                                    <input type="date" name="end_date" class="w-full rounded-lg border-gray-300 p-2.5 border" required>
+                                </div>
+                                
+                                <button type="submit" class="w-full py-3 bg-blue-600 text-white font-bold rounded-lg shadow-md hover:bg-blue-700 transition flex justify-center items-center gap-2">
+                                    <i class="fas fa-sync"></i> Fetch Data
+                                </button>
+                            </form>
+                        </div>
+                    </div>
                     <!-- Pagination -->
                     <div class="mt-4 px-2">
                         {{ $batches->links() }}

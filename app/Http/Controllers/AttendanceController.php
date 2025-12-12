@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Employee;
 use App\Models\Attendance;
 use App\Models\ActivityLog;
+use App\Models\AttendanceLog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
@@ -59,22 +60,36 @@ class AttendanceController extends Controller
         $end = $request->get('end');
         $employees = [];
         $attendances = [];
+        $machineData = []; 
 
         if ($start && $end) {
-            $employees = Employee::where('compani_id', $userCompany->id)
-                ->orderBy('name')
-                ->get();
+            $employees = Cache::remember('employees_list_' . $userCompany->id, 60, function () use ($userCompany) {
+                return $userCompany->employees()->orderBy('name')->get();
+            });
 
-            $attendances = Attendance::where('compani_id', $userCompany->id)
+            $attendances = $userCompany->attendances()
                 ->where('period_start', $start)
                 ->where('period_end', $end)
                 ->get()
                 ->keyBy('employee_id');
+            
+            $rawLogs = AttendanceLog::where('compani_id', $userCompany->id)
+                ->whereBetween('scan_time', [$start . ' 00:00:00', $end . ' 23:59:59'])
+                ->select('employee_id', DB::raw('DATE(scan_time) as scan_date'))
+                ->distinct()
+                ->get();
+
+            foreach ($rawLogs->groupBy('employee_id') as $empId => $logs) {
+                $machineData[$empId] = [
+                    'present' => $logs->count(),
+                    'late'    => 0 
+                ];
+            }
         }
 
         Cache::tags(['attendance_batches_' . $userCompany->id])->flush();
 
-        return view('manageAttendance', compact('start', 'end', 'employees', 'attendances'));
+        return view('manageAttendance', compact('start', 'end', 'employees', 'attendances', 'machineData'));
     }
 
     public function storeBatch(Request $request)
