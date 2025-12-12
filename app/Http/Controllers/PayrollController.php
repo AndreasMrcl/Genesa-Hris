@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use App\Exports\PayrollExport;
+use App\Exports\PayrollReportExport;
 use Maatwebsite\Excel\Facades\Excel;
 
 class PayrollController extends Controller
@@ -519,5 +520,30 @@ class PayrollController extends Controller
         ]);
 
         Cache::tags(['activities_' . $companyId])->flush();
+    }
+
+    public function exportReport(Request $request)
+    {
+        $userCompany = Auth::user()->compani;
+        
+        $request->validate([
+            'start' => 'required|date',
+            'end'   => 'required|date',
+        ]);
+
+        $exists = $userCompany->payrolls()
+            ->where('pay_period_start', $request->start)
+            ->where('pay_period_end', $request->end)
+            ->exists();
+
+        if (!$exists) {
+            return redirect()->route('payroll')->withErrors(['msg' => 'No data found for report.']);
+        }
+        
+        $this->logActivity('Export Payroll Report', "Mengunduh Laporan Analisa Gaji periode {$request->start}", $userCompany->id);
+
+        $filename = 'Laporan_Gaji_' . $request->start . '.xlsx';
+        
+        return Excel::download(new PayrollReportExport($userCompany->id, $request->start, $request->end), $filename);
     }
 }

@@ -102,7 +102,7 @@
                                     <td class="p-4 text-center">
                                         <div class="flex items-center justify-center gap-2">
 
-                                            <!-- TOMBOL EXPORT EXCEL (BARU) -->
+                                            <!-- TOMBOL EXPORT EXCEL -->
                                             <a href="{{ route('payrollExport', ['start' => $batch->pay_period_start, 'end' => $batch->pay_period_end]) }}"
                                                 class="p-2 text-green-600 bg-green-50 hover:bg-green-100 rounded-full transition shadow-sm"
                                                 title="Download Excel Rekap">
@@ -112,6 +112,13 @@
                                                         stroke-width="2"
                                                         d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
                                                 </svg>
+                                            </a>
+
+                                            <!-- TOMBOL EXPORT REPORT EXCEL -->
+                                            <a href="{{ route('payrollReportExport', ['start' => $batch->pay_period_start, 'end' => $batch->pay_period_end]) }}" 
+                                                class="p-2 text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-full transition shadow-sm" 
+                                                title="Download Laporan Lengkap">
+                                                    <i class="fas fa-chart-pie"></i>
                                             </a>
 
                                             <!-- TOMBOL DELETE BATCH -->
