@@ -17,6 +17,7 @@ use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\OvertimeController;
 use App\Http\Controllers\DeductEmpController;
 use App\Http\Controllers\AttendanceController;
+use App\Http\Controllers\FingerspotController;
 use App\Http\Controllers\ActivityLogController;
 use App\Http\Controllers\AnnouncementController;
 use App\Http\Controllers\CompanyPayrollConfigController;
@@ -92,7 +93,7 @@ Route::middleware('auth:web')->group(function () {
     Route::get('/announcement', [AnnouncementController::class, 'index'])->name('announcement');
     Route::post('/postannouncement', [AnnouncementController::class, 'store'])->name('postannouncement');
     Route::put('/announcement/{id}/update', [AnnouncementController::class, 'update'])->name('updateannouncement');
-    Route::delete('/announcement/{id}/delete', [AnnouncementController::class, 'destroy'])->name('delannouncement');            
+    Route::delete('/announcement/{id}/delete', [AnnouncementController::class, 'destroy'])->name('delannouncement');
 
     //PAYROLL
     Route::get('/payroll', [PayrollController::class, 'index'])->name('payroll');
@@ -154,6 +155,9 @@ Route::middleware('auth:web')->group(function () {
     Route::post('/position', [PositionController::class, 'store'])->name('postposition');
     Route::put('/position/{id}/update', [PositionController::class, 'update'])->name('updateposition');
     Route::delete('/position/{id}/delete', [PositionController::class, 'destroy'])->name('desposition');
+
+    //FINGERSPOT SYNC
+    Route::post('/fingerspot/fetch', [FingerspotController::class, 'fetchFromApi'])->name('fingerspotFetch');
 });
 
 Route::middleware('auth:employee')->group(function () {

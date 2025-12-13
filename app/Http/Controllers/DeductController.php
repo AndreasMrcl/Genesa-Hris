@@ -28,9 +28,9 @@ class DeductController extends Controller
             return redirect()->route('login');
         }
 
-        $cacheKey = 'deductions_' . $userCompany->id;
+        $cacheKey = "deductions_{$userCompany->id}";
 
-        $deductions = Cache::remember($cacheKey, 60, function () use ($userCompany) {
+        $deductions = Cache::remember($cacheKey, 180, function () use ($userCompany) {
             return Deduct::where('compani_id', $userCompany->id)->get();
         });
 
@@ -46,22 +46,28 @@ class DeductController extends Controller
             'type' => 'required',
         ]);
 
-        $data['compani_id'] = $userCompany->id;
+        $deduct = Deduct::create([
+            'name'     => $data['name'],
+            'type'     => $data['type'],
+            'compani_id'  => $userCompany->id,
+        ]);
 
-        $deduct = Deduct::create($data);
+        $this->logActivity(
+            'Create Allowance',
+            "Menambahkan deduction '{$deduct->name}'",
+            $userCompany->id
+        );
 
-        $this->logActivity('Create Allowance', "Menambahkan deduction baru: {$deduct->name} ({$deduct->type})", $userCompany->id);
-
-        Cache::forget('deductions_' . $userCompany->id);
+        $this->clearCache($userCompany->id);
 
         return redirect(route('deduction'))->with('success', 'Deduction successfully created!');
     }
 
-    public function update(Request $request,$id)
+    public function update(Request $request, $id)
     {
         $userCompany = auth()->user()->compani;
 
-        $request->validate([
+        $data = $request->validate([
             'name' => 'required',
             'type' => 'required',
         ]);
@@ -70,32 +76,20 @@ class DeductController extends Controller
             ->where('compani_id', $userCompany->id)
             ->firstOrFail();
 
-        $oldData = [
-            'name' => $deduct->name,
-            'type' => $deduct->type,
-        ];
+        $oldContent = $deduct->name;
 
-        $newData = [
-            'name' => $request->name,
-            'type' => $request->type,
-        ];
+        $deduct->update([
+            'name' => $data['name'],
+            'type' => $data['type'],
+        ]);
 
-        $deduct->update($newData);
+        $this->logActivity(
+            'Update Deduction',
+            "Mengubah deduction '{$oldContent}' menjadi '{$deduct->name}'",
+            $userCompany->id
+        );
 
-        $changes = [];
-        foreach ($newData as $key => $value) {
-            if ($oldData[$key] != $value) {
-                $fieldLabel = ucfirst(str_replace('_', ' ', $key)); 
-                $changes[] = "$fieldLabel diubah dari '{$oldData[$key]}' menjadi '{$value}'";
-            }
-        }
-
-        if (!empty($changes)) {
-            $descriptionString = "Update Deduction {$deduct->name}: " . implode(', ', $changes);
-            $this->logActivity('Update Deduction', $descriptionString, $userCompany->id);
-        }
-
-        Cache::forget('deductions_' . $userCompany->id);
+        $this->clearCache($userCompany->id);
 
         return redirect(route('deduction'))->with('success', 'Deduction successfully updated!');
     }
@@ -108,18 +102,24 @@ class DeductController extends Controller
             ->where('compani_id', $userCompany->id)
             ->firstOrFail();
 
-        if ($deduction) {
-            $name = $deduction->name;
-            $deduction->delete();
+        $oldContent = $deduction->name;
 
-            $this->logActivity('Delete Deduction', "Menghapus deduction: {$name}", $userCompany->id);
-            
-            Cache::forget('deductions_' . $userCompany->id);
-        }
+        $deduction->delete();
 
-        Cache::forget('deductions_' . $userCompany->id);
+        $this->logActivity(
+            'Delete Deduction',
+            "Menghapus deduction '{$oldContent}'",
+            $userCompany->id
+        );
+
+        $this->clearCache($userCompany->id);
 
         return redirect(route('deduction'))->with('success', 'Deduction successfully deleted!');
+    }
+
+    private function clearCache($companyId)
+    {
+        Cache::forget("deductions_{$companyId}");
     }
 
     private function logActivity($type, $description, $companyId)
@@ -132,6 +132,6 @@ class DeductController extends Controller
             'created_at'    => now(),
         ]);
 
-        Cache::tags(['activities_' . $companyId])->flush();
+        Cache::forget("activities_{$companyId}");
     }
 }

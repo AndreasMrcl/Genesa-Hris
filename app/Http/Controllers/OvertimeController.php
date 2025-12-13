@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Employee;
 use App\Models\Overtime;
+use App\Models\ActivityLog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
@@ -28,9 +29,9 @@ class OvertimeController extends Controller
             return redirect()->route('login');
         }
 
-        $cacheKey = 'overtimes_' . $userCompany->id;
+        $cacheKey = "overtimes_{$userCompany->id}";
 
-        $overtimes = Cache::remember($cacheKey, now()->addMinutes(60), function () use ($userCompany) {
+        $overtimes = Cache::remember($cacheKey, 180, function () use ($userCompany) {
             return $userCompany->overtimes()->with('employee')->get();
         });
 
@@ -52,11 +53,23 @@ class OvertimeController extends Controller
             'overtime_pay' => 'required',
         ]);
 
-        $data['compani_id'] = $userCompany->id;
+        $overtime = Overtime::create([
+            'employee_id'     => $data['employee_id'],
+            'overtime_date'     => $data['overtime_date'],
+            'start_time'     => $data['start_time'],
+            'end_time'     => $data['end_time'],
+            'status'     => $data['status'],
+            'overtime_pay'     => $data['overtime_pay'],
+            'compani_id'  => $userCompany->id,
+        ]);
 
-        Overtime::create($data);
+        $this->logActivity(
+            'Create Overtime',
+            "Menambahkan overtime '{$overtime->employee->name}'",
+            $userCompany->id
+        );
 
-        Cache::forget('overtimes');
+        $this->clearCache($userCompany->id);
 
         return redirect(route('overtime'))->with('success', 'Overtime successfully created!');
     }
@@ -65,7 +78,7 @@ class OvertimeController extends Controller
     {
         $userCompany = auth()->user()->compani;
 
-        $request->validate([
+        $data = $request->validate([
             'employee_id' => 'required',
             'overtime_date' => 'required',
             'start_time' => 'required',
@@ -74,25 +87,71 @@ class OvertimeController extends Controller
             'overtime_pay' => 'required',
         ]);
 
-        $data = $request->only(['employee_id', 'overtime_date', 'start_time', 'end_time', 'total_hours', 'reason', 'status', 'overtime_pay']);
+        $overtime = Overtime::where('id', $id)
+            ->where('compani_id', $userCompany->id)
+            ->firstOrFail();
 
-        $data['compani_id'] = $userCompany->id;
+        $oldContent = $overtime->employee->name;
 
-        Overtime::where('id', $id)->update($data);
+        $overtime->update([
+            'employee_id'     => $data['employee_id'],
+            'overtime_date'     => $data['overtime_date'],
+            'start_time'     => $data['start_time'],
+            'end_time'     => $data['end_time'],
+            'status'     => $data['status'],
+            'overtime_pay'     => $data['overtime_pay'],
+        ]);
 
-        Cache::forget('overtimes');
+        $this->logActivity(
+            'Update Overtime',
+            "Mengubah Overtime '{$oldContent}'",
+            $userCompany->id
+        );
+
+        $this->clearCache($userCompany->id);
 
         return redirect(route('overtime'))->with('success', 'Overtime successfully updated!');
     }
 
     public function destroy($id)
     {
-        Overtime::destroy($id);
+        $userCompany = auth()->user()->compani;
 
-        Cache::forget('overtimes_' . $userCompany->id);
+        $overtime = Overtime::where('id', $id)
+            ->where('compani_id', $userCompany->id)
+            ->first();
+
+        if ($overtime) {
+            $name = $overtime->employee->name;
+            $overtime->delete();
+
+            $this->logActivity(
+                'Delete Overtime',
+                "{$name}",
+                $userCompany->id
+            );
+        }
+
+        $this->clearCache($userCompany->id);
 
         return redirect(route('overtime'))->with('success', 'Overtime successfully deleted!');
     }
 
- 
+    private function clearCache($companyId)
+    {
+        Cache::forget("overtimes_{$companyId}");
+    }
+
+    private function logActivity($type, $description, $companyId)
+    {
+        ActivityLog::create([
+            'user_id'       => Auth::id(),
+            'compani_id'    => $companyId,
+            'activity_type' => $type,
+            'description'   => $description,
+            'created_at'    => now(),
+        ]);
+
+        Cache::forget("activities_{$companyId}");
+    }
 }

@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Branch;
 use App\Models\Employee;
-use App\Models\Position;
 use App\Models\ActivityLog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -30,9 +29,9 @@ class EmployeeController extends Controller
             return redirect()->route('login');
         }
 
-        $cacheKey = 'employees_' . $userCompany->id;
+        $cacheKey = "employees_{$userCompany->id}";
 
-        $employees = Cache::remember($cacheKey, 60, function () use ($userCompany) {
+        $employees = Cache::remember($cacheKey, 180, function () use ($userCompany) {
             return $userCompany->employees()->with('compani', 'branch', 'position')->get();
         });
 
@@ -54,6 +53,7 @@ class EmployeeController extends Controller
             'email' => 'required|email|unique:employees,email',
             'password' => 'required|min:6',
             'nik' => 'required|numeric',
+            'fingerprint_id' => 'required|numeric',
             'phone' => 'required|numeric',
             'address' => 'required|string',
             'ktp' => 'nullable|numeric',
@@ -88,6 +88,7 @@ class EmployeeController extends Controller
         $data['password'] = bcrypt($data['password']);
 
         $employee = Employee::create($data);
+
         $posName = $employee->position->name ?? '-';
 
         $this->logActivity(
@@ -96,7 +97,7 @@ class EmployeeController extends Controller
             $userCompany->id
         );
 
-        Cache::forget('employees_' . $userCompany->id);
+        $this->clearCache($userCompany->id);
 
         return redirect(route('employee'))->with('success', 'Employee successfully created!');
     }
@@ -111,6 +112,7 @@ class EmployeeController extends Controller
             'branch_id' => 'required|exists:branches,id',
             'email' => 'required|email',
             'nik' => 'required|numeric',
+            'fingerprint_id' => 'required|numeric',
             'phone' => 'required|numeric',
             'address' => 'required|string',
             'ktp' => 'nullable|numeric',
@@ -170,7 +172,7 @@ class EmployeeController extends Controller
 
         $this->logActivity('Update Employee', $desc, $userCompany->id);
 
-        Cache::forget('employees_' . $userCompany->id);
+        $this->clearCache($userCompany->id);
 
         return redirect(route('employee'))->with('success', 'Employee successfully updated!');
     }
@@ -181,18 +183,25 @@ class EmployeeController extends Controller
 
         $employee = Employee::where('id', $id)
             ->where('compani_id', $userCompany->id)
-            ->first();
+            ->firstOrFail();
 
-        if ($employee) {
-            $name = $employee->name;
-            $employee->delete();
-            $this->logActivity('Delete Employee', "Menghapus karyawan: {$name}", $userCompany->id);
+        $oldContent = $employee->name;
 
-            Cache::forget('employees_' . $userCompany->id);
-            return redirect(route('employee'))->with('success', 'Employee Berhasil Dihapus!');
-        }
+        $employee->delete();
+        $this->logActivity(
+            'Delete Employee',
+            "Menghapus karyawan: {$oldContent}",
+            $userCompany->id
+        );
+
+        $this->clearCache($userCompany->id);
 
         return redirect(route('employee'))->with('error', 'Employee not found or access denied.');
+    }
+
+    private function clearCache($companyId)
+    {
+        Cache::forget("employees_{$companyId}");
     }
 
     private function logActivity($type, $description, $companyId)
@@ -205,6 +214,6 @@ class EmployeeController extends Controller
             'created_at'    => now(),
         ]);
 
-        Cache::tags(['activities_' . $companyId])->flush();
+        Cache::forget("activities_{$companyId}");
     }
 }

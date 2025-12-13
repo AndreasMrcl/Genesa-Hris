@@ -19,6 +19,7 @@ class Employee extends Authenticatable
         'position_id',
         'email',
         'nik',
+        'fingerprint_id',
         'npwp',
         'ktp',
         'bpjs_kesehatan_no',
@@ -45,6 +46,11 @@ class Employee extends Authenticatable
     public function compani()
     {
         return $this->belongsTo(Compani::class);
+    }
+
+    public function activityLogs()
+    {
+        return $this->hasMany(ActivityLog::class);
     }
 
     public function branch()
@@ -95,5 +101,10 @@ class Employee extends Authenticatable
     public function deductEmps()
     {
         return $this->hasMany(DeductEmp::class);
+    }
+
+    public function attendanceLogs()
+    {
+        return $this->hasMany(AttendanceLog::class);
     }
 }

@@ -320,6 +320,11 @@
                                 <input type="number" name="npwp"
                                     class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-indigo-500 bg-white">
                             </div>
+                            <div>
+                                <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Fingerprint. Id</label>
+                                <input type="number" name="fingerprint_id"
+                                    class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-indigo-500 bg-white">
+                            </div>
                         </div>
 
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-5">

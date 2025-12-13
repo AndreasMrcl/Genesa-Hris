@@ -22,15 +22,13 @@ class AllowController extends Controller
             return redirect()->route('addcompany');
         }
 
-        $status = $userCompany->status;
-
-        if ($status !== 'Settlement') {
+        if ($userCompany->status !== 'Settlement') {
             return redirect()->route('login');
         }
 
-        $cacheKey = 'allowances_' . $userCompany->id;
+        $cacheKey = "allowances_{$userCompany->id}";
 
-        $allowances = Cache::remember($cacheKey, 60, function () use ($userCompany) {
+        $allowances = Cache::remember($cacheKey, 180, function () use ($userCompany) {
             return Allow::where('compani_id', $userCompany->id)->get();
         });
 
@@ -47,15 +45,20 @@ class AllowController extends Controller
         ]);
 
         $data['compani_id'] = $userCompany->id;
-        $data['is_taxable'] = $request->has('is_taxable');
+
+        $data['is_taxable'] = $request->boolean('is_taxable');
 
         $allow = Allow::create($data);
 
-        $this->logActivity('Create Allowance', "Menambahkan allowance baru: {$allow->name} ({$allow->type})", $userCompany->id);
+        $this->logActivity(
+            'Create Allowance',
+            "Menambahkan allowance baru: {$allow->name} ({$allow->type})",
+            $userCompany->id
+        );
 
-        Cache::forget('allowances_' . $userCompany->id);
+        $this->clearCache($userCompany->id);
 
-        return redirect(route('allowance'))->with('success', 'Allowance successfully created!');
+        return redirect()->route('allowance')->with('success', 'Allowance successfully created!');
     }
 
     public function update(Request $request, $id)
@@ -64,45 +67,46 @@ class AllowController extends Controller
 
         $request->validate([
             'name' => 'required',
-            'type' => 'required',
+            'type'  => 'required',
         ]);
 
         $allow = Allow::where('id', $id)
             ->where('compani_id', $userCompany->id)
             ->firstOrFail();
 
-        $oldData = [
-            'name' => $allow->name,
-            'type' => $allow->type,
+        $old = [
+            'name'       => $allow->name,
+            'type'       => $allow->type,
             'is_taxable' => $allow->is_taxable ? 'Yes' : 'No'
         ];
 
-        $newData = [
-            'name' => $request->name,
-            'type' => $request->type,
-            'is_taxable' => $request->has('is_taxable') // Simpan boolean ke DB
+        $new = [
+            'name'       => $request->name,
+            'type'       => $request->type,
+            'is_taxable' => $request->boolean('is_taxable'),
         ];
 
-        $allow->update($newData);
+        $allow->update($new);
 
-        $newData['is_taxable'] = $newData['is_taxable'] ? 'Yes' : 'No';
+        $new['is_taxable'] = $new['is_taxable'] ? 'Yes' : 'No';
 
+        // Detect what changed
         $changes = [];
-        foreach ($newData as $key => $value) {
-            if ($oldData[$key] != $value) {
-                $fieldLabel = ucfirst(str_replace('_', ' ', $key)); // is_taxable -> Is taxable
-                $changes[] = "$fieldLabel diubah dari '{$oldData[$key]}' menjadi '{$value}'";
+        foreach ($new as $field => $value) {
+            if ($old[$field] != $value) {
+                $label = ucfirst(str_replace('_', ' ', $field));
+                $changes[] = "{$label} diubah dari '{$old[$field]}' menjadi '{$value}'";
             }
         }
 
-        if (!empty($changes)) {
-            $descriptionString = "Update Allowance {$allow->name}: " . implode(', ', $changes);
-            $this->logActivity('Update Allowance', $descriptionString, $userCompany->id);
+        if ($changes) {
+            $desc = "Update Allowance '{$allow->name}': " . implode(', ', $changes);
+            $this->logActivity('Update Allowance', $desc, $userCompany->id);
         }
 
-        Cache::forget('allowances_' . $userCompany->id);
+        $this->clearCache($userCompany->id);
 
-        return redirect(route('allowance'))->with('success', 'Allowance successfully updated!');
+        return redirect()->route('allowance')->with('success', 'Allowance successfully updated!');
     }
 
     public function destroy($id)
@@ -113,28 +117,35 @@ class AllowController extends Controller
             ->where('compani_id', $userCompany->id)
             ->firstOrFail();
 
-        if ($allowance) {
-            $name = $allowance->name;
-            $allowance->delete();
+        $name = $allowance->name;
 
-            $this->logActivity('Delete Allowance', "Menghapus allowance: {$name}", $userCompany->id);
-        }
+        $allowance->delete();
 
-        Cache::forget('allowances_' . $userCompany->id);
+        $this->logActivity(
+            'Delete Allowance',
+            "Menghapus allowance: {$name}",
+            $userCompany->id
+        );
 
-        return redirect(route('allowance'))->with('success', 'Allowance successfully deleted!');
+        $this->clearCache($userCompany->id);
+
+        return redirect()->route('allowance')->with('success', 'Allowance successfully deleted!');
+    }
+
+    private function clearCache($companyId)
+    {
+        Cache::forget("allowances_{$companyId}");
     }
 
     private function logActivity($type, $description, $companyId)
     {
         ActivityLog::create([
-            'user_id'       => Auth::id(),
+            'user_id'       => auth()->id(),
             'compani_id'    => $companyId,
             'activity_type' => $type,
             'description'   => $description,
-            'created_at'    => now(),
         ]);
 
-        Cache::tags(['activities_' . $companyId])->flush();
+        Cache::forget("activities_{$companyId}");
     }
 }

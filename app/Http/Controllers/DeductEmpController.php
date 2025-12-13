@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Employee;
-use App\Models\Deduct  ;
+use App\Models\Deduct;
 use App\Models\DeductEmp;
 use App\Models\ActivityLog;
 use Illuminate\Http\Request;
@@ -20,9 +20,9 @@ class DeductEmpController extends Controller
             ->where('compani_id', $userCompany->id)
             ->firstOrFail();
 
-        $cacheKey = 'deduct_emp_' . $employeeId;
+        $cacheKey = "deduct_emp_{$employeeId}";
 
-        $employeeDeductions = Cache::remember($cacheKey, 60, function () use ($employeeId) {
+        $employeeDeductions = Cache::remember($cacheKey, 180, function () use ($employeeId) {
             return DeductEmp::with('deduct')
                 ->where('employee_id', $employeeId)
                 ->get();
@@ -63,17 +63,17 @@ class DeductEmpController extends Controller
         $employeeName = Employee::find($employeeId)->name ?? 'Unknown';
 
         $this->logActivity(
-            'Assign Deduction', 
-            "Memberikan potongan {$Deduct->name} kepada {$employeeName} dengan nominal Rp {$request->amount} ", 
+            'Assign Deduction',
+            "Memberikan potongan {$Deduct->name} kepada {$employeeName} dengan nominal Rp {$request->amount} ",
             $userCompany->id
         );
 
-        Cache::forget('deduct_emp_' . $employeeId);
+        $this->clearCache($employeeId);
 
         return back()->with('success', 'Deduction assigned successfully!');
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request, $employeeId)
     {
         $userCompany = auth()->user()->compani;
 
@@ -81,7 +81,7 @@ class DeductEmpController extends Controller
             'amount' => 'required|min:0',
         ]);
 
-        $assignment = DeductEmp::with(['employee', 'deduct'])->findOrFail($id);
+        $assignment = DeductEmp::with(['employee', 'deduct'])->findOrFail($employeeId);
 
         if ($assignment->employee->compani_id !== $userCompany->id) {
             abort(403, 'Unauthorized Action');
@@ -94,12 +94,12 @@ class DeductEmpController extends Controller
         ]);
 
         $this->logActivity(
-            'Update Assigned Deduction', 
-            "Mengubah nominal {$assignment->deduct->name} untuk {$assignment->employee->name} dari Rp {$oldAmount} menjadi Rp {$request->amount}", 
+            'Update Assigned Deduction',
+            "Mengubah nominal {$assignment->deduct->name} untuk {$assignment->employee->name} dari Rp {$oldAmount} menjadi Rp {$request->amount}",
             $userCompany->id
         );
 
-        Cache::forget('deduct_emp_' . $assignment->employee_id);
+        $this->clearCache($employeeId);
 
         return back()->with('success', 'Deduction amount updated!');
     }
@@ -117,18 +117,24 @@ class DeductEmpController extends Controller
         $employeeId = $assignment->employee_id;
         $deductName = $assignment->deduct->name;
         $employeeName = $assignment->employee->name;
-        
+
         $assignment->delete();
 
         $this->logActivity(
-            'Remove Assigned Deduction', 
-            "Menghapus potongan {$deductName} dari {$employeeName}", 
+            'Remove Assigned Deduction',
+            "Menghapus potongan {$deductName} dari {$employeeName}",
             $userCompany->id
         );
 
-        Cache::forget('deduct_emp_' . $employeeId);
+        $this->clearCache($employeeId);
 
         return back()->with('success', 'Deduction removed from employee!');
+    }
+
+
+    private function clearCache($employeeId)
+    {
+        Cache::forget("deduct_emp_{$employeeId}");
     }
 
     private function logActivity($type, $description, $companyId)
@@ -141,6 +147,6 @@ class DeductEmpController extends Controller
             'created_at'    => now(),
         ]);
 
-        Cache::tags(['activities_' . $companyId])->flush();
+        Cache::forget("activities_{$companyId}");
     }
 }

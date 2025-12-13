@@ -11,6 +11,7 @@ class ActivityLog extends Model
     use HasFactory;
     protected $fillable = [
         'user_id',
+        'employee_id',
         'compani_id',
         'activity_type',
         'description',
@@ -26,6 +27,11 @@ class ActivityLog extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function employee()
+    {
+        return $this->belongsTo(Employee::class);
     }
 
     public function compani()

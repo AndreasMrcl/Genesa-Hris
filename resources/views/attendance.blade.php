@@ -42,8 +42,12 @@
                     </h1>
                     <p class="text-sm text-gray-500 mt-1">List of recorded attendance periods</p>
                 </div>
-                <a href="{{ route('manageattendance') }}" 
-                   class="p-2 px-6 bg-green-500 text-white rounded-lg shadow hover:bg-green-600 transition font-semibold flex items-center gap-2">
+                <button onclick="document.getElementById('syncModal').classList.remove('hidden')"
+                    class="p-2 px-4 bg-white text-blue-600 border border-blue-200 rounded-lg shadow hover:bg-blue-50 transition font-semibold flex items-center gap-2">
+                    <i class="fas fa-sync-alt"></i> Sync Device
+                </button>
+                <a href="{{ route('manageattendance') }}"
+                    class="p-2 px-6 bg-green-500 text-white rounded-lg shadow hover:bg-green-600 transition font-semibold flex items-center gap-2">
                     <i class="fas fa-plus"></i> New Recap
                 </a>
             </div>
@@ -65,15 +69,16 @@
                                 <tr class="hover:bg-gray-50 transition">
                                     <td class="p-4">
                                         <div class="flex flex-col">
-                                            <a href="{{ route('manageattendance', ['start' => $batch->period_start, 'end' => $batch->period_end]) }}" 
-                                               class="text-lg font-bold text-blue-600 hover:underline mb-1">
-                                                {{ \Carbon\Carbon::parse($batch->period_start)->format('d M Y') }} - 
+                                            <a href="{{ route('manageattendance', ['start' => $batch->period_start, 'end' => $batch->period_end]) }}"
+                                                class="text-lg font-bold text-blue-600 hover:underline mb-1">
+                                                {{ \Carbon\Carbon::parse($batch->period_start)->format('d M Y') }} -
                                                 {{ \Carbon\Carbon::parse($batch->period_end)->format('d M Y') }}
                                             </a>
                                         </div>
                                     </td>
                                     <td class="p-4 text-center">
-                                        <span class="bg-blue-100 text-blue-800 text-xs font-medium px-3 py-1 rounded-full">
+                                        <span
+                                            class="bg-blue-100 text-blue-800 text-xs font-medium px-3 py-1 rounded-full">
                                             {{ $batch->total_records }} Records
                                         </span>
                                     </td>
@@ -82,13 +87,16 @@
                                     </td>
                                     <td class="p-4 text-center">
                                         <!-- Delete Batch Form -->
-                                        <form action="{{ route('delattendance') }}" method="POST" class="inline-block delete-batch-form">
+                                        <form action="{{ route('delattendance') }}" method="POST"
+                                            class="inline-block delete-batch-form">
                                             @csrf
                                             @method('DELETE')
                                             <input type="hidden" name="start" value="{{ $batch->period_start }}">
                                             <input type="hidden" name="end" value="{{ $batch->period_end }}">
-                                            
-                                            <button type="button" class="delete-confirm p-2 w-9 h-9 text-white bg-red-500 rounded-lg shadow hover:bg-red-600 transition" title="Delete Batch">
+
+                                            <button type="button"
+                                                class="delete-confirm p-2 w-9 h-9 text-white bg-red-500 rounded-lg shadow hover:bg-red-600 transition"
+                                                title="Delete Batch">
                                                 <i class="fas fa-trash"></i>
                                             </button>
                                         </form>
@@ -103,7 +111,6 @@
                             @endforelse
                         </tbody>
                     </table>
-                    
                     <!-- Pagination -->
                     <div class="mt-4 px-2">
                         {{ $batches->links() }}
@@ -113,13 +120,53 @@
         </div>
     </main>
 
+    <!-- SYNC MODAL -->
+
+    <div id="syncModal"
+        class="hidden fixed inset-0 bg-gray-900/60 backdrop-blur-sm flex items-center justify-center z-50 px-4">
+        <div class="bg-white rounded-2xl p-6 w-full max-w-md shadow-2xl relative">
+            <button onclick="document.getElementById('syncModal').classList.add('hidden')"
+                class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
+                <i class="fas fa-times text-xl"></i>
+            </button>
+
+            <h2 class="text-xl font-bold mb-4 text-gray-800 flex items-center gap-2">
+                <i class="fas fa-cloud-download-alt text-blue-600"></i> Sync from Cloud
+            </h2>
+
+            <p class="text-sm text-gray-500 mb-6">
+                Pull data manually from Fingerspot Cloud if realtime webhook missed some logs.
+            </p>
+
+            <form action="{{ route('fingerspotFetch') }}" method="POST" class="space-y-4">
+                @csrf
+                <div>
+                    <label class="block text-xs font-bold text-gray-600 uppercase mb-1">From
+                        Date</label>
+                    <input type="date" name="start_date" class="w-full rounded-lg border-gray-300 p-2.5 border"
+                        required>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-gray-600 uppercase mb-1">To Date</label>
+                    <input type="date" name="end_date" class="w-full rounded-lg border-gray-300 p-2.5 border"
+                        required>
+                </div>
+
+                <button type="submit"
+                    class="w-full py-3 bg-blue-600 text-white font-bold rounded-lg shadow-md hover:bg-blue-700 transition flex justify-center items-center gap-2">
+                    <i class="fas fa-sync"></i> Fetch Data
+                </button>
+            </form>
+        </div>
+    </div>
+
     <!-- SCRIPTS -->
     <script>
         document.querySelectorAll('.delete-confirm').forEach(button => {
             button.addEventListener('click', function(e) {
                 e.preventDefault();
                 const form = this.closest('form');
-                
+
                 Swal.fire({
                     title: 'Delete this period?',
                     text: "This will delete ALL attendance data for this date range. Cannot be undone!",

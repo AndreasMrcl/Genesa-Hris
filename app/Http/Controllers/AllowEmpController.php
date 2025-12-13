@@ -24,21 +24,19 @@ class AllowEmpController extends Controller
             return redirect()->route('addcompany');
         }
 
-        $status = $userCompany->status;
-
-        if ($status !== 'Settlement') {
+        if ($userCompany->status !== 'Settlement') {
             return redirect()->route('login');
         }
 
         $employee = $userCompany->employees()->findOrFail($employeeId);
 
-        $cacheKey = 'allow_emp_' . $employeeId;
+        $cacheKey = "allow_emp_{$employeeId}";
 
-        $employeeAllowances = Cache::remember($cacheKey, 60, function () use ($employee) {
+        $employeeAllowances = Cache::remember($cacheKey, 180, function () use ($employee) {
             return $employee->allowEmps()->with('allow')->get();
         });
 
-        $allows = $userCompany->allows()->get(); 
+        $allows = $userCompany->allows()->get();
 
         return view('allowEmp', compact('employee', 'employeeAllowances', 'allows'));
     }
@@ -71,14 +69,14 @@ class AllowEmpController extends Controller
         ]);
 
         $employeeName = Employee::find($employeeId)->name ?? 'Unknown';
-        
+
         $this->logActivity(
-            'Assign Allowance', 
-            "Memberikan tunjangan {$Allow->name} kepada {$employeeName} dengan nominal Rp {$request->amount} ", 
+            'Assign Allowance',
+            "Memberikan tunjangan {$Allow->name} kepada {$employeeName} dengan nominal Rp {$request->amount} ",
             $userCompany->id
         );
-        
-        Cache::forget('allow_emp_' . $employeeId);
+
+        $this->clearCache($employeeId);
 
         return back()->with('success', 'Allowance assigned successfully!');
     }
@@ -103,13 +101,15 @@ class AllowEmpController extends Controller
             'amount' => $request->amount
         ]);
 
+        $employeeId = $assignment->employee_id;
+
         $this->logActivity(
-            'Update Assigned Allowance', 
-            "Mengubah nominal {$assignment->allow->name} untuk {$assignment->employee->name} dari Rp {$oldAmount} menjadi Rp {$request->amount}", 
+            'Update Assigned Allowance',
+            "Mengubah nominal {$assignment->allow->name} untuk {$assignment->employee->name} dari Rp {$oldAmount} menjadi Rp {$request->amount}",
             $userCompany->id
         );
 
-        Cache::forget('allow_emp_' . $assignment->employee_id);
+        $this->clearCache($employeeId);
 
         return back()->with('success', 'Allowance amount updated!');
     }
@@ -127,18 +127,23 @@ class AllowEmpController extends Controller
         $employeeId = $assignment->employee_id;
         $allowName = $assignment->allow->name;
         $employeeName = $assignment->employee->name;
-        
+
         $assignment->delete();
 
         $this->logActivity(
-            'Remove Assigned Allowance', 
-            "Menghapus tunjangan {$allowName} dari {$employeeName}", 
+            'Remove Assigned Allowance',
+            "Menghapus tunjangan {$allowName} dari {$employeeName}",
             $userCompany->id
         );
 
-        Cache::forget('allow_emp_' . $employeeId);
+        $this->clearCache($employeeId);
 
         return back()->with('success', 'Allowance removed from employee!');
+    }
+
+    private function clearCache($employeeId)
+    {
+        Cache::forget("allow_emp_{$employeeId}");
     }
 
     private function logActivity($type, $description, $companyId)
@@ -151,6 +156,6 @@ class AllowEmpController extends Controller
             'created_at'    => now(),
         ]);
 
-        Cache::tags(['activities_' . $companyId])->flush();
+        Cache::forget("activities_{$companyId}");
     }
 }

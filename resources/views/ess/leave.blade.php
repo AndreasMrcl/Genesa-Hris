@@ -54,7 +54,7 @@
                                 </td>
                                 <td class="p-4">
                                     <div class="font-bold text-gray-900">{{ $item->employee->name ?? 'N/A' }}</div>
-                                    <div class="text-xs text-gray-500">{{ $item->employee->position ?? '' }}</div>
+                                    <div class="text-xs text-gray-500">{{ $item->employee->position->name ?? '' }}</div>
                                 </td>
                                 <td class="p-4 text-center text-xs">
                                     <div class="font-semibold text-gray-700">

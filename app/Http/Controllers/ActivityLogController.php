@@ -19,21 +19,13 @@ class ActivityLogController extends Controller
         if (!$userCompany) {
             return redirect()->route('addcompany');
         }
-        
-        $page = request()->get('page', 1);
 
-        $cacheTag = 'activities_' . $userCompany->id;
+        $cacheKey = "activities_{$userCompany->id}";
 
-        $cacheKey = 'page_' . $page;
-
-        $logs = Cache::tags([$cacheTag])->remember($cacheKey, now()->addMinutes(60), function () use ($userCompany) {
-            return ActivityLog::with('user')
-                ->where('compani_id', $userCompany->id) // Filter hanya log perusahaan ini
-                ->latest()
-                ->paginate(15);
+        $logs = Cache::remember($cacheKey, 180, function () use ($userCompany) {
+            return $userCompany->activityLogs()->latest()->get();
         });
 
         return view('activityLog', compact('logs'));
     }
-
 }

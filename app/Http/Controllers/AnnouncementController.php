@@ -28,9 +28,9 @@ class AnnouncementController extends Controller
             return redirect()->route('login');
         }
 
-        $cacheKey = 'announcements_' . $userCompany->id;
+        $cacheKey = "announcements_{$userCompany->id}";
 
-        $announcements = Cache::remember($cacheKey, 60, function () use ($userCompany) {
+        $announcements = Cache::remember($cacheKey, 180, function () use ($userCompany) {
             return Announcement::where('compani_id', $userCompany->id)
                 ->latest('created_at')
                 ->get();
@@ -47,17 +47,18 @@ class AnnouncementController extends Controller
             'content'     => 'required|string',
         ]);
 
-        $data['compani_id'] = $userCompany->id;
-
-        Announcement::create($data);
+        $announcement = Announcement::create([
+            'content'     => $data['content'],
+            'compani_id'  => $userCompany->id,
+        ]);
 
         $this->logActivity(
             'Create Announcement',
-            "Menambahkan announcement ({$request->content})",
+            "Menambahkan announcement '{$announcement->content}'",
             $userCompany->id
         );
 
-        Cache::forget('announcements_' . $userCompany->id);
+        $this->clearCache($userCompany->id);
 
         return redirect(route('announcement'))->with('success', 'Ann created successfully!');
     }
@@ -66,25 +67,27 @@ class AnnouncementController extends Controller
     {
         $userCompany = auth()->user()->compani;
 
-        $request->validate([
-            'content'     => 'required|string',
+        $data = $request->validate([
+            'content' => 'required|string',
         ]);
 
         $announcement = Announcement::where('id', $id)
             ->where('compani_id', $userCompany->id)
             ->firstOrFail();
 
+        $oldContent = $announcement->content;
+
         $announcement->update([
-            'content'     => $request->content,
+            'content' => $data['content'],
         ]);
 
         $this->logActivity(
-            'Update Note',
-            "Mengubah catatan ID #{$announcement->id} dengan {$announcement->content}",
+            'Update Announcement',
+            "Mengubah Announcement '{$oldContent}' menjadi '{$announcement->content}'",
             $userCompany->id
         );
 
-        Cache::forget('announcements_' . $userCompany->id);
+        $this->clearCache($userCompany->id);
 
         return redirect(route('announcement'))->with('success', 'Announcement updated successfully!');
     }
@@ -95,21 +98,26 @@ class AnnouncementController extends Controller
 
         $announcement = Announcement::where('id', $id)
             ->where('compani_id', $userCompany->id)
-            ->first();
+            ->firstOrFail();
 
-        if ($announcement) {
-            $announcement->delete();
+        $oldContent = $announcement->content;
 
-            $this->logActivity(
-                'Delete Announcement',
-                "Menghapus announcement {$announcement->content}",
-                $userCompany->id
-            );
+        $announcement->delete();
 
-            Cache::forget('announcements_' . $userCompany->id);
-        }
+        $this->logActivity(
+            'Delete Announcement',
+            "Menghapus announcement '{$oldContent}'",
+            $userCompany->id
+        );
+
+        $this->clearCache($userCompany->id);
 
         return redirect(route('announcement'))->with('success', 'Announcement deleted successfully!');
+    }
+
+    private function clearCache($companyId)
+    {
+        Cache::forget("announcements_{$companyId}");
     }
 
     private function logActivity($type, $description, $companyId)
@@ -122,6 +130,6 @@ class AnnouncementController extends Controller
             'created_at'    => now(),
         ]);
 
-        Cache::tags(['activities_' . $companyId])->flush();
+        Cache::forget("activities_{$companyId}");
     }
 }
