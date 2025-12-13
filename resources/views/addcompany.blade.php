@@ -17,7 +17,7 @@
 
 <body class="bg-gray-100">
     <!-- end sidenav -->
-        <main class="w-5/6 mx-auto">
+    <main class="w-5/6 mx-auto">
         @include('layout.navbar')
 
         <div class="p-6 space-y-6">
@@ -52,7 +52,8 @@
                     <section>
                         <h2 class="font-bold text-xl mb-4 text-gray-800">Penanggung Jawab</h2>
 
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 p-5 bg-gray-50 border border-gray-200 rounded-xl">
+                        <div
+                            class="grid grid-cols-1 md:grid-cols-3 gap-4 p-5 bg-gray-50 border border-gray-200 rounded-xl">
 
                             <div class="space-y-2">
                                 <label class="font-semibold text-gray-700">Name</label>
@@ -91,7 +92,8 @@
                     <section>
                         <h2 class="font-bold text-xl mb-4 text-gray-800">Rekening Bank</h2>
 
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 p-5 bg-gray-50 border border-gray-200 rounded-xl">
+                        <div
+                            class="grid grid-cols-1 md:grid-cols-3 gap-4 p-5 bg-gray-50 border border-gray-200 rounded-xl">
 
                             <div class="space-y-2">
                                 <label class="font-semibold text-gray-700">Atas Nama</label>
@@ -136,10 +138,9 @@
                                     class="bg-white border border-gray-300 text-gray-900 p-3 rounded-xl w-full"
                                     id="location" name="location" value="{{ old('location') }}" required readonly />
 
-                                <input type="text"
-                                    id="searchLocation"
+                                <input type="text" id="searchLocation"
                                     class="bg-white border border-gray-300 text-gray-900 p-3 rounded-xl w-full"
-                                    placeholder="Search location..."/>
+                                    placeholder="Search location..." />
 
                                 <div class="flex gap-3">
                                     <button type="button" id="searchBtn"
@@ -154,17 +155,19 @@
                                 </div>
 
                                 <div id="map"
-                                    class="w-full h-64 rounded-xl border border-gray-300 shadow-sm overflow-hidden"></div>
+                                    class="w-full h-64 rounded-xl border border-gray-300 shadow-sm overflow-hidden">
+                                </div>
                             </div>
 
                         </div>
                     </section>
 
-                    <button id="submitBtn" type="submit"
-                        class="bg-blue-600 hover:bg-blue-700 text-white p-4 w-full rounded-xl font-semibold shadow-sm transition">
-                        Submit
-                    </button>
-
+                    <div class="pt-4 flex justify-end border-t border-gray-100">
+                        <button type="submit"
+                            class="px-8 py-3 bg-slate-800 text-white font-bold rounded-lg shadow-lg hover:bg-slate-900 transition transform hover:-translate-y-0.5 flex items-center gap-2">
+                            <i class="fas fa-save"></i> Save Company Info
+                        </button>
+                    </div>
                 </form>
             </div>
         </div>
@@ -243,15 +246,9 @@
         };
 
         const form = document.getElementById('companyForm');
-        const submitBtn = document.getElementById('submitBtn');
-
-        form.addEventListener('submit', () => {
-            submitBtn.disabled = true;
-            submitBtn.textContent = 'Submitting...';
-            submitBtn.classList.add('opacity-70', 'cursor-not-allowed');
-        });
+        
     </script>
-    
+
     @include('layout.loading')
 
 </body>

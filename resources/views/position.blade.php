@@ -59,7 +59,7 @@
                                             {{ str_replace('_', ' ', $item->category) }}
                                         </span>
                                     </td>
-                                    <td class="p-4 text-right font-mono text-slate-600">
+                                    <td class="p-4 font-mono text-slate-600 ">
                                         Rp {{ number_format($item->base_salary_default, 0, ',', '.') }}
                                     </td>
                                     <td class="p-4">
@@ -121,7 +121,7 @@
                     </div>
                     <div>
                         <label class="block text-sm font-semibold text-gray-700 mb-1">Default Salary (Rp)</label>
-                        <input type="text" name="base_salary_default" class="currency w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-slate-500" placeholder="0" required>
+                        <input type="text" name="base_salary_default" value="0" class="currency w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-slate-500" placeholder="0">
                     </div>
                 </div>
 
@@ -164,7 +164,7 @@
                     </div>
                     <div>
                         <label class="block text-sm font-semibold text-gray-700 mb-1">Default Salary (Rp)</label>
-                        <input type="text" id="editSalary" name="base_salary_default" class="currency w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-blue-500" required>
+                        <input type="text" id="editSalary" name="base_salary_default" value="0" class="currency w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-blue-500">
                     </div>
                 </div>
 

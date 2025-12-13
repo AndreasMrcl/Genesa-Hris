@@ -99,6 +99,7 @@
                                                 data-branch="{{ $item->branch_id }}" 
                                                 data-email="{{ $item->email }}"
                                                 data-nik="{{ $item->nik }}" 
+                                                data-fingerprint_id="{{ $item->fingerprint_id }}" 
                                                 data-ktp="{{ $item->ktp }}"
                                                 data-npwp="{{ $item->npwp }}"
                                                 data-bpjs-kes-no="{{ $item->bpjs_kesehatan_no }}"
@@ -318,6 +319,11 @@
                             <div>
                                 <label class="block text-xs font-bold text-gray-600 uppercase mb-1">NPWP</label>
                                 <input type="number" name="npwp"
+                                    class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-indigo-500 bg-white">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Fingerprint. Id</label>
+                                <input type="number" name="fingerprint_id"
                                     class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-indigo-500 bg-white">
                             </div>
                         </div>
@@ -541,6 +547,12 @@
                                 <input type="number" id="editNpwp" name="npwp"
                                     class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border bg-white">
                             </div>
+                                                        <div>
+                                <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Fingerprint. Id</label>
+                                <input type="number" id="editFingerprint" name="fingerprint_id"
+                                    class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-indigo-500 bg-white">
+                            </div>
+
                         </div>
 
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-5">
@@ -739,6 +751,7 @@
                 $('#editEmail').val(btn.data('email'));
                 $('#editPassword').val('');
                 $('#editNik').val(btn.data('nik'));
+                $('#editFingerprint').val(btn.data('fingerprint_id'));
                 $('#editPhone').val(btn.data('phone'));
                 $('#editAddress').val(btn.data('address'));
                 $('#editJoinDate').val(btn.data('join'));

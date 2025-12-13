@@ -19,26 +19,13 @@ class ActivityLogController extends Controller
         if (!$userCompany) {
             return redirect()->route('addcompany');
         }
-        
-        $status = $userCompany->status;
 
-        if ($status !== 'Settlement') {
-            return redirect()->route('login');
-        }
-        
-        $page = request()->get('page', 1);
+        $cacheKey = "activities_{$userCompany->id}";
 
-        $cacheTag = 'activities_' . $userCompany->id;
-
-        $cacheKey = 'page_' . $page;
-
-        $logs = Cache::tags([$cacheTag])->remember($cacheKey, now()->addMinutes(60), function () use ($userCompany) {
-            return $userCompany->activityLogs()->with('user')
-                ->latest()
-                ->paginate(15);
+        $logs = Cache::remember($cacheKey, 180, function () use ($userCompany) {
+            return $userCompany->activityLogs()->latest()->get();
         });
 
         return view('activityLog', compact('logs'));
     }
-
 }

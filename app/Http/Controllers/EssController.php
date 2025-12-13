@@ -5,9 +5,13 @@ namespace App\Http\Controllers;
 use App\Models\Leave;
 use App\Models\Overtime;
 use App\Models\Attendance;
+use App\Models\ActivityLog;
+use App\Models\Payroll;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
+
 
 class EssController extends Controller
 {
@@ -65,15 +69,25 @@ class EssController extends Controller
             'reason' => 'required',
         ]);
 
-        $data['compani_id'] = $userCompany->id;
+        $leave = Leave::create([
+            'employee_id'     => $data['employee_id'],
+            'start_date'     => $data['start_date'],
+            'end_date'     => $data['end_date'],
+            'type'     => $data['type'],
+            'reason'     => $data['reason'],
+            'compani_id'  => $userCompany->id,
+        ]);
 
-        Leave::create($data);
+        $this->logActivity(
+            'Create Leave',
+            "Membuat leave '{$leave->employee->name}'",
+            $userCompany->id
+        );
 
-        Cache::forget('leaves');
+        Cache::forget("leaves_{$userCompany->id}");
 
         return redirect(route('ess-leave'));
     }
-
 
     public function overtime()
     {
@@ -98,11 +112,21 @@ class EssController extends Controller
             'end_time' => 'required',
         ]);
 
-        $data['compani_id'] = $userCompany->id;
+        $overtime = Overtime::create([
+            'employee_id'     => $data['employee_id'],
+            'overtime_date'     => $data['overtime_date'],
+            'start_time'     => $data['start_time'],
+            'end_time'     => $data['end_time'],
+            'compani_id'  => $userCompany->id,
+        ]);
 
-        Overtime::create($data);
+        $this->logActivity(
+            'Create Overtime',
+            "Menambahkan overtime '{$overtime->employee->name}'",
+            $userCompany->id
+        );
 
-        Cache::forget('overtimes');
+        Cache::forget("overtimes_{$userCompany->id}");
 
         return redirect(route('ess-overtime'));
     }
@@ -124,7 +148,26 @@ class EssController extends Controller
             return redirect('/');
         }
 
-        return view('ess.payroll');
+        $payrolls = Auth::guard('employee')->user()->payrolls;
+
+        
+
+        return view('ess.payroll', compact('payrolls'));
+    }
+
+    public function downloadPdf($id)
+    {
+        if (!Auth::guard('employee')->check()) {
+            return redirect('/');
+        }
+      
+        $payroll = Payroll::with(['employee', 'payrollDetails'])->findOrFail($id);
+
+        $pdf = Pdf::loadView('ess.pdf', compact('payroll'));
+        
+        $pdf->setPaper('A4', 'portrait');
+
+        return $pdf->stream('Payslip-' . $payroll->employee->name . '-' . $payroll->pay_period_end . '.pdf');
     }
 
     public function organization()
@@ -144,10 +187,23 @@ class EssController extends Controller
 
         $employee = Auth::guard('employee')->user();
 
-                $compani = $employee->compani;
+        $compani = $employee->compani;
 
         $announcements = $compani->announcements;
 
         return view('ess.profil', compact('employee', 'compani', 'announcements'));
+    }
+
+    private function logActivity($type, $description, $companyId)
+    {
+        ActivityLog::create([
+            'employee_id'       => Auth::guard('employee')->id(),
+            'compani_id'    => $companyId,
+            'activity_type' => $type,
+            'description'   => $description,
+            'created_at'    => now(),
+        ]);
+
+        Cache::forget("activities_{$companyId}");
     }
 }

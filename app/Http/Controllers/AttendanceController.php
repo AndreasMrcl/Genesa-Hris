@@ -33,15 +33,15 @@ class AttendanceController extends Controller
 
         $page = request()->get('page', 1);
 
-        $cacheTag = 'attendance_batches_' . $userCompany->id; 
+        $cacheTag = 'attendance_batches_' . $userCompany->id;
         $cacheKey = 'page_' . $page;
 
         $batches = Cache::tags([$cacheTag])->remember($cacheKey, now()->addMinutes(60), function () use ($userCompany) {
             return $userCompany->attendances()
                 ->select(
-                    'period_start', 
-                    'period_end', 
-                    DB::raw('count(*) as total_records'), 
+                    'period_start',
+                    'period_end',
+                    DB::raw('count(*) as total_records'),
                     DB::raw('max(updated_at) as last_updated')
                 )
                 ->groupBy('period_start', 'period_end')
@@ -55,40 +55,43 @@ class AttendanceController extends Controller
     public function manage(Request $request)
     {
         $userCompany = Auth::user()->compani;
-        
+
         $start = $request->get('start');
         $end = $request->get('end');
         $employees = [];
         $attendances = [];
-        $machineData = []; 
+        $machineData = [];
 
         if ($start && $end) {
-            $employees = Cache::remember('employees_list_' . $userCompany->id, 60, function () use ($userCompany) {
-                return $userCompany->employees()->orderBy('name')->get();
-            });
+            // Ambil daftar karyawan langsung dari database (realtime)
+            $employees = $userCompany->employees()->orderBy('name')->get();
 
+            // Ambil attendances existing untuk periode
             $attendances = $userCompany->attendances()
                 ->where('period_start', $start)
                 ->where('period_end', $end)
                 ->get()
                 ->keyBy('employee_id');
-            
+
+            // Ambil logs dari device / Fingerspot, hitung per hari
             $rawLogs = AttendanceLog::where('compani_id', $userCompany->id)
                 ->whereBetween('scan_time', [$start . ' 00:00:00', $end . ' 23:59:59'])
                 ->select('employee_id', DB::raw('DATE(scan_time) as scan_date'))
                 ->distinct()
                 ->get();
 
+            // Group logs per employee dan hitung kehadiran per hari
             foreach ($rawLogs->groupBy('employee_id') as $empId => $logs) {
+                $uniqueDays = $logs->pluck('scan_date')->unique()->count();
+
                 $machineData[$empId] = [
-                    'present' => $logs->count(),
-                    'late'    => 0 
+                    'present' => $uniqueDays,
+                    'late'    => 0 // bisa hitung berdasarkan jam masuk nanti
                 ];
             }
         }
 
-        Cache::tags(['attendance_batches_' . $userCompany->id])->flush();
-
+        // Tidak ada cache, jadi semua realtime
         return view('manageAttendance', compact('start', 'end', 'employees', 'attendances', 'machineData'));
     }
 
@@ -129,15 +132,14 @@ class AttendanceController extends Controller
             DB::commit();
 
             $this->logActivity(
-                'Update Attendance Batch', 
-                "Input/Update rekap absensi periode {$request->period_start} s/d {$request->period_end}", 
+                'Update Attendance Batch',
+                "Input/Update rekap absensi periode {$request->period_start} s/d {$request->period_end}",
                 $userCompany->id
             );
 
             Cache::tags(['attendance_batches_' . $userCompany->id])->flush();
 
             return redirect()->route('attendance')->with('success', 'Attendance data saved successfully!');
-
         } catch (\Exception $e) {
             DB::rollBack();
             return back()->withErrors(['msg' => 'Error saving data: ' . $e->getMessage()])->withInput();
@@ -149,7 +151,7 @@ class AttendanceController extends Controller
         $userCompany = auth()->user()->compani;
 
         $request->validate([
-            'start' => 'required|date', 
+            'start' => 'required|date',
             'end'   => 'required|date',
         ]);
 
@@ -159,8 +161,8 @@ class AttendanceController extends Controller
             ->delete();
 
         $this->logActivity(
-            'Delete Attendance Batch', 
-            "Menghapus rekap absensi periode {$request->start} s/d {$request->end}", 
+            'Delete Attendance Batch',
+            "Menghapus rekap absensi periode {$request->start} s/d {$request->end}",
             $userCompany->id
         );
 
@@ -179,6 +181,6 @@ class AttendanceController extends Controller
             'created_at'    => now(),
         ]);
 
-        Cache::tags(['activities_' . $companyId])->flush();
+        Cache::forget("activities_{$companyId}");
     }
 }

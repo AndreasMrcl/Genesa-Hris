@@ -69,11 +69,7 @@
                         </div>
                         <div>
                             <p class="text-xs text-gray-400 uppercase tracking-wider">Period</p>
-                            <p class="text-lg font-semibold text-gray-800">{{ \Carbon\Carbon::parse($payroll->pay_period_start)->format('d M Y') }} - {{ \Carbon\Carbon::parse($payroll->pay_period_end)->format('d M Y') }}</p>
-                        </div>
-                        <div>
-                            <p class="text-xs text-gray-400 uppercase tracking-wider">Employee ID</p>
-                            <p class="text-lg font-semibold text-gray-800">{{ $payroll->employee->nik }}</p>
+                            <p class="text-lg font-semibold text-gray-800">{{ \Carbon\Carbon::parse($payroll->pay_period_end)->format('M Y') }}</p>
                         </div>
                         <div>
                             <p class="text-xs text-gray-400 uppercase tracking-wider">Branch</p>

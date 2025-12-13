@@ -93,7 +93,7 @@ Route::middleware('auth:web')->group(function () {
     Route::get('/announcement', [AnnouncementController::class, 'index'])->name('announcement');
     Route::post('/postannouncement', [AnnouncementController::class, 'store'])->name('postannouncement');
     Route::put('/announcement/{id}/update', [AnnouncementController::class, 'update'])->name('updateannouncement');
-    Route::delete('/announcement/{id}/delete', [AnnouncementController::class, 'destroy'])->name('delannouncement');            
+    Route::delete('/announcement/{id}/delete', [AnnouncementController::class, 'destroy'])->name('delannouncement');
 
     //PAYROLL
     Route::get('/payroll', [PayrollController::class, 'index'])->name('payroll');
@@ -175,6 +175,7 @@ Route::middleware('auth:employee')->group(function () {
     Route::get('/ess-note', [EssController::class, 'note'])->name('ess-note');
 
     Route::get('/ess-payroll', [EssController::class, 'payroll'])->name('ess-payroll');
+    Route::get('/ess-payroll/{id}/pdf', [EssController::class, 'downloadPdf'])->name('ess-pdf');
 
     Route::get('/ess-organization', [EssController::class, 'organization'])->name('ess-organization');
 

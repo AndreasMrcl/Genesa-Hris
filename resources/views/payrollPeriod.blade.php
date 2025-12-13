@@ -57,7 +57,7 @@
                                                 class="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-700 font-bold text-xs">
                                                 {{ substr($item->employee->name, 0, 2) }}
                                             </div>
-                                            <div>
+                                           <div>
                                                 <div class="font-medium text-gray-900">{{ $item->employee->name }}</div>
                                                 <div class="text-xs text-gray-500">{{ $item->employee->position->name  }}</div>
                                             </div>

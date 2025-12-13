@@ -13,10 +13,10 @@ class AttendanceLog extends Model
         'compani_id',
         'employee_id',
         'fingerprint_id',
-        'device_sn',     
-        'scan_time',  
+        'device_sn',
+        'scan_time',
         'verification_mode',
-        'scan_status',    
+        'scan_status',
         'is_processed'
     ];
 

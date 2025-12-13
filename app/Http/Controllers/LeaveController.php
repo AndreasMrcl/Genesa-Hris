@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Employee;
 use App\Models\Leave;
+use App\Models\Employee;
+use App\Models\ActivityLog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
@@ -28,9 +29,9 @@ class LeaveController extends Controller
             return redirect()->route('login');
         }
 
-        $cacheKey = 'leaves';
+        $cacheKey = "leaves_{$userCompany->id}";
 
-        $leaves = Cache::remember($cacheKey, now()->addMinutes(60), function () use ($userCompany) {
+        $leaves = Cache::remember($cacheKey, 180, function () use ($userCompany) {
             return $userCompany->leaves()->with('employee')->get();
         });
 
@@ -44,19 +45,31 @@ class LeaveController extends Controller
         $userCompany = auth()->user()->compani;
 
         $data = $request->validate([
-            'employee_id' => 'required',
-            'start_date' => 'required',
-            'end_date' => 'required',
-            'type' => 'required',
-            'reason' => 'required',
-            'status' => 'required',
+            'employee_id' => 'required|exists:employees,id',
+            'start_date'  => 'required|date',
+            'end_date'    => 'required|date|after_or_equal:start_date',
+            'type'        => 'required|string',
+            'reason'      => 'required|string',
+            'status'      => 'required|string',
         ]);
 
-        $data['compani_id'] = $userCompany->id;
+        $leave = Leave::create([
+            'employee_id'     => $data['employee_id'],
+            'start_date'     => $data['start_date'],
+            'end_date'     => $data['end_date'],
+            'type'     => $data['type'],
+            'reason'     => $data['reason'],
+            'status'     => $data['status'],
+            'compani_id'  => $userCompany->id,
+        ]);
 
-        Leave::create($data);
+        $this->logActivity(
+            'Create Leave',
+            "Membuat leave '{$leave->employee->name}'",
+            $userCompany->id
+        );
 
-        Cache::forget('leaves');
+        $this->clearCache($userCompany->id);
 
         return redirect(route('leave'))->with('success', 'Leave successfully created!');
     }
@@ -65,7 +78,7 @@ class LeaveController extends Controller
     {
         $userCompany = auth()->user()->compani;
 
-        $request->validate([
+        $data = $request->validate([
             'employee_id' => 'required',
             'start_date' => 'required',
             'end_date' => 'required',
@@ -74,23 +87,71 @@ class LeaveController extends Controller
             'status' => 'required',
         ]);
 
-        $data = $request->only(['employee_id', 'start_date', 'end_date', 'type', 'reason', 'status']);
+        $leave = Leave::where('id', $id)
+            ->where('compani_id', $userCompany->id)
+            ->firstOrFail();
 
-        $data['compani_id'] = $userCompany->id;
+        $oldContent = $leave->employee->name;
 
-        Leave::where('id', $id)->update($data);
+        $leave->update([
+            'employee_id' => $data['employee_id'],
+            'start_date' => $data['start_date'],
+            'end_date' => $data['end_date'],
+            'type' => $data['type'],
+            'reason' => $data['reason'],
+            'status' => $data['status'],
+        ]);
 
-        Cache::forget('leaves');
+
+        $this->logActivity(
+            'Update Leave',
+            "Mengubah leave '{$oldContent}' menjadi '{$leave->status}'",
+            $userCompany->id
+        );
+
+        $this->clearCache($userCompany->id);
 
         return redirect(route('leave'))->with('success', 'Leave successfully updated!');
     }
 
     public function destroy($id)
     {
-        Leave::destroy($id);
+        $userCompany = auth()->user()->compani;
 
-        Cache::forget('leaves');
+        $leave = Leave::where('id', $id)
+            ->where('compani_id', $userCompany->id)
+            ->first();
+
+        $oldContent = $leave->employee->name;
+
+        $leave->delete();
+
+        $this->logActivity(
+            'Delete Leave',
+            "Menghapus leave '{$oldContent}'",
+            $userCompany->id
+        );
+
+        $this->clearCache($userCompany->id);
 
         return redirect(route('leave'))->with('success', 'Leave successfully deleted!');
+    }
+
+    private function clearCache($companyId)
+    {
+        Cache::forget("leaves_{$companyId}");
+    }
+
+    private function logActivity($type, $description, $companyId)
+    {
+        ActivityLog::create([
+            'user_id'       => Auth::id(),
+            'compani_id'    => $companyId,
+            'activity_type' => $type,
+            'description'   => $description,
+            'created_at'    => now(),
+        ]);
+
+        Cache::forget("activities_{$companyId}");
     }
 }
