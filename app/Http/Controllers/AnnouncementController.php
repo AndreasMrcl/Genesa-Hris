@@ -31,7 +31,7 @@ class AnnouncementController extends Controller
         $cacheKey = 'announcements_' . $userCompany->id;
 
         $announcements = Cache::remember($cacheKey, 60, function () use ($userCompany) {
-            return Announcement::where('compani_id', $userCompany->id)
+            return $userCompany->announcements()
                 ->latest('created_at')
                 ->get();
         });

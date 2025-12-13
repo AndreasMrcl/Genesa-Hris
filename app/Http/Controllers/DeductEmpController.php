@@ -14,21 +14,31 @@ class DeductEmpController extends Controller
 {
     public function index($employeeId)
     {
+        if (!Auth::check()) {
+            return redirect('/');
+        }
+ 
         $userCompany = Auth::user()->compani;
 
-        $employee = Employee::where('id', $employeeId)
-            ->where('compani_id', $userCompany->id)
-            ->firstOrFail();
+        if (!$userCompany) {
+            return redirect()->route('addcompany');
+        }
+
+        $status = $userCompany->status;
+
+        if ($status !== 'Settlement') {
+            return redirect()->route('login');
+        }
+
+        $employee = $userCompany->employees()->findOrFail( $employeeId);
 
         $cacheKey = 'deduct_emp_' . $employeeId;
 
-        $employeeDeductions = Cache::remember($cacheKey, 60, function () use ($employeeId) {
-            return DeductEmp::with('deduct')
-                ->where('employee_id', $employeeId)
-                ->get();
+        $employeeDeductions = Cache::remember($cacheKey, 60, function () use ($employee) {
+            return $employee->deductEmps()->with('allow')->get();
         });
 
-        $deducts = Deduct::where('compani_id', $userCompany->id)->get();
+        $deducts = $userCompany->deducts()->get();
 
         return view('deductEmp', compact('employee', 'employeeDeductions', 'deducts'));
     }
@@ -42,12 +52,12 @@ class DeductEmpController extends Controller
             'amount' => 'required|min:0',
         ]);
 
-        $employee = Employee::where('id', $employeeId)
-            ->where('compani_id', $userCompany->id)
+        $employee = $userCompany->employees()
+            ->where('id', $employeeId)
             ->firstOrFail();
 
-        $Deduct = Deduct::where('id', $request->deduct_id)
-            ->where('compani_id', $userCompany->id)
+        $Deduct = $userCompany->deducts()
+            ->where('id', $request->deduct_id)
             ->first();
 
         if (!$Deduct) {

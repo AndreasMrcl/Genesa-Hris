@@ -15,7 +15,7 @@ class AllowController extends Controller
         if (!Auth::check()) {
             return redirect('/');
         }
-
+ 
         $userCompany = Auth::user()->compani;
 
         if (!$userCompany) {
@@ -31,7 +31,7 @@ class AllowController extends Controller
         $cacheKey = 'allowances_' . $userCompany->id;
 
         $allowances = Cache::remember($cacheKey, 60, function () use ($userCompany) {
-            return Allow::where('compani_id', $userCompany->id)->get();
+            return $userCompany->allows()->get();
         });
 
         return view('allowance', compact('allowances'));
@@ -80,7 +80,7 @@ class AllowController extends Controller
         $newData = [
             'name' => $request->name,
             'type' => $request->type,
-            'is_taxable' => $request->has('is_taxable') // Simpan boolean ke DB
+            'is_taxable' => $request->has('is_taxable') 
         ];
 
         $allow->update($newData);
@@ -90,7 +90,7 @@ class AllowController extends Controller
         $changes = [];
         foreach ($newData as $key => $value) {
             if ($oldData[$key] != $value) {
-                $fieldLabel = ucfirst(str_replace('_', ' ', $key)); // is_taxable -> Is taxable
+                $fieldLabel = ucfirst(str_replace('_', ' ', $key));
                 $changes[] = "$fieldLabel diubah dari '{$oldData[$key]}' menjadi '{$value}'";
             }
         }

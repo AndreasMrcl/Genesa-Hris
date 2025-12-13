@@ -52,12 +52,12 @@ class AllowEmpController extends Controller
             'amount' => 'required|min:0',
         ]);
 
-        $employee = Employee::where('id', $employeeId)
-            ->where('compani_id', $userCompany->id)
+        $employee = $userCompany->employees()
+            ->where('id', $employeeId)
             ->firstOrFail();
 
-        $Allow = Allow::where('id', $request->allow_id)
-            ->where('compani_id', $userCompany->id)
+        $Allow = $userCompany->allows()
+            ->where('id', $request->allow_id)
             ->first();
 
         if (!$Allow) {

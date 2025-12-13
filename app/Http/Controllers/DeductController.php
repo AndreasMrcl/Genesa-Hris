@@ -31,7 +31,7 @@ class DeductController extends Controller
         $cacheKey = 'deductions_' . $userCompany->id;
 
         $deductions = Cache::remember($cacheKey, 60, function () use ($userCompany) {
-            return Deduct::where('compani_id', $userCompany->id)->get();
+            return $userCompany->deducts()->get();
         });
 
         return view('deduction', compact('deductions'));

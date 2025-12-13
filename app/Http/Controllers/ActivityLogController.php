@@ -20,6 +20,12 @@ class ActivityLogController extends Controller
             return redirect()->route('addcompany');
         }
         
+        $status = $userCompany->status;
+
+        if ($status !== 'Settlement') {
+            return redirect()->route('login');
+        }
+        
         $page = request()->get('page', 1);
 
         $cacheTag = 'activities_' . $userCompany->id;
@@ -27,8 +33,7 @@ class ActivityLogController extends Controller
         $cacheKey = 'page_' . $page;
 
         $logs = Cache::tags([$cacheTag])->remember($cacheKey, now()->addMinutes(60), function () use ($userCompany) {
-            return ActivityLog::with('user')
-                ->where('compani_id', $userCompany->id) // Filter hanya log perusahaan ini
+            return $userCompany->activityLogs()->with('user')
                 ->latest()
                 ->paginate(15);
         });

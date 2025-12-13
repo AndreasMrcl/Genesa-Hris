@@ -32,8 +32,8 @@ class NoteController extends Controller
         $cacheKey = 'notes_' . $userCompany->id;
 
         $notes = Cache::remember($cacheKey, 60, function () use ($userCompany) {
-            return Note::with('employee')
-                ->where('compani_id', $userCompany->id)
+            return $userCompany->notes()
+                ->with('employee')
                 ->latest('created_at') 
                 ->get();
         });
