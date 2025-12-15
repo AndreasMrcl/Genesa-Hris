@@ -191,6 +191,7 @@ class EmployeeController extends Controller
         $oldContent = $employee->name;
 
         $employee->delete();
+        
         $this->logActivity(
             'Delete Employee',
             "Menghapus karyawan: {$oldContent}",

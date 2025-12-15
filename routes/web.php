@@ -16,6 +16,7 @@ use App\Http\Controllers\AllowEmpController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\OvertimeController;
 use App\Http\Controllers\DeductEmpController;
+use App\Http\Controllers\TaxConfigController;
 use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\ActivityLogController;
 use App\Http\Controllers\AnnouncementController;
@@ -43,6 +44,7 @@ Route::middleware('auth:web')->group(function () {
     Route::get('/company', [CompaniController::class, 'index'])->name('company');
     Route::get('/addcompany', [CompaniController::class, 'create'])->name('addcompany');
     Route::post('/postcompany', [CompaniController::class, 'store'])->name('postcompany');
+    Route::put('/company/{id}/update', [CompaniController::class, 'update'])->name('updatecompany');
     Route::delete('/company/{id}/delete', [CompaniController::class, 'destroy'])->name('delcompany');
 
     //BRANCH

@@ -21,7 +21,7 @@
         <div class="p-6 space-y-6">
 
             <!-- Header -->
-            <div class="flex justify-between items-center bg-white p-5 rounded-xl shadow-sm border border-gray-100">
+            <div class="md:flex justify-between items-center bg-white p-5 rounded-xl shadow-sm border border-gray-100 space-y-2 md:space-y-0">
                 <div>
                     <h1 class="font-bold text-2xl text-gray-800">
                         <i class="fas fa-building text-cyan-600"></i> Branch Management</h1>
@@ -39,9 +39,9 @@
                         <thead class="bg-gray-100 text-gray-600 text-sm leading-normal">
                             <tr>
                                 <th class="p-4 font-bold rounded-tl-lg text-center" width="5%">No</th>
-                                <th class="p-4 font-bold">Branch Name</th>
+                                <th class="p-4 font-bold">Name</th>
                                 <th class="p-4 font-bold">Category</th>
-                                <th class="p-4 font-bold">Contact Info</th>
+                                <th class="p-4 font-bold">Contact</th>
                                 <th class="p-4 font-bold text-center rounded-tr-lg" width="15%">Actions</th>
                             </tr>
                         </thead>

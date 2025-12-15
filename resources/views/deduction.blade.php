@@ -22,7 +22,7 @@
         <div class="p-6 space-y-6">
 
             <!-- Header -->
-            <div class="flex justify-between items-center bg-white p-5 rounded-xl shadow-sm border border-gray-100">
+            <div class="md:flex justify-between items-center bg-white p-5 rounded-xl shadow-sm border border-gray-100 space-y-2 md:space-y-0">
                 <div>
                     <h1 class="font-bold text-2xl text-gray-800">
                         <i class="fas fa-file-invoice-dollar text-rose-600"></i> Master Deductions</h1>

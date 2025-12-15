@@ -19,7 +19,7 @@
         <div class="p-6 space-y-6">
 
             <!-- HEADER -->
-            <div class="flex justify-between items-center bg-white p-5 rounded-xl shadow-sm border border-gray-100">
+            <div class="md:flex justify-between items-center bg-white p-5 rounded-xl shadow-sm border border-gray-100 space-y-2 md:space-y-0">
                 <div>
                     <h1 class="font-bold text-2xl text-gray-800 flex items-center gap-2">
                         <i class="fa-solid fa-user-gear text-slate-600"></i> Profile Settings
@@ -29,7 +29,7 @@
             </div>
 
             <!-- SUCCESS ALERT -->
-            @if(session('success'))
+            @if (session('success'))
                 <div class="p-4 mb-4 text-sm text-green-800 rounded-lg bg-green-50 flex items-center gap-2">
                     <i class="fas fa-check-circle"></i> {{ session('success') }}
                 </div>
@@ -51,14 +51,15 @@
                             <div>
                                 <label class="block text-sm font-semibold text-gray-700 mb-1">Name</label>
                                 <input type="text" name="name" value="{{ auth()->user()->name }}"
-                                    class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-indigo-500" readonly>
+                                    class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-indigo-500"
+                                    readonly>
                             </div>
 
                             <div>
                                 <label class="block text-sm font-semibold text-gray-700 mb-1">Email</label>
                                 <input type="email" name="email" value="{{ auth()->user()->email }}"
-                                    class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-indigo-500" readonly
-                                    >
+                                    class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-indigo-500"
+                                    readonly>
                             </div>
 
                         </div>
@@ -71,7 +72,8 @@
                         <i class="fa-solid fa-building mr-1"></i> Company Information
                     </h2>
 
-                    <form action="" method="POST" class="space-y-6">
+                    <form action="{{ route('updatecompany', $userCompany->id) }}" method="POST" class="space-y-6"
+                        enctype="multipart/form-data">
                         @csrf
                         @method('PUT')
 
@@ -80,7 +82,8 @@
                             <div>
                                 <label class="block text-sm font-semibold text-gray-700 mb-1">Company Name</label>
                                 <input type="text" name="company" value="{{ $userCompany->company }}"
-                                    class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-emerald-500" required>
+                                    class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-emerald-500"
+                                    required>
                             </div>
 
                             <div>
@@ -98,14 +101,15 @@
                             <div>
                                 <label class="block text-sm font-semibold text-gray-700 mb-1">Address</label>
                                 <textarea name="location"
-                                    class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-emerald-500"
-                                    rows="3">{{ $userCompany->location }}</textarea>
+                                    class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-emerald-500" rows="3"
+                                    readonly>{{ $userCompany->location }}</textarea>
                             </div>
 
                         </div>
 
                         <!-- MAP -->
-                        <div id="map" class="w-full h-64 rounded-xl overflow-hidden shadow-sm border border-gray-300"></div>
+                        <div id="map"
+                            class="w-full h-64 rounded-xl overflow-hidden shadow-sm border border-gray-300"></div>
 
                         <!-- SAVE BUTTON -->
                         <div class="pt-4 flex justify-end border-t border-gray-100">
@@ -115,6 +119,7 @@
                             </button>
                         </div>
                     </form>
+
                 </section>
 
             </div>
@@ -148,7 +153,9 @@
                 })
                 .catch(err => console.error("Map error:", err));
         });
+        
     </script>
 
 </body>
+
 </html>

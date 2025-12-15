@@ -57,7 +57,7 @@
         <div class="p-5 space-y-4">
 
             <!-- Header & Add Button -->
-            <div class="flex justify-between items-center bg-white p-5 rounded-xl shadow-sm border border-gray-100">
+            <div class="md:flex justify-between items-center bg-white p-5 rounded-xl shadow-sm border border-gray-100 space-y-2 md:space-y-0">
                 <h1 class="font-semibold text-2xl text-black">Shift</h1>
                 <button id="addBtn"
                     class="p-2 px-8 bg-green-500 text-white rounded-lg shadow hover:bg-green-600 transition">

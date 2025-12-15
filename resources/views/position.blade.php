@@ -23,7 +23,7 @@
         <div class="p-6 space-y-6">
 
             <!-- Header -->
-            <div class="flex justify-between items-center bg-white p-5 rounded-xl shadow-sm border border-gray-100">
+            <div class="md:flex justify-between items-center bg-white p-5 rounded-xl shadow-sm border border-gray-100 space-y-2 md:space-y-0">
                 <div>
                     <h1 class="font-bold text-2xl text-gray-800 flex items-center gap-2">
                         <i class="fas fa-id-badge text-slate-600"></i> Job Positions
@@ -36,15 +36,15 @@
             </div>
 
             <!-- Table -->
-            <div class="w-full bg-white rounded-xl shadow-md overflow-hidden border border-gray-100">
+            <div class="w-full bg-white rounded-xl shadow-md border border-gray-100">
                 <div class="p-5 overflow-auto">
-                    <table id="myTable" class="w-full text-left border-collapse stripe hover">
-                        <thead class="bg-gray-100 text-gray-600 uppercase text-sm leading-normal">
+                    <table id="myTable" class="w-full text-left">
+                        <thead class="bg-gray-100 text-gray-600 text-sm leading-normal">
                             <tr>
                                 <th class="p-4 font-bold rounded-tl-lg text-center" width="5%">No</th>
-                                <th class="p-4 font-bold">Position Name</th>
+                                <th class="p-4 font-bold">Name</th>
                                 <th class="p-4 font-bold">Category</th>
-                                <th class="p-4 font-bold text-right">Default Salary</th>
+                                <th class="p-4 font-bold text-right">Salary</th>
                                 <th class="p-4 font-bold text-center rounded-tr-lg" width="15%">Actions</th>
                             </tr>
                         </thead>
@@ -182,9 +182,6 @@
         $(document).ready(function() {
             // Init DataTable
             new DataTable('#myTable', {
-                responsive: true,
-                columnDefs: [{ orderable: false, targets: -1 }],
-                language: { search: "Search:", lengthMenu: "Show _MENU_ entries" }
             });
 
             // Currency Formatter

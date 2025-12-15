@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Employee;
 use App\Models\Overtime;
 use App\Models\ActivityLog;
 use Illuminate\Http\Request;

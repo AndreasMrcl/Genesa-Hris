@@ -35,7 +35,7 @@
         <div class="p-6 space-y-6">
 
             <!-- Header Section -->
-            <div class="flex justify-between items-center bg-white p-5 rounded-xl shadow-sm border border-gray-100">
+            <div class="md:flex justify-between items-center bg-white p-5 rounded-xl shadow-sm border border-gray-100 space-y-2 md:space-y-0">
                 <div>
                     <h1 class="font-bold text-2xl text-gray-800 flex items-center gap-2">
                         <i class="fas fa-clock text-indigo-600"></i> Attendance Recap
@@ -47,16 +47,16 @@
                     <i class="fas fa-sync-alt"></i> Sync Device
                 </button>
                 <a href="{{ route('manageattendance') }}"
-                    class="p-2 px-6 bg-green-500 text-white rounded-lg shadow hover:bg-green-600 transition font-semibold flex items-center gap-2">
+                    class="p-2 px-6 bg-green-500 text-white rounded-lg shadow hover:bg-green-600 transition font-semibold flex items-center w-fit gap-2">
                     <i class="fas fa-plus"></i> New Recap
                 </a>
             </div>
 
-            <!-- Table Section -->
-            <div class="w-full rounded-lg bg-white shadow-md">
-                <div class="p-2 overflow-auto">
-                    <table class="w-full text-left border-collapse">
-                        <thead class="bg-gray-100 text-gray-600 uppercase text-sm">
+            <!-- Table -->
+            <div class="w-full bg-white rounded-xl shadow-md border border-gray-100">
+                <div class="p-5 overflow-auto">
+                    <table id="myTable" class="w-full text-left">
+                        <thead class="bg-gray-100 text-gray-600 text-sm leading-normal">
                             <tr>
                                 <th class="p-4 font-bold">Period Range</th>
                                 <th class="p-4 font-bold text-center">Total Employees</th>

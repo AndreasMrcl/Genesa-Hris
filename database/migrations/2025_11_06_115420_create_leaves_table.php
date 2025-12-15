@@ -16,13 +16,13 @@ return new class extends Migration
             $table->foreignId('compani_id')->constrained()->onUpdate('cascade')->onDelete('cascade');
             $table->foreignId('employee_id')->constrained()->onUpdate('cascade')->onDelete('cascade');
             $table->enum('type', [
-                'izin',    // cuti tahunan
-                'sakit',      // sakit
-                'cuti',  // urusan pribadi
-                'meninggalkan_pekerjaan', // cuti melahirkan
-                'tukar_shift',    // cuti tanpa gaji
-                'other'      // lainnya
-            ])->default('annual');
+                'izin',
+                'sakit',
+                'cuti',
+                'meninggalkan_pekerjaan',
+                'tukar_shift',
+                'other',
+            ]);
             // Tanggal mulai & selesai cuti
             $table->date('start_date');
             $table->date('end_date');

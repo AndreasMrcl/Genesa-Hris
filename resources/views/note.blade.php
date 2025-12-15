@@ -22,7 +22,7 @@
         <div class="p-6 space-y-6">
 
             <!-- Header Section -->
-            <div class="flex justify-between items-center bg-white p-5 rounded-xl shadow-sm border border-gray-100">
+            <div class="md:flex justify-between items-center bg-white p-5 rounded-xl shadow-sm border border-gray-100 space-y-2 md:space-y-0">
                 <div>
                     <h1 class="font-bold text-2xl text-gray-800 flex items-center gap-2">
                         <i class="fas fa-sticky-note text-teal-600"></i> Employee Notes
