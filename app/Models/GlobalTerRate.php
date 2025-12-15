@@ -10,13 +10,13 @@ class GlobalTerRate extends Model
     use HasFactory;
 
     protected $fillable = [
-        'ter_category',     // 'A', 'B', 'C'
-        'gross_income_min', // Batas Bawah Penghasilan
-        'gross_income_max', // Batas Atas Penghasilan
-        'rate_percentage',  // Tarif Persentase
+        'compani_id',
+        'ter_category',    
+        'gross_income_min', 
+        'gross_income_max', 
+        'rate_percentage', 
     ];
 
-    // Memastikan output angka tetap angka (bukan string)
     protected $casts = [
         'gross_income_min' => 'decimal:2',
         'gross_income_max' => 'decimal:2',
@@ -32,5 +32,10 @@ class GlobalTerRate extends Model
             ->first();
 
         return $rate ? $rate->rate_percentage : 0;
+    }
+
+    public function compani()
+    {
+        return $this->belongsTo(Compani::class);
     }
 }

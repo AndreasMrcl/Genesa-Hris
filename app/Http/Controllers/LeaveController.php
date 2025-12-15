@@ -49,7 +49,7 @@ class LeaveController extends Controller
             'start_date'  => 'required|date',
             'end_date'    => 'required|date|after_or_equal:start_date',
             'type'        => 'required|string',
-            'reason'      => 'required|string',
+            'note'      => 'required|string',
             'status'      => 'required|string',
         ]);
 
@@ -58,7 +58,7 @@ class LeaveController extends Controller
             'start_date'     => $data['start_date'],
             'end_date'     => $data['end_date'],
             'type'     => $data['type'],
-            'reason'     => $data['reason'],
+            'note'     => $data['note'],
             'status'     => $data['status'],
             'compani_id'  => $userCompany->id,
         ]);
@@ -83,7 +83,7 @@ class LeaveController extends Controller
             'start_date' => 'required',
             'end_date' => 'required',
             'type' => 'required',
-            'reason' => 'required',
+            'note' => 'required',
             'status' => 'required',
         ]);
 
@@ -98,7 +98,7 @@ class LeaveController extends Controller
             'start_date' => $data['start_date'],
             'end_date' => $data['end_date'],
             'type' => $data['type'],
-            'reason' => $data['reason'],
+            'note' => $data['note'],
             'status' => $data['status'],
         ]);
 

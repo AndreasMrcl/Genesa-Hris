@@ -73,14 +73,10 @@
                                     <td class="p-4 space-y-1">
                                         <div class="font-medium text-gray-700">{{ $item->position->name ?? '-' }}</div>
                                         <div class="">
-                                            @if ($item->status == 'full_time')
                                                 <span
-                                                    class="bg-green-100 text-green-700 text-xs px-2 py-0.5 rounded-full font-bold border border-green-200">Full
-                                                    Time</span>
-                                            @else
-                                                <span
-                                                    class="bg-yellow-100 text-yellow-700 text-xs px-2 py-0.5 rounded-full font-bold border border-yellow-200">{{ ucfirst(str_replace('_', ' ', $item->status)) }}</span>
-                                            @endif
+                                                    class="bg-yellow-100 text-yellow-700 text-xs px-2 py-0.5 rounded-full font-bold border border-yellow-200">
+                                                    {{ ucfirst(str_replace('_', ' ', $item->status)) }}
+                                                </span>
                                         </div>
                                     </td>
                                     <td class="p-4 text-xs">
@@ -306,14 +302,10 @@
                                 <label class="block text-xs font-bold text-gray-600 uppercase mb-1">PTKP Status</label>
                                 <select name="ptkp_status"
                                     class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-indigo-500 bg-white">
-                                    <option value="TK/0">TK/0</option>
-                                    <option value="TK/1">TK/1</option>
-                                    <option value="TK/2">TK/2</option>
-                                    <option value="TK/3">TK/3</option>
-                                    <option value="K/0">K/0</option>
-                                    <option value="K/1">K/1</option>
-                                    <option value="K/2">K/2</option>
-                                    <option value="K/3">K/3</option>
+                                    <option value="">-- Select PTKP --</option>
+                                    @foreach($ptkps as $ptkp)
+                                        <option value="{{ $ptkp->code }}">{{ $ptkp->code }} ({{ $ptkp->ter_category }})</option>
+                                    @endforeach
                                 </select>
                             </div>
                             <div>
@@ -532,14 +524,10 @@
                                 <label class="block text-xs font-bold text-gray-600 uppercase mb-1">PTKP Status</label>
                                 <select id="editPtkp" name="ptkp_status"
                                     class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border bg-white">
-                                    <option value="TK/0">TK/0</option>
-                                    <option value="TK/1">TK/1</option>
-                                    <option value="TK/2">TK/2</option>
-                                    <option value="TK/3">TK/3</option>
-                                    <option value="K/0">K/0</option>
-                                    <option value="K/1">K/1</option>
-                                    <option value="K/2">K/2</option>
-                                    <option value="K/3">K/3</option>
+                                    <option value="">-- Select PTKP --</option>
+                                    @foreach($ptkps as $ptkp)
+                                        <option value="{{ $ptkp->code }}">{{ $ptkp->code }} ({{ $ptkp->ter_category }})</option>
+                                    @endforeach
                                 </select>
                             </div>
                             <div>

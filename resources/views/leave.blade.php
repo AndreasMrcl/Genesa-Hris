@@ -59,7 +59,7 @@
                                 <th class="p-4 font-bold">Employee</th>
                                 <th class="p-4 font-bold text-center">Duration</th>
                                 <th class="p-4 font-bold">Type</th>
-                                <th class="p-4 font-bold">Reason</th>
+                                <th class="p-4 font-bold">Note</th>
                                 <th class="p-4 font-bold text-center">Status</th>
                                 <th class="p-4 font-bold text-center rounded-tr-lg" width="15%">Action</th>
                             </tr>
@@ -91,7 +91,7 @@
                                         <span class="font-semibold text-gray-700 uppercase">{{ $item->type }}</span>
                                     </td>
                                     <td class="p-4 text-xs text-gray-600 italic max-w-xs truncate">
-                                        "{{ \Illuminate\Support\Str::limit($item->reason, 30) }}"
+                                        "{{ \Illuminate\Support\Str::limit($item->note, 30) }}"
                                     </td>
                                     <td class="p-4 text-center">
                                         @php
@@ -116,7 +116,7 @@
                                                 data-id="{{ $item->id }}" data-employee="{{ $item->employee_id }}"
                                                 data-start_date="{{ $item->start_date }}"
                                                 data-end_date="{{ $item->end_date }}" data-type="{{ $item->type }}"
-                                                data-reason="{{ $item->reason }}" data-status="{{ $item->status }}"
+                                                data-note="{{ $item->note }}" data-status="{{ $item->status }}"
                                                 title="Edit">
                                                 <i class="fas fa-edit"></i>
                                             </button>
@@ -191,12 +191,12 @@
                         <select name="type"
                             class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-yellow-500"
                             required>
-                            <option value="annual">Annual</option>
-                            <option value="sick">Sick</option>
-                            <option value="personal">Personal</option>
-                            <option value="maternity">Maternity</option>
-                            <option value="unpaid">Unpaid</option>
-                            <option value="other">Other</option>
+                            <option value="izin">Izin</option>
+                            <option value="sakit">Sakit</option>
+                            <option value="cuti">Cuti</option>
+                            <option value="meninggalkan_pekerjaan">Meninggalkan Pekerjaan</option>
+                            <option value="tukar_shift">Tukar Shift</option>
+                            <option value="other">Lainnya</option>
                         </select>
                     </div>
                     <div>
@@ -213,8 +213,8 @@
                 </div>
 
                 <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-1">Reason</label>
-                    <textarea name="reason" rows="3"
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">Note</label>
+                    <textarea name="note" rows="3"
                         class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-yellow-500" required></textarea>
                 </div>
 
@@ -272,12 +272,12 @@
                         <select id="editType" name="type"
                             class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-blue-500"
                             required>
-                            <option value="annual">Annual</option>
-                            <option value="sick">Sick</option>
-                            <option value="personal">Personal</option>
-                            <option value="maternity">Maternity</option>
-                            <option value="unpaid">Unpaid</option>
-                            <option value="other">Other</option>
+                            <option value="izin">Izin</option>
+                            <option value="sakit">Sakit</option>
+                            <option value="cuti">Cuti</option>
+                            <option value="meninggalkan_pekerjaan">Meninggalkan Pekerjaan</option>
+                            <option value="tukar_shift">Tukar Shift</option>
+                            <option value="other">Lainnya</option>
                         </select>
                     </div>
                     <div>
@@ -294,8 +294,8 @@
                 </div>
 
                 <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-1">Reason</label>
-                    <textarea id="editReason" name="reason" rows="3"
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">Note</label>
+                    <textarea id="editNote" name="note" rows="3"
                         class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-blue-500" required></textarea>
                 </div>
 
@@ -330,7 +330,7 @@
                 $('#editStartDate').val(btn.data('start_date'));
                 $('#editEndDate').val(btn.data('end_date'));
                 $('#editType').val(btn.data('type'));
-                $('#editReason').val(btn.data('reason'));
+                $('#editNote').val(btn.data('note'));
                 $('#editStatus').val(btn.data('status'));
 
                 $('#editForm').attr('action', `/leave/${btn.data('id')}/update`);

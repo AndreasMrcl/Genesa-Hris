@@ -100,4 +100,14 @@ class Compani extends Model
     {
         return $this->hasMany(AttendanceLog::class);
     }
+
+    public function globalTerRates()
+    {
+        return $this->hasMany(GlobalTerRate::class);
+    }
+      
+    public function globalPtkps()
+    {
+        return $this->hasMany(GlobalPtkp::class);
+    }
 }

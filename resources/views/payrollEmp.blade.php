@@ -18,15 +18,14 @@
             <!-- Header with Back Button -->
             <div class="flex justify-between items-center bg-white p-5 rounded-xl shadow-sm border border-gray-100">
                 <div>
-                    <h1 class="font-semibold text-xl text-gray-800">Payroll Detail</h1>
-                    <p class="text-sm text-indigo-600 font-bold">
-                        Period: {{ \Carbon\Carbon::parse($start)->format('d M Y') }} -
-                        {{ \Carbon\Carbon::parse($end)->format('d M Y') }}
+                    <h1 class="font-semibold text-xl text-gray-800"><i class="fas fa-users text-indigo-600"></i> {{ $branchName }}</h1>
+                    <p class="text-sm text-indigo-600 font-semibold mt-1">
+                        Employee Payroll for Period: {{ \Carbon\Carbon::parse($start)->format('d M Y') }} - {{ \Carbon\Carbon::parse($end)->format('d M Y') }}
                     </p>
                 </div>
-                <a href="{{ route('payroll') }}"
+                <a href="{{ route('periodPayrollBranch', ['start' => $start, 'end' => $end]) }}"
                     class="px-4 py-2 bg-gray-100 text-gray-600 rounded-lg hover:bg-gray-200 transition flex items-center gap-2 text-sm font-medium">
-                    <span>&larr;</span> Back to History
+                    <span>&larr;</span> Back to Branch List
                 </a>
             </div>
 

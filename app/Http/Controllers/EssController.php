@@ -66,7 +66,7 @@ class EssController extends Controller
             'start_date' => 'required',
             'end_date' => 'required',
             'type' => 'required',
-            'reason' => 'required',
+            'note' => 'required',
         ]);
 
         $leave = Leave::create([
@@ -74,7 +74,7 @@ class EssController extends Controller
             'start_date'     => $data['start_date'],
             'end_date'     => $data['end_date'],
             'type'     => $data['type'],
-            'reason'     => $data['reason'],
+            'note'     => $data['note'],
             'compani_id'  => $userCompany->id,
         ]);
 

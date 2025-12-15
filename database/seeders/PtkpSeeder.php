@@ -7,27 +7,27 @@ use Illuminate\Database\Seeder;
 use App\Models\GlobalBpjs;
 use App\Models\GlobalPtkp;
 
-class BpjsSeeder extends Seeder
+class PtkpSeeder extends Seeder
 {
     /**
      * Run the database seeds.
      */
     public function run(): void
     {
-        GlobalBpjs::updateOrCreate(
-            ['id' => 1], 
-            [
-                'kes_comp_percent' => 4.00,
-                'kes_emp_percent' => 1.00,
-                'kes_cap_amount' => 12000000,
-                'jht_comp_percent' => 3.70,
-                'jht_emp_percent' => 2.00,
-                'jp_comp_percent' => 2.00,
-                'jp_emp_percent' => 1.00,
-                'jp_cap_amount' => 10547400, // Update sesuai angka resmi 2024 (Rp 10.042.300)
-                'jkm_comp_percent' => 0.30, // Standar umum JKM adalah 0.30%
-            ]
-        );
+        // GlobalBpjs::updateOrCreate(
+        //     ['id' => 1], 
+        //     [
+        //         'kes_comp_percent' => 4.00,
+        //         'kes_emp_percent' => 1.00,
+        //         'kes_cap_amount' => 12000000,
+        //         'jht_comp_percent' => 3.70,
+        //         'jht_emp_percent' => 2.00,
+        //         'jp_comp_percent' => 2.00,
+        //         'jp_emp_percent' => 1.00,
+        //         'jp_cap_amount' => 10547400, // Update sesuai angka resmi 2024 (Rp 10.042.300)
+        //         'jkm_comp_percent' => 0.30, // Standar umum JKM adalah 0.30%
+        //     ]
+        // );
 
         // 2. Isi Aturan PTKP & Kategori TER (PP 58 Tahun 2023)
         $ptkps = [

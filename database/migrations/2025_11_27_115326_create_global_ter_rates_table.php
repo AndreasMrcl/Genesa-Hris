@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('global_ter_rates', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('compani_id')->constrained()->onUpdate('cascade')->onDelete('cascade');
             $table->enum('ter_category', ['A', 'B', 'C']); 
             
             // Range Penghasilan Bruto (Min - Max)

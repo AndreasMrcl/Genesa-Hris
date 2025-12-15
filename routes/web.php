@@ -22,6 +22,7 @@ use App\Http\Controllers\AnnouncementController;
 use App\Http\Controllers\CompanyPayrollConfigController;
 use App\Http\Controllers\PositionController;
 use App\Http\Controllers\FingerspotController;
+use App\Http\Controllers\TaxConfigController;
 
 Route::get('/', [AuthController::class, 'login'])->name('login');
 Route::get('/register', [AuthController::class, 'register'])->name('register');
@@ -137,7 +138,8 @@ Route::middleware('auth:web')->group(function () {
 
     //PAYROLL
     Route::get('/payrolls', [PayrollController::class, 'index'])->name('payroll');
-    Route::get('/payrolls/period/{start}/{end}', [PayrollController::class, 'period'])->name('periodPayroll');
+    Route::get('/payrolls/period/{start}/{end}', [PayrollController::class, 'period'])->name('periodPayrollBranch');
+    Route::get('/payrolls/period/{start}/{end}/branch/{branch}', [PayrollController::class, 'branch'])->name('payrollBranchEmployees');
     Route::get('/payrolls/create', [PayrollController::class, 'create'])->name('createpayroll');
     Route::post('/payrolls', [PayrollController::class, 'store'])->name('postpayroll');
     Route::get('/payrolls/{id}', [PayrollController::class, 'show'])->name('showpayroll');
@@ -148,8 +150,17 @@ Route::middleware('auth:web')->group(function () {
     Route::get('/activity-logs', [ActivityLogController::class, 'index'])->name('activityLog');
 
     //COMPANY PAYROLL CONFIG
-    Route::get('/companyconfig', [CompanyPayrollConfigController::class, 'index'])->name('companyconfig');
-    Route::put('/companyconfig/update', [CompanyPayrollConfigController::class, 'update'])->name('updatecompanyconfig');
+    Route::get('/companyconfig', [CompanyPayrollConfigController::class, 'index'])->name('companyConfig');
+    Route::put('/companyconfig/update', [CompanyPayrollConfigController::class, 'update'])->name('updatecompanyConfig');
+
+    //COMPANY TAX CONFIG
+    Route::get('/companyconfig/tax', [TaxConfigController::class, 'index'])->name('taxConfig');
+    Route::post('/companyconfig/tax/ptkp', [TaxConfigController::class, 'storePtkp'])->name('postptkp');
+    Route::put('/companyconfig/tax/ptkp/{id}', [TaxConfigController::class, 'updatePtkp'])->name('updateptkp');
+    Route::delete('/companyconfig/tax/ptkp/{id}', [TaxConfigController::class, 'destroyPtkp'])->name('delptkp');
+    Route::post('/companyconfig/tax/ter', [TaxConfigController::class, 'storeTer'])->name('postter');
+    Route::put('/companyconfig/tax/ter/{id}', [TaxConfigController::class, 'updateTer'])->name('updateter');
+    Route::delete('/companyconfig/taxconfig/ter/{id}', [TaxConfigController::class, 'destroyTer'])->name('delter');
 
     //POSITION
     Route::get('/position', [PositionController::class, 'index'])->name('position');

@@ -13,9 +13,10 @@ return new class extends Migration
     {
         Schema::create('global_ptkps', function (Blueprint $table) {
             $table->id();
-            $table->string('code')->unique(); // TK/0, K/1, dll
-            $table->decimal('amount', 15, 2); // Nilai PTKP Tahunan
-            $table->enum('ter_category', ['A', 'B', 'C']); // Kategori TER 2024
+            $table->foreignId('compani_id')->constrained()->onUpdate('cascade')->onDelete('cascade');
+            $table->string('code')->unique(); 
+            $table->decimal('amount', 15, 2);
+            $table->enum('ter_category', ['A', 'B', 'C']); 
             $table->timestamps();
         });
     }

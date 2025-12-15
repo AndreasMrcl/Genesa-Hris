@@ -162,7 +162,7 @@
                         </a>
                     </li>
                     <li class="p-4 mx-2">
-                        <a class="" href="{{ route('companyconfig') }}">
+                        <a class="" href="{{ route('companyConfig') }}">
                             <div class="flex space-x-4">
                                 <div class="bg-sky-600 p-2 rounded-xl">
                                     <i class="material-icons text-white">settings</i>

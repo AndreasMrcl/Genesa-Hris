@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Branch;
 use App\Models\Employee;
 use App\Models\ActivityLog;
+use App\Models\GlobalPtkp;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
@@ -39,7 +40,9 @@ class EmployeeController extends Controller
 
         $positions = $userCompany->positions()->select('id', 'name', 'category', 'base_salary_default')->get();
 
-        return view('employee', compact('employees', 'branch', 'positions'));
+        $ptkps = $userCompany->globalPtkps()->orderBy('code')->get();
+
+        return view('employee', compact('employees', 'branch', 'positions', 'ptkps'));
     }
 
     public function store(Request $request)

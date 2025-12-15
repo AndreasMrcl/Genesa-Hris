@@ -16,18 +16,18 @@ return new class extends Migration
             $table->foreignId('compani_id')->constrained()->onUpdate('cascade')->onDelete('cascade');
             $table->foreignId('employee_id')->constrained()->onUpdate('cascade')->onDelete('cascade');
             $table->enum('type', [
-                'annual',    // cuti tahunan
-                'sick',      // sakit
-                'personal',  // urusan pribadi
-                'maternity', // cuti melahirkan
-                'unpaid',    // cuti tanpa gaji
+                'izin',    // cuti tahunan
+                'sakit',      // sakit
+                'cuti',  // urusan pribadi
+                'meninggalkan_pekerjaan', // cuti melahirkan
+                'tukar_shift',    // cuti tanpa gaji
                 'other'      // lainnya
             ])->default('annual');
             // Tanggal mulai & selesai cuti
             $table->date('start_date');
             $table->date('end_date');
             // Alasan atau keterangan tambahan
-            $table->text('reason')->nullable();
+            $table->text('note')->nullable();
             // Status approval (workflow sederhana)
             $table->enum('status', [
                 'pending',   // menunggu approval

@@ -18,14 +18,14 @@
             <!-- Header -->
             <div class="flex justify-between items-center bg-white p-5 rounded-xl shadow-sm border border-gray-100">
                 <div>
-                    <h1 class="font-bold text-2xl text-black">
+                    <h1 class="font-bold text-2xl text-gray-800 flex items-center gap-2">
                         <i class="fas fa-money-check-alt text-indigo-600"></i> Payroll History
                     </h1>
                     <p class="text-sm text-gray-500">List of generated payroll periods</p>
                 </div>
-                <a href="{{ route('createpayroll') }}"
-                    class="p-2 px-6 bg-indigo-600 text-white rounded-lg shadow hover:bg-indigo-700 transition font-semibold flex items-center gap-2">
-                    <span>+</span> Run Payroll
+                <a href="{{ route('createpayroll') }}" 
+                   class="px-6 py-3 bg-indigo-600 text-white rounded-lg shadow-md hover:bg-indigo-700 transition font-semibold flex items-center gap-2">
+                   <i class="fas fa-plus"></i> Run Payroll
                 </a>
             </div>
 
@@ -53,40 +53,38 @@
                     <table class="w-full text-left">
                         <thead class="bg-gray-100 text-gray-600 text-sm leading-normal">
                             <tr>
-                                <th class="p-4 font-semibold text-gray-700">Period</th>
-                                <th class="p-4 font-semibold text-gray-700 text-center">Total Employees</th>
-                                <th class="p-4 font-semibold text-gray-700 text-right">Total Expense</th>
-                                <th class="p-4 font-semibold text-gray-700 text-center">Status</th>
-                                <th class="p-4 font-semibold text-gray-700 text-center">Action</th>
+                                <th class="p-4 font-bold">Period Range</th>
+                                <th class="p-4 font-bold text-center">Total Branches</th>
+                                <th class="p-4 font-bold text-center">Total Expense</th>
+                                <th class="p-4 font-bold text-center">Action</th>
                             </tr>
                         </thead>
                         <tbody class="text-gray-700 text-sm">
                             @forelse ($batches as $batch)
-                                <tr class="hover:bg-gray-50 transition group">
+                                <tr class="hover:bg-cyan-50 transition group">
                                     <td class="p-4">
                                         <div class="flex flex-col">
-                                            <!-- Link ke Level 2 (Detail Periode) -->
-                                            <a href="{{ route('periodPayroll', ['start' => $batch->pay_period_start, 'end' => $batch->pay_period_end]) }}"
-                                                class="text-lg font-bold text-indigo-600 hover:text-indigo-800 hover:underline mb-1">
-                                                {{ \Carbon\Carbon::parse($batch->pay_period_start)->format('d M Y') }} -
-                                                {{ \Carbon\Carbon::parse($batch->pay_period_end)->format('d M Y') }}
-                                            </a>
+                                            <a href="{{ route('periodPayrollBranch', ['start' => $batch->pay_period_start, 'end' => $batch->pay_period_end]) }}" 
+                                           class="text-lg font-bold text-indigo-600 mb-1">
+                                            {{ \Carbon\Carbon::parse($batch->pay_period_start)->format('d M Y') }} - 
+                                            {{ \Carbon\Carbon::parse($batch->pay_period_end)->format('d M Y') }}
+                                        </a>
                                             <span class="text-xs text-gray-400">Created:
                                                 {{ \Carbon\Carbon::parse($batch->created_at)->diffForHumans() }}</span>
                                         </div>
                                     </td>
                                     <td class="p-4 text-center">
                                         <span
-                                            class="bg-blue-100 text-blue-800 text-xs font-medium px-3 py-1 rounded-full">
-                                            {{ $batch->total_employees }} Staff
+                                            class="font-bold text-gray-800 text-base">
+                                            {{ $batch->total_branches }}
                                         </span>
                                     </td>
-                                    <td class="p-4 text-right">
-                                        <div class="font-bold text-gray-800">
+                                    <td class="p-4 text-center">
+                                        <div class="font-bold text-gray-800 text-base">
                                             Rp {{ number_format($batch->total_spent, 0, ',', '.') }}
                                         </div>
                                     </td>
-                                    <td class="p-4 text-center">
+                                    {{-- <td class="p-4 text-center">
                                         @if ($batch->status == 'paid')
                                             <span
                                                 class="px-3 py-1 text-xs font-semibold text-green-800 bg-green-100 rounded-full border border-green-200">
@@ -98,7 +96,7 @@
                                                 Pending
                                             </span>
                                         @endif
-                                    </td>
+                                    </td> --}}
                                     <td class="p-4 text-center">
                                         <div class="flex items-center justify-center gap-2">
 

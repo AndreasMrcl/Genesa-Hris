@@ -21,9 +21,13 @@
         <div class="p-5">
             <!-- Action Bar -->
             <div class="mb-6 flex justify-between items-center">
-                <a href="{{ route('periodPayroll', ['start' => $payroll->pay_period_start, 'end' => $payroll->pay_period_end]) }}" 
-                   class="text-gray-600 hover:text-gray-900 flex items-center gap-2 no-print">
-                    <span>&larr;</span> Back to Employee List
+                <a href="{{ route('payrollBranchEmployees', [
+                        'start' => $payroll->pay_period_start, 
+                        'end' => $payroll->pay_period_end, 
+                        'branch' => $payroll->employee->branch_id
+                   ]) }}" 
+                   class="text-gray-600 hover:text-gray-900 flex items-center gap-2 font-medium transition">
+                    <i class="fas fa-arrow-left"></i> Back to Employee List
                 </a>
                 <button onclick="window.print()" class="px-6 py-2 bg-gray-800 text-white rounded-lg shadow hover:bg-gray-900 transition flex items-center gap-2">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">

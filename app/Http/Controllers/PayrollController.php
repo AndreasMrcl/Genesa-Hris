@@ -6,10 +6,10 @@ use App\Models\Payroll;
 use App\Models\PayrollDetail;
 use App\Models\Employee;
 use App\Models\CompanyPayrollConfig;
-use App\Models\GlobalBpjs;
 use App\Models\GlobalPtkp;
 use App\Models\GlobalTerRate;
 use App\Models\ActivityLog;
+use App\Models\Branch;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
@@ -42,18 +42,19 @@ class PayrollController extends Controller
 
         $cacheKey = 'payroll_' . $userCompany->id . '_page_' . $page;
 
-        $batches = Cache::remember($cacheKey, now()->addMinutes(60), function () use ($userCompany) {
+        $batches = Cache::remember($cacheKey, 180, function () use ($userCompany) {
             return $userCompany->payrolls()
+                ->join('employees', 'payrolls.employee_id', '=', 'employees.id')
                 ->select(
-                    'pay_period_start',
-                    'pay_period_end',
-                    DB::raw('count(*) as total_employees'),
-                    DB::raw('sum(net_salary) as total_spent'),
-                    DB::raw('max(status) as status'),
-                    DB::raw('max(created_at) as created_at')
+                    'payrolls.pay_period_start', 
+                    'payrolls.pay_period_end', 
+                    DB::raw('count(distinct employees.branch_id) as total_branches'), 
+                    DB::raw('sum(payrolls.net_salary) as total_spent'),
+                    DB::raw('max(payrolls.status) as status'),
+                    DB::raw('max(payrolls.created_at) as created_at')
                 )
-                ->groupBy('pay_period_start', 'pay_period_end')
-                ->latest('created_at')
+                ->groupBy('payrolls.pay_period_start', 'payrolls.pay_period_end')
+                ->latest('payrolls.created_at')
                 ->paginate(10);
         });
 
@@ -66,19 +67,52 @@ class PayrollController extends Controller
 
         $cacheKey = 'payroll_period_' . $userCompany->id . '_' . $start . '_' . $end;
 
-        $payrolls = Cache::remember($cacheKey, now()->addMinutes(60), function () use ($userCompany, $start, $end) {
-            return $userCompany->payrolls()
-                ->with('employee')
-                ->where('pay_period_start', $start)
-                ->where('pay_period_end', $end)
+        $branchStats = Cache::remember($cacheKey, 180, function () use ($userCompany, $start, $end) {
+            return Payroll::query()
+                ->join('employees', 'payrolls.employee_id', '=', 'employees.id')
+                ->join('branches', 'employees.branch_id', '=', 'branches.id')
+                ->where('payrolls.compani_id', $userCompany->id)
+                ->where('payrolls.pay_period_start', $start)
+                ->where('payrolls.pay_period_end', $end)
+                ->select(
+                    'branches.id',
+                    'branches.name',
+                    'branches.category',
+                    DB::raw('count(payrolls.id) as employee_count'),
+                    DB::raw('sum(payrolls.net_salary) as total_expense')
+                )
+                ->groupBy('branches.id', 'branches.name', 'branches.category')
+                ->orderBy('branches.name')
                 ->get();
         });
 
-        if ($payrolls->isEmpty()) {
+        if ($branchStats->isEmpty()) {
             return redirect()->route('payroll')->withErrors(['msg' => 'Payroll data not found.']);
         }
 
-        return view('payrollPeriod', compact('payrolls', 'start', 'end'));
+        return view('payrollBranches', compact('branchStats', 'start', 'end'));
+    }
+
+    public function branch($start, $end, $branchId)
+    {
+        $userCompany = Auth::user()->compani;
+        
+        $cacheKey = 'payroll_emp_' . $userCompany->id . '_' . $start . '_' . $end . '_' . $branchId;
+
+        $payrolls = Cache::remember($cacheKey, 180, function () use ($userCompany, $start, $end, $branchId) {
+            return Payroll::with(['employee', 'employee.position'])
+                ->where('compani_id', $userCompany->id)
+                ->where('pay_period_start', $start)
+                ->where('pay_period_end', $end)
+                ->whereHas('employee', function($q) use ($branchId) {
+                    $q->where('branch_id', $branchId);
+                })
+                ->get();
+        });
+
+        $branchName = Branch::where('id', $branchId)->value('name');
+
+        return view('payrollEmp', compact('payrolls', 'start', 'end', 'branchName', 'branchId'));
     }
 
     public function create()
@@ -113,12 +147,10 @@ class PayrollController extends Controller
             return back()->withErrors(['msg' => "Payroll for period $start to $end already exists!"]);
         }
 
-        $globalBpjs = GlobalBpjs::first();
         $companyConfig = CompanyPayrollConfig::where('compani_id', $userCompany->id)->first();
 
         if (!$companyConfig) return back()->withErrors(['msg' => 'Company Settings not found.']);
         if ($companyConfig->ump_amount <= 0) return back()->withErrors(['msg' => 'Regional Minimum Wage (UMP) is not set or 0.']);
-        if (!$globalBpjs) return back()->withErrors(['msg' => 'Global BPJS Settings not found.']);
 
         $employees = $userCompany->employees()
             ->whereHas('attendances', function ($q) use ($start, $end) {
@@ -134,17 +166,17 @@ class PayrollController extends Controller
         }
 
         $bpjsBase = $companyConfig->ump_amount;
-        $bpjsKes = min($bpjsBase, $globalBpjs->kes_cap_amount);
+        $bpjsKes = min($bpjsBase, $companyConfig->kes_cap_amount);
 
-        $bpjsKesEmp  = $bpjsKes * ($globalBpjs->kes_emp_percent / 100);
-        $bpjsKesComp = $bpjsKes * ($globalBpjs->kes_comp_percent / 100);
+        $bpjsKesEmp  = $bpjsKes * ($companyConfig->kes_emp_percent / 100);
+        $bpjsKesComp = $bpjsKes * ($companyConfig->kes_comp_percent / 100);
         $bpjsJkk = $bpjsBase * ($companyConfig->bpjs_jkk_rate / 100);
-        $bpjsJkm = $bpjsBase * ($globalBpjs->jkm_comp_percent / 100);
-        $bpjsJhtEmp  = $bpjsBase * ($globalBpjs->jht_emp_percent / 100);
-        $bpjsJhtComp = $bpjsBase * ($globalBpjs->jht_comp_percent / 100);
-        $baseJp = min($bpjsBase, $globalBpjs->jp_cap_amount);
-        $bpjsJpEmp  = $baseJp * ($globalBpjs->jp_emp_percent / 100);
-        $bpjsJpComp = $baseJp * ($globalBpjs->jp_comp_percent / 100);
+        $bpjsJkm = $bpjsBase * ($companyConfig->jkm_comp_percent / 100);
+        $bpjsJhtEmp  = $bpjsBase * ($companyConfig->jht_emp_percent / 100);
+        $bpjsJhtComp = $bpjsBase * ($companyConfig->jht_comp_percent / 100);
+        $baseJp = min($bpjsBase, $companyConfig->jp_cap_amount);
+        $bpjsJpEmp  = $baseJp * ($companyConfig->jp_emp_percent / 100);
+        $bpjsJpComp = $baseJp * ($companyConfig->jp_comp_percent / 100);
 
         DB::beginTransaction();
 

@@ -31,14 +31,24 @@
                 </div>
             @endif
 
+            @if($errors->any())
+                <div class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 border border-red-200">
+                    <ul class="list-disc pl-5">
+                        @foreach($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+
             <!-- Form Section -->
             <div class="w-full bg-white rounded-xl shadow-md overflow-hidden border border-gray-100">
                 <div class="p-6">
-                    <form action="{{ route('updatecompanyconfig') }}" method="POST" class="space-y-8">
+                    <form action="{{ route('updatecompanyConfig') }}" method="POST" class="space-y-8">
                         @csrf
                         @method('PUT')
 
-                        <!-- 1. TAX SETTINGS -->
+                        <!-- TAX SETTINGS -->
                         <div>
                             <h3 class="text-sm font-bold text-indigo-600 uppercase tracking-wider mb-4 border-b pb-2">
                                 <i class="fas fa-file-invoice-dollar mr-1"></i> Tax Settings (PPh 21)
@@ -64,7 +74,7 @@
                             </div>
                         </div>
 
-                        <!-- 2. BPJS SETTINGS -->
+                        <!-- BPJS SETTINGS -->
                         <div>
                             <h3 class="text-sm font-bold text-emerald-600 uppercase tracking-wider mb-4 border-b pb-2">
                                 <i class="fas fa-shield-alt mr-1"></i> BPJS Configuration
@@ -81,22 +91,85 @@
                                     <span class="ml-2 text-sm font-semibold text-gray-700">Activate BPJS Ketenagakerjaan</span>
                                 </label>
                             </div>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
+                                <!-- BPJS Kesehatan -->
+                                <div class="col-span-2">
+                                    <h4 class="text-xs font-bold text-gray-500 uppercase mb-2">BPJS Kesehatan</h4>
+                                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                        <div>
+                                            <label class="block text-xs font-semibold text-gray-600 mb-1">Company (%)</label>
+                                            <input type="number" step="0.01" name="kes_comp_percent" value="{{ $config->kes_comp_percent }}" class="w-full rounded-lg border-gray-300 shadow-sm p-2 border text-sm" required>
+                                        </div>
+                                        <div>
+                                            <label class="block text-xs font-semibold text-gray-600 mb-1">Employee (%)</label>
+                                            <input type="number" step="0.01" name="kes_emp_percent" value="{{ $config->kes_emp_percent }}" class="w-full rounded-lg border-gray-300 shadow-sm p-2 border text-sm" required>
+                                        </div>
+                                        <div>
+                                            <label class="block text-xs font-semibold text-gray-600 mb-1">Max Cap Amount</label>
+                                            <input type="number" name="kes_cap_amount" value="{{ $config->kes_cap_amount }}" class="w-full rounded-lg border-gray-300 shadow-sm p-2 border text-sm" required>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
 
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
+                                <!-- JKM -->
                                 <div>
-                                    <label class="block text-sm font-semibold text-gray-700 mb-1">JKK Rate (Jaminan Kecelakaan Kerja)</label>
-                                    <div class="relative">
-                                        <input type="number" step="0.01" name="bpjs_jkk_rate" value="{{ $config->bpjs_jkk_rate }}" class="w-full pr-10 rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-emerald-500" required>
-                                        <span class="absolute right-3 top-2.5 text-gray-500 font-medium">%</span>
+                                    <h4 class="text-xs font-bold text-gray-500 uppercase mb-2">JKK Rate (Jaminan Kecelakaan Kerja)</h4>
+                                    <div>
+                                        <label class="block text-xs font-semibold text-gray-600 mb-1">Company (%)</label>
+                                        <input type="number" step="0.01" name="bpjs_jkk_rate" value="{{ $config->bpjs_jkk_rate }}" class="w-full rounded-lg border-gray-300 shadow-sm p-2 border text-sm" required>
                                     </div>
                                     <p class="text-xs text-gray-500 mt-1">Company risk rate (0.24% - 1.74%).</p>
                                 </div>
-                                <div class="bg-yellow-50 p-3 rounded-lg border border-yellow-200 text-yellow-800 text-sm">
-                                    <i class="fas fa-info-circle mr-1"></i> 
-                                    Other rates (JHT, JP, JKM, Kes) follow Global Government Regulations managed by System Admin.
+                                <div>
+                                    <h4 class="text-xs font-bold text-gray-500 uppercase mb-2">JKM (Jaminan Kematian)</h4>
+                                    <div>
+                                        <label class="block text-xs font-semibold text-gray-600 mb-1">Company (%)</label>
+                                        <input type="number" step="0.01" name="jkm_comp_percent" value="{{ $config->jkm_comp_percent }}" class="w-full rounded-lg border-gray-300 shadow-sm p-2 border text-sm" required>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <!-- JHT -->
+                                <div>
+                                    <h4 class="text-xs font-bold text-gray-500 uppercase mb-2">JHT (Jaminan Hari Tua)</h4>
+                                    <div class="grid grid-cols-2 gap-4">
+                                        <div>
+                                            <label class="block text-xs font-semibold text-gray-600 mb-1">Company (%)</label>
+                                            <input type="number" step="0.01" name="jht_comp_percent" value="{{ $config->jht_comp_percent }}" class="w-full rounded-lg border-gray-300 shadow-sm p-2 border text-sm" required>
+                                        </div>
+                                        <div>
+                                            <label class="block text-xs font-semibold text-gray-600 mb-1">Employee (%)</label>
+                                            <input type="number" step="0.01" name="jht_emp_percent" value="{{ $config->jht_emp_percent }}" class="w-full rounded-lg border-gray-300 shadow-sm p-2 border text-sm" required>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- JP -->
+                                <div>
+                                    <h4 class="text-xs font-bold text-gray-500 uppercase mb-2">JP (Jaminan Pensiun)</h4>
+                                    <div class="grid grid-cols-3 gap-4">
+                                        <div>
+                                            <label class="block text-xs font-semibold text-gray-600 mb-1">Comp (%)</label>
+                                            <input type="number" step="0.01" name="jp_comp_percent" value="{{ $config->jp_comp_percent }}" class="w-full rounded-lg border-gray-300 shadow-sm p-2 border text-sm" required>
+                                        </div>
+                                        <div>
+                                            <label class="block text-xs font-semibold text-gray-600 mb-1">Emp (%)</label>
+                                            <input type="number" step="0.01" name="jp_emp_percent" value="{{ $config->jp_emp_percent }}" class="w-full rounded-lg border-gray-300 shadow-sm p-2 border text-sm" required>
+                                        </div>
+                                        <div>
+                                            <label class="block text-xs font-semibold text-gray-600 mb-1">Cap Amount</label>
+                                            <input type="number" name="jp_cap_amount" value="{{ $config->jp_cap_amount }}" class="w-full rounded-lg border-gray-300 shadow-sm p-2 border text-sm" required>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
+                        
+                        <!-- SOCIAL CONTRIBUTION SETTINGS -->
                         <div class="mt-8">
                             <h3 class="text-sm font-bold text-gray-600 uppercase tracking-wider mb-4 border-b pb-2">
                                 <i class="fas fa-hand-holding-heart mr-1"></i> Social Contributions
@@ -113,6 +186,46 @@
                                     </p>
                                 </div>
                             </div>
+                        </div>
+                        
+                        <!-- PTKP & TER SETTINGS -->
+                        <div class="mt-8">
+                            <div class="flex justify-between items-center border-b pb-2 mb-4">
+                                <h3 class="text-sm font-bold text-indigo-600 uppercase tracking-wider">
+                                    <i class="fas fa-users-cog mr-1"></i> PTKP & TER Configuration
+                                </h3>
+                                <a href="{{ route('taxConfig') }}" class="text-xs font-bold text-indigo-600 hover:text-indigo-800 uppercase flex items-center gap-1 bg-indigo-50 px-3 py-1.5 rounded-lg border border-indigo-200 transition">
+                                    <i class="fas fa-edit"></i> Manage Rates
+                                </a>
+                            </div>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                @foreach(['A', 'B', 'C'] as $category)
+                                    <div class="bg-gray-50 p-4 rounded-xl border border-gray-200">
+                                        <div class="flex justify-between items-center mb-3 border-b border-gray-200 pb-2">
+                                            <h4 class="font-bold text-gray-700">TER Kategori {{ $category }}</h4>
+                                        </div>
+                                        
+                                        <div class="space-y-3">
+                                            @foreach($ptkps->where('ter_category', $category) as $ptkp)
+                                                <div>
+                                                    <div class="flex justify-between mb-1">
+                                                        <label class="text-xs font-bold text-gray-500">{{ $ptkp->code }}</label>
+                                                        <span class="text-xs text-gray-400">PTKP Amount</span>
+                                                    </div>
+                                                    <div class="relative">
+                                                        <span class="absolute left-3 top-2 text-gray-500 font-medium text-xs">Rp</span>
+                                                        <input type="text" name="ptkp[{{ $ptkp->id }}][amount]" 
+                                                               value="{{ number_format($ptkp->amount, 0, ',', '.') }}" 
+                                                               class="currency w-full pl-8 rounded-md border-gray-300 shadow-sm p-1.5 border text-sm font-semibold focus:ring-2 focus:ring-indigo-500">
+                                                    </div>
+                                                </div>
+                                            @endforeach
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+                            <p class="text-xs text-gray-500 mt-3 italic">* Changing these values will affect PPh 21 calculation (TER Method).</p>
                         </div>
 
                         <div class="pt-4 flex justify-end border-t border-gray-100">
