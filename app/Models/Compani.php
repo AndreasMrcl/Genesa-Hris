@@ -110,4 +110,9 @@ class Compani extends Model
     {
         return $this->hasMany(GlobalPtkp::class);
     }
+    
+    public function schedules()
+    {
+        return $this->hasMany(Schedule::class);
+    }
 }

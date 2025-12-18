@@ -7,12 +7,11 @@ use App\Models\Payroll;
 use App\Models\Overtime;
 use App\Models\Attendance;
 use App\Models\ActivityLog;
-use App\Models\Payroll;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
-use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
+use Carbon\Carbon;
 
 
 class EssController extends Controller
@@ -34,6 +33,57 @@ class EssController extends Controller
             ->first();
 
         return view('ess.home', compact('employee', 'compani', 'announcements',  'attendance'));
+    }
+
+    public function schedule()
+    {
+        if (!Auth::guard('employee')->check()) {
+            return redirect('/');
+        }
+
+        $schedules = Auth::guard('employee')->user()
+            ->schedules()
+            ->with('shift')
+            ->whereDate('date', '>=', Carbon::today())
+            ->orderBy('date', 'asc')
+            ->get();
+
+        $totalHours = $schedules->reduce(function ($carry, $item) {
+            if ($item->shift) {
+                $start = Carbon::parse($item->shift->start_time);
+                $end = Carbon::parse($item->shift->end_time);
+                
+                if ($item->shift->is_cross_day) {
+                    $end->addDay();
+                }
+                
+                return $carry + $start->diffInHours($end);
+            }
+            return $carry;
+        }, 0);
+
+        $nextShiftText = '-';
+        $nextItem = $schedules->first(); 
+
+        if ($nextItem) {
+            $nextDate = Carbon::parse($nextItem->date);
+            
+            if ($nextDate->isToday()) {
+                $dayStr = 'Today';
+            } elseif ($nextDate->isTomorrow()) {
+                $dayStr = 'Tomorrow';
+            } else {
+                $dayStr = $nextDate->format('d M');
+            }
+            
+            $timeStr = $nextItem->shift 
+                ? Carbon::parse($nextItem->shift->start_time)->format('H:i') 
+                : '(Off)';
+            
+            $nextShiftText = "$dayStr, $timeStr";
+        }
+        
+        return view('ess.schedule', compact('schedules', 'totalHours', 'nextShiftText'));
     }
 
     public function attendance()
@@ -144,7 +194,6 @@ class EssController extends Controller
         return view('ess.note', compact('notes'));
     }
 
-
     public function payroll()
     {
         if (!Auth::guard('employee')->check()) {
@@ -152,8 +201,6 @@ class EssController extends Controller
         }
 
         $payrolls = Auth::guard('employee')->user()->payrolls;
-
-
 
         return view('ess.payroll', compact('payrolls'));
     }

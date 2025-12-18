@@ -15,12 +15,11 @@ return new class extends Migration
             $table->id();
             $table->foreignId('compani_id')->constrained()->onUpdate('cascade')->onDelete('cascade');
             $table->foreignId('branch_id')->constrained()->onUpdate('cascade')->onDelete('cascade');
-            $table->foreignId('employee_id')->constrained()->onUpdate('cascade')->onDelete('cascade');
-            $table->date('start_shift');
-            $table->date('end_shift');
+            $table->string('name');
             $table->time('start_time');
             $table->time('end_time');
-            $table->text('description')->nullable();
+            $table->boolean('is_cross_day')->default(false);
+            $table->string('color')->default('#3B82F6');
             $table->timestamps();
         });
     }

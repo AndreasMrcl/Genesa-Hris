@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Shift;
+use App\Models\ActivityLog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
@@ -27,17 +28,19 @@ class ShiftController extends Controller
             return redirect()->route('login');
         }
 
-        $cacheKey = 'shifts';
+        $cacheKey = "shifts_{$userCompany->id}";
 
-        $shifts = Cache::remember($cacheKey, now()->addMinutes(60), function () use ($userCompany) {
-            return $userCompany->shifts()->with('employee', 'branch')->get();
+        $shifts = Cache::remember($cacheKey, 180, function () use ($userCompany) {
+            return $userCompany->shifts()
+                ->with('branch')
+                ->orderBy('branch_id')
+                ->orderBy('start_time')
+                ->get();
         });
 
-        $branch = $userCompany->branches()->get();
+        $branches = $userCompany->branches()->select('id', 'name')->get();
 
-        $employee = $userCompany->employees()->get();
-
-        return view('shift', compact('shifts', 'branch', 'employee'));
+        return view('shift', compact('shifts', 'branches'));
     }
 
     public function store(Request $request)
@@ -45,18 +48,21 @@ class ShiftController extends Controller
         $userCompany = auth()->user()->compani;
 
         $data = $request->validate([
-            'branch_id' => 'required',
-            'employee_id' => 'required',
+            'name'       => 'required|string|max:50',
+            'branch_id'  => 'nullable|exists:branches,id',
             'start_time' => 'required',
-            'end_time' => 'required',
-            'description' => 'required',
+            'end_time'   => 'required',
+            'color'      => 'nullable|string',
         ]);
 
         $data['compani_id'] = $userCompany->id;
+        $data['is_cross_day'] = $request->has('is_cross_day');
 
-        Shift::create($data);
+        $shift = Shift::create($data);
+        
+        $this->logActivity('Create Master Shift', "Membuat shift baru: {$shift->name} ({$shift->start_time} - {$shift->end_time})", $userCompany->id);
 
-        Cache::forget('shifts');
+        $this->clearCache($userCompany->id);
 
         return redirect(route('shift'))->with('success', 'Shift successfully created!');
     }
@@ -66,30 +72,59 @@ class ShiftController extends Controller
         $userCompany = auth()->user()->compani;
 
         $request->validate([
-            'branch_id' => 'required',
-            'employee_id' => 'required',
+            'name'       => 'required|string|max:50',
+            'branch_id'  => 'nullable|exists:branches,id',
             'start_time' => 'required',
-            'end_time' => 'required',
-            'description' => 'required',
+            'end_time'   => 'required',
+            'color'      => 'nullable|string',
         ]);
 
-        $data = $request->only(['branch_id', 'employee_id', 'start_time', 'end_time', 'description']);
+        $shift = Shift::where('id', $id)->where('compani_id', $userCompany->id)->firstOrFail();
 
-        $data['compani_id'] = $userCompany->id;
+        $shift->update([
+            'name'         => $request->name,
+            'branch_id'    => $request->branch_id,
+            'start_time'   => $request->start_time,
+            'end_time'     => $request->end_time,
+            'is_cross_day' => $request->has('is_cross_day'),
+            'color'        => $request->color,
+        ]);
 
-        Shift::where('id', $id)->update($data);
-
-        Cache::forget('shifts');
+        $this->logActivity('Update Master Shift', "Mengubah shift: {$shift->name}", $userCompany->id);
+        $this->clearCache($userCompany->id);
 
         return redirect(route('shift'))->with('success', 'Shift successfully updated!');
     }
 
     public function destroy($id)
     {
-        Shift::destroy($id);
+        $userCompany = auth()->user()->compani;
 
-        Cache::forget('shifts');
+        $shift = Shift::where('id', $id)->where('compani_id', $userCompany->id)->first();
+
+        $shift->delete();
+
+        $this->logActivity('Delete Master Shift', "Menghapus shift: {$shift->name}", $userCompany->id);
+        $this->clearCache($userCompany->id);
 
         return redirect(route('shift'))->with('success', 'Shiift successfully deleted!');
+    }
+
+    private function clearCache($companyId)
+    {
+        Cache::forget("shifts_{$companyId}");
+    }
+
+    private function logActivity($type, $description, $companyId)
+    {
+        ActivityLog::create([
+            'user_id'       => Auth::id(),
+            'compani_id'    => $companyId,
+            'activity_type' => $type,
+            'description'   => $description,
+            'created_at'    => now(),
+        ]);
+
+        Cache::forget("activities_{$companyId}");
     }
 }

@@ -16,7 +16,6 @@ use App\Http\Controllers\AllowEmpController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\OvertimeController;
 use App\Http\Controllers\DeductEmpController;
-use App\Http\Controllers\TaxConfigController;
 use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\ActivityLogController;
 use App\Http\Controllers\AnnouncementController;
@@ -24,6 +23,8 @@ use App\Http\Controllers\CompanyPayrollConfigController;
 use App\Http\Controllers\PositionController;
 use App\Http\Controllers\FingerspotController;
 use App\Http\Controllers\TaxConfigController;
+use App\Http\Controllers\ScheduleController;
+
 
 Route::get('/', [AuthController::class, 'login'])->name('login');
 Route::get('/register', [AuthController::class, 'register'])->name('register');
@@ -91,6 +92,12 @@ Route::middleware('auth:web')->group(function () {
     Route::post('/postshift', [ShiftController::class, 'store'])->name('postshift');
     Route::put('/shift/{id}/update', [ShiftController::class, 'update'])->name('updateshift');
     Route::delete('/shift/{id}/delete', [ShiftController::class, 'destroy'])->name('delshift');
+
+    //SCHEDULE
+    Route::get('/schedule', [ScheduleController::class, 'index'])->name('schedule');
+    Route::post('/postschedule', [ScheduleController::class, 'store'])->name('postschedule');
+    Route::put('/schedule/{id}/update', [ScheduleController::class, 'update'])->name('updateschedule');
+    Route::delete('/schedule/{id}/delete', [ScheduleController::class, 'destroy'])->name('delschedule');
 
     //ANNOUNCEMENT
     Route::get('/announcement', [AnnouncementController::class, 'index'])->name('announcement');
@@ -176,6 +183,8 @@ Route::middleware('auth:web')->group(function () {
 
 Route::middleware('auth:employee')->group(function () {
     Route::get('/ess-home', [EssController::class, 'home'])->name('ess-home');
+
+    Route::get('/ess-schedule', [EssController::class, 'schedule'])->name('ess-schedule');
 
     Route::get('/ess-attendance', [EssController::class, 'attendance'])->name('ess-attendance');
 
