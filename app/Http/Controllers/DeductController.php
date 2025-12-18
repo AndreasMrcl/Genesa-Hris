@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Deduct;
 use App\Models\ActivityLog;
+use App\Models\Deduct;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
@@ -12,13 +12,13 @@ class DeductController extends Controller
 {
     public function index()
     {
-        if (!Auth::check()) {
+        if (! Auth::check()) {
             return redirect('/');
         }
 
         $userCompany = Auth::user()->compani;
 
-        if (!$userCompany) {
+        if (! $userCompany) {
             return redirect()->route('addcompany');
         }
 
@@ -47,9 +47,9 @@ class DeductController extends Controller
         ]);
 
         $deduct = Deduct::create([
-            'name'     => $data['name'],
-            'type'     => $data['type'],
-            'compani_id'  => $userCompany->id,
+            'name' => $data['name'],
+            'type' => $data['type'],
+            'compani_id' => $userCompany->id,
         ]);
 
         $this->logActivity(
@@ -125,11 +125,11 @@ class DeductController extends Controller
     private function logActivity($type, $description, $companyId)
     {
         ActivityLog::create([
-            'user_id'       => Auth::id(),
-            'compani_id'    => $companyId,
+            'user_id' => Auth::id(),
+            'compani_id' => $companyId,
             'activity_type' => $type,
-            'description'   => $description,
-            'created_at'    => now(),
+            'description' => $description,
+            'created_at' => now(),
         ]);
 
         Cache::forget("activities_{$companyId}");

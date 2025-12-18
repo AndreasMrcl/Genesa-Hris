@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Shift;
 use App\Models\ActivityLog;
+use App\Models\Shift;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
@@ -12,13 +12,13 @@ class ShiftController extends Controller
 {
     public function index()
     {
-        if (!Auth::check()) {
+        if (! Auth::check()) {
             return redirect('/');
         }
 
         $userCompany = Auth::user()->compani;
 
-        if (!$userCompany) {
+        if (! $userCompany) {
             return redirect()->route('addcompany');
         }
 
@@ -48,18 +48,18 @@ class ShiftController extends Controller
         $userCompany = auth()->user()->compani;
 
         $data = $request->validate([
-            'name'       => 'required|string|max:50',
-            'branch_id'  => 'nullable|exists:branches,id',
+            'name' => 'required|string|max:50',
+            'branch_id' => 'nullable|exists:branches,id',
             'start_time' => 'required',
-            'end_time'   => 'required',
-            'color'      => 'nullable|string',
+            'end_time' => 'required',
+            'color' => 'nullable|string',
         ]);
 
         $data['compani_id'] = $userCompany->id;
         $data['is_cross_day'] = $request->has('is_cross_day');
 
         $shift = Shift::create($data);
-        
+
         $this->logActivity('Create Master Shift', "Membuat shift baru: {$shift->name} ({$shift->start_time} - {$shift->end_time})", $userCompany->id);
 
         $this->clearCache($userCompany->id);
@@ -72,22 +72,22 @@ class ShiftController extends Controller
         $userCompany = auth()->user()->compani;
 
         $request->validate([
-            'name'       => 'required|string|max:50',
-            'branch_id'  => 'nullable|exists:branches,id',
+            'name' => 'required|string|max:50',
+            'branch_id' => 'nullable|exists:branches,id',
             'start_time' => 'required',
-            'end_time'   => 'required',
-            'color'      => 'nullable|string',
+            'end_time' => 'required',
+            'color' => 'nullable|string',
         ]);
 
         $shift = Shift::where('id', $id)->where('compani_id', $userCompany->id)->firstOrFail();
 
         $shift->update([
-            'name'         => $request->name,
-            'branch_id'    => $request->branch_id,
-            'start_time'   => $request->start_time,
-            'end_time'     => $request->end_time,
+            'name' => $request->name,
+            'branch_id' => $request->branch_id,
+            'start_time' => $request->start_time,
+            'end_time' => $request->end_time,
             'is_cross_day' => $request->has('is_cross_day'),
-            'color'        => $request->color,
+            'color' => $request->color,
         ]);
 
         $this->logActivity('Update Master Shift', "Mengubah shift: {$shift->name}", $userCompany->id);
@@ -118,11 +118,11 @@ class ShiftController extends Controller
     private function logActivity($type, $description, $companyId)
     {
         ActivityLog::create([
-            'user_id'       => Auth::id(),
-            'compani_id'    => $companyId,
+            'user_id' => Auth::id(),
+            'compani_id' => $companyId,
             'activity_type' => $type,
-            'description'   => $description,
-            'created_at'    => now(),
+            'description' => $description,
+            'created_at' => now(),
         ]);
 
         Cache::forget("activities_{$companyId}");

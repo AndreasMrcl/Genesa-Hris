@@ -2,33 +2,32 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Payroll;
-use App\Models\PayrollDetail;
-use App\Models\Employee;
+use App\Exports\PayrollExport;
+use App\Exports\PayrollReportExport;
+use App\Models\ActivityLog;
+use App\Models\Branch;
 use App\Models\CompanyPayrollConfig;
 use App\Models\GlobalPtkp;
 use App\Models\GlobalTerRate;
-use App\Models\ActivityLog;
-use App\Models\Branch;
+use App\Models\Payroll;
+use App\Models\PayrollDetail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
-use App\Exports\PayrollExport;
-use App\Exports\PayrollReportExport;
 use Maatwebsite\Excel\Facades\Excel;
 
 class PayrollController extends Controller
 {
     public function index()
     {
-        if (!Auth::check()) {
+        if (! Auth::check()) {
             return redirect('/');
         }
 
         $userCompany = Auth::user()->compani;
 
-        if (!$userCompany) {
+        if (! $userCompany) {
             return redirect()->route('addcompany');
         }
 
@@ -40,15 +39,15 @@ class PayrollController extends Controller
 
         $page = request()->get('page', 1);
 
-        $cacheKey = 'payroll_' . $userCompany->id . '_page_' . $page;
+        $cacheKey = 'payroll_'.$userCompany->id.'_page_'.$page;
 
         $batches = Cache::remember($cacheKey, 180, function () use ($userCompany) {
             return $userCompany->payrolls()
                 ->join('employees', 'payrolls.employee_id', '=', 'employees.id')
                 ->select(
-                    'payrolls.pay_period_start', 
-                    'payrolls.pay_period_end', 
-                    DB::raw('count(distinct employees.branch_id) as total_branches'), 
+                    'payrolls.pay_period_start',
+                    'payrolls.pay_period_end',
+                    DB::raw('count(distinct employees.branch_id) as total_branches'),
                     DB::raw('sum(payrolls.net_salary) as total_spent'),
                     DB::raw('max(payrolls.status) as status'),
                     DB::raw('max(payrolls.created_at) as created_at')
@@ -65,7 +64,7 @@ class PayrollController extends Controller
     {
         $userCompany = Auth::user()->compani;
 
-        $cacheKey = 'payroll_period_' . $userCompany->id . '_' . $start . '_' . $end;
+        $cacheKey = 'payroll_period_'.$userCompany->id.'_'.$start.'_'.$end;
 
         $branchStats = Cache::remember($cacheKey, 180, function () use ($userCompany, $start, $end) {
             return Payroll::query()
@@ -96,15 +95,15 @@ class PayrollController extends Controller
     public function branch($start, $end, $branchId)
     {
         $userCompany = Auth::user()->compani;
-        
-        $cacheKey = 'payroll_emp_' . $userCompany->id . '_' . $start . '_' . $end . '_' . $branchId;
+
+        $cacheKey = 'payroll_emp_'.$userCompany->id.'_'.$start.'_'.$end.'_'.$branchId;
 
         $payrolls = Cache::remember($cacheKey, 180, function () use ($userCompany, $start, $end, $branchId) {
             return Payroll::with(['employee', 'employee.position'])
                 ->where('compani_id', $userCompany->id)
                 ->where('pay_period_start', $start)
                 ->where('pay_period_end', $end)
-                ->whereHas('employee', function($q) use ($branchId) {
+                ->whereHas('employee', function ($q) use ($branchId) {
                     $q->where('branch_id', $branchId);
                 })
                 ->get();
@@ -149,8 +148,12 @@ class PayrollController extends Controller
 
         $companyConfig = CompanyPayrollConfig::where('compani_id', $userCompany->id)->first();
 
-        if (!$companyConfig) return back()->withErrors(['msg' => 'Company Settings not found.']);
-        if ($companyConfig->ump_amount <= 0) return back()->withErrors(['msg' => 'Regional Minimum Wage (UMP) is not set or 0.']);
+        if (! $companyConfig) {
+            return back()->withErrors(['msg' => 'Company Settings not found.']);
+        }
+        if ($companyConfig->ump_amount <= 0) {
+            return back()->withErrors(['msg' => 'Regional Minimum Wage (UMP) is not set or 0.']);
+        }
 
         $employees = $userCompany->employees()
             ->whereHas('attendances', function ($q) use ($start, $end) {
@@ -168,14 +171,14 @@ class PayrollController extends Controller
         $bpjsBase = $companyConfig->ump_amount;
         $bpjsKes = min($bpjsBase, $companyConfig->kes_cap_amount);
 
-        $bpjsKesEmp  = $bpjsKes * ($companyConfig->kes_emp_percent / 100);
+        $bpjsKesEmp = $bpjsKes * ($companyConfig->kes_emp_percent / 100);
         $bpjsKesComp = $bpjsKes * ($companyConfig->kes_comp_percent / 100);
         $bpjsJkk = $bpjsBase * ($companyConfig->bpjs_jkk_rate / 100);
         $bpjsJkm = $bpjsBase * ($companyConfig->jkm_comp_percent / 100);
-        $bpjsJhtEmp  = $bpjsBase * ($companyConfig->jht_emp_percent / 100);
+        $bpjsJhtEmp = $bpjsBase * ($companyConfig->jht_emp_percent / 100);
         $bpjsJhtComp = $bpjsBase * ($companyConfig->jht_comp_percent / 100);
         $baseJp = min($bpjsBase, $companyConfig->jp_cap_amount);
-        $bpjsJpEmp  = $baseJp * ($companyConfig->jp_emp_percent / 100);
+        $bpjsJpEmp = $baseJp * ($companyConfig->jp_emp_percent / 100);
         $bpjsJpComp = $baseJp * ($companyConfig->jp_comp_percent / 100);
 
         DB::beginTransaction();
@@ -226,7 +229,9 @@ class PayrollController extends Controller
 
                     $totalAllowance += $amount;
 
-                    if ($master->is_taxable) $taxableIncomeBase += $amount;
+                    if ($master->is_taxable) {
+                        $taxableIncomeBase += $amount;
+                    }
 
                     $detailsToSave[] = [
                         'name' => $master->name,
@@ -240,12 +245,12 @@ class PayrollController extends Controller
                 $companyBenefit = 0;
 
                 $partKes = $emp->participates_bpjs_kes ?? true;
-                $partTk  = $emp->participates_bpjs_tk ?? true;
-                $partJp  = $emp->participates_bpjs_jp ?? true;
+                $partTk = $emp->participates_bpjs_tk ?? true;
+                $partJp = $emp->participates_bpjs_jp ?? true;
 
                 if ($companyConfig->bpjs_kes_active && $partKes) {
                     $bpjsEmpDeduction += $bpjsKesEmp;
-                    $companyBenefit   += $bpjsKesComp;
+                    $companyBenefit += $bpjsKesComp;
 
                     $detailsToSave[] = ['name' => 'BPJS Kes', 'category' => 'deduction', 'amount' => $bpjsKesEmp];
                     $detailsToSave[] = ['name' => 'Tunj. BPJS Kes', 'category' => 'benefit', 'amount' => $bpjsKesComp];
@@ -287,7 +292,7 @@ class PayrollController extends Controller
                     } elseif ($taxMethod == 'NET') {
                         $pph21 = $this->calculatePph21TER($brutoDasar, $ptkpRule->ter_category);
                         if ($pph21 > 0) {
-                            $detailsToSave[] = ['name' => 'PPh 21 (Ditanggung Perusahaan)', 'category' => 'deduction', 'amount' => 0,];
+                            $detailsToSave[] = ['name' => 'PPh 21 (Ditanggung Perusahaan)', 'category' => 'deduction', 'amount' => 0];
                         }
                     } elseif ($taxMethod == 'GROSS UP') {
                         $tunjanganPajak = 0;
@@ -348,7 +353,7 @@ class PayrollController extends Controller
                         $alphaPenalty = $totalAlpha * $dailySalary;
                         $totalDeduction += $alphaPenalty;
                         $detailsToSave[] = [
-                            'name' => 'Alpha (' . $totalAlpha . ')',
+                            'name' => 'Alpha ('.$totalAlpha.')',
                             'category' => 'deduction',
                             'amount' => $alphaPenalty,
                         ];
@@ -358,18 +363,18 @@ class PayrollController extends Controller
                         $permissionPenalty = $totalPermission * ($dailySalary * 0.5);
                         $totalDeduction += $permissionPenalty;
                         $detailsToSave[] = [
-                            'name' => 'Izin (' . $totalPermission . ')',
+                            'name' => 'Izin ('.$totalPermission.')',
                             'category' => 'deduction',
                             'amount' => $permissionPenalty,
                         ];
                     }
                 }
-                
+
                 if ($totalLate > 0) {
                     $latePenalty = $totalLate * 27300;
                     $totalDeduction += $latePenalty;
                     $detailsToSave[] = [
-                        'name' => 'Terlambat (' . $totalLate . ')',
+                        'name' => 'Terlambat ('.$totalLate.')',
                         'category' => 'deduction',
                         'amount' => $latePenalty,
                     ];
@@ -383,9 +388,9 @@ class PayrollController extends Controller
                     if ($infaqAmount > 0) {
                         $totalDeduction += $infaqAmount;
                         $detailsToSave[] = [
-                            'name' => 'Infaq (' . $companyConfig->infaq_percent . '%)',
+                            'name' => 'Infaq ('.$companyConfig->infaq_percent.'%)',
                             'category' => 'deduction',
-                            'amount' => $infaqAmount
+                            'amount' => $infaqAmount,
                         ];
                     }
                 }
@@ -432,12 +437,13 @@ class PayrollController extends Controller
             );
 
             DB::commit();
-            Cache::forget('payroll_' . $userCompany->id . '_page_1');
+            Cache::forget('payroll_'.$userCompany->id.'_page_1');
 
             return redirect()->route('payroll')->with('success', "Generated $countProcessed slips for period $start to $end.");
         } catch (\Exception $e) {
             DB::rollBack();
-            return back()->withErrors(['msg' => 'Calculation Error: ' . $e->getMessage() . ' Line: ' . $e->getLine()]);
+
+            return back()->withErrors(['msg' => 'Calculation Error: '.$e->getMessage().' Line: '.$e->getLine()]);
         }
     }
 
@@ -454,6 +460,7 @@ class PayrollController extends Controller
         if ($rate) {
             return $grossIncome * ($rate->rate_percentage / 100);
         }
+
         return 0;
     }
 
@@ -461,7 +468,7 @@ class PayrollController extends Controller
     {
         $userCompany = Auth::user()->compani;
 
-        $cacheKey = 'payroll_detail_' . $id;
+        $cacheKey = 'payroll_detail_'.$id;
 
         $payroll = Cache::remember($cacheKey, now()->addMinutes(60), function () use ($id, $userCompany) {
             return $userCompany->payrolls()
@@ -487,8 +494,8 @@ class PayrollController extends Controller
         $formattedEnd = \Carbon\Carbon::parse($end)->format('d M Y');
         $this->logActivity('Delete Payroll Batch', "Menghapus seluruh data gaji periode {$formattedStart} s/d {$formattedEnd}", $userCompany->id);
 
-        Cache::forget('payroll_' . $userCompany->id . '_page_1');
-        Cache::forget('payroll_period_' . $userCompany->id . '_' . $start . '_' . $end);
+        Cache::forget('payroll_'.$userCompany->id.'_page_1');
+        Cache::forget('payroll_period_'.$userCompany->id.'_'.$start.'_'.$end);
 
         return redirect()->route('payroll')->with('success', "Deleted payroll batch ($deleted records).");
     }
@@ -506,9 +513,9 @@ class PayrollController extends Controller
 
         $this->logActivity('Delete Payroll Slip', "Menghapus slip gaji milik {$employeeName} untuk periode {$start}", $userCompany->id);
 
-        Cache::forget('payroll_' . $userCompany->id . '_page_1');
-        Cache::forget('payroll_detail_' . $id);
-        Cache::forget('payroll_period_' . $userCompany->id . '_' . $start . '_' . $end);
+        Cache::forget('payroll_'.$userCompany->id.'_page_1');
+        Cache::forget('payroll_detail_'.$id);
+        Cache::forget('payroll_period_'.$userCompany->id.'_'.$start.'_'.$end);
 
         return back()->with('success', 'Single payroll record deleted.');
     }
@@ -519,7 +526,7 @@ class PayrollController extends Controller
 
         $request->validate([
             'start' => 'required|date',
-            'end'   => 'required|date',
+            'end' => 'required|date',
         ]);
 
         $start = $request->start;
@@ -530,13 +537,13 @@ class PayrollController extends Controller
             ->where('pay_period_end', $end)
             ->exists();
 
-        if (!$exists) {
+        if (! $exists) {
             return redirect()->route('payroll')->withErrors(['msg' => 'No payroll data found for this period to export.']);
         }
 
         $this->logActivity('Export Payroll', "Mengunduh laporan Excel untuk periode {$start} s/d {$end}", $userCompany->id);
 
-        $filename = 'Payroll_Rekap_' . $start . '_to_' . $end . '.xlsx';
+        $filename = 'Payroll_Rekap_'.$start.'_to_'.$end.'.xlsx';
 
         return Excel::download(new PayrollExport($userCompany->id, $start, $end), $filename);
     }
@@ -544,23 +551,23 @@ class PayrollController extends Controller
     private function logActivity($type, $description, $companyId)
     {
         ActivityLog::create([
-            'user_id'       => Auth::id(),
-            'compani_id'    => $companyId,
+            'user_id' => Auth::id(),
+            'compani_id' => $companyId,
             'activity_type' => $type,
-            'description'   => $description,
-            'created_at'    => now(),
+            'description' => $description,
+            'created_at' => now(),
         ]);
 
-        Cache::tags(['activities_' . $companyId])->flush();
+        Cache::tags(['activities_'.$companyId])->flush();
     }
 
     public function exportReport(Request $request)
     {
         $userCompany = Auth::user()->compani;
-        
+
         $request->validate([
             'start' => 'required|date',
-            'end'   => 'required|date',
+            'end' => 'required|date',
         ]);
 
         $exists = $userCompany->payrolls()
@@ -568,14 +575,14 @@ class PayrollController extends Controller
             ->where('pay_period_end', $request->end)
             ->exists();
 
-        if (!$exists) {
+        if (! $exists) {
             return redirect()->route('payroll')->withErrors(['msg' => 'No data found for report.']);
         }
-        
+
         $this->logActivity('Export Payroll Report', "Mengunduh Laporan Analisa Gaji periode {$request->start}", $userCompany->id);
 
-        $filename = 'Laporan_Gaji_' . $request->start . '.xlsx';
-        
+        $filename = 'Laporan_Gaji_'.$request->start.'.xlsx';
+
         return Excel::download(new PayrollReportExport($userCompany->id, $request->start, $request->end), $filename);
     }
 }

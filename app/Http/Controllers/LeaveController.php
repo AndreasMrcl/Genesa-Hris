@@ -2,9 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Leave;
-use App\Models\Employee;
 use App\Models\ActivityLog;
+use App\Models\Leave;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
@@ -13,13 +12,13 @@ class LeaveController extends Controller
 {
     public function index()
     {
-        if (!Auth::check()) {
+        if (! Auth::check()) {
             return redirect('/');
         }
 
         $userCompany = Auth::user()->compani;
 
-        if (!$userCompany) {
+        if (! $userCompany) {
             return redirect()->route('addcompany');
         }
 
@@ -46,21 +45,21 @@ class LeaveController extends Controller
 
         $data = $request->validate([
             'employee_id' => 'required|exists:employees,id',
-            'start_date'  => 'required|date',
-            'end_date'    => 'required|date|after_or_equal:start_date',
-            'type'        => 'required|string',
-            'note'      => 'required|string',
-            'status'      => 'required|string',
+            'start_date' => 'required|date',
+            'end_date' => 'required|date|after_or_equal:start_date',
+            'type' => 'required|string',
+            'note' => 'required|string',
+            'status' => 'required|string',
         ]);
 
         $leave = Leave::create([
-            'employee_id'     => $data['employee_id'],
-            'start_date'     => $data['start_date'],
-            'end_date'     => $data['end_date'],
-            'type'     => $data['type'],
-            'note'     => $data['note'],
-            'status'     => $data['status'],
-            'compani_id'  => $userCompany->id,
+            'employee_id' => $data['employee_id'],
+            'start_date' => $data['start_date'],
+            'end_date' => $data['end_date'],
+            'type' => $data['type'],
+            'note' => $data['note'],
+            'status' => $data['status'],
+            'compani_id' => $userCompany->id,
         ]);
 
         $this->logActivity(
@@ -101,7 +100,6 @@ class LeaveController extends Controller
             'note' => $data['note'],
             'status' => $data['status'],
         ]);
-
 
         $this->logActivity(
             'Update Leave',
@@ -145,11 +143,11 @@ class LeaveController extends Controller
     private function logActivity($type, $description, $companyId)
     {
         ActivityLog::create([
-            'user_id'       => Auth::id(),
-            'compani_id'    => $companyId,
+            'user_id' => Auth::id(),
+            'compani_id' => $companyId,
             'activity_type' => $type,
-            'description'   => $description,
-            'created_at'    => now(),
+            'description' => $description,
+            'created_at' => now(),
         ]);
 
         Cache::forget("activities_{$companyId}");

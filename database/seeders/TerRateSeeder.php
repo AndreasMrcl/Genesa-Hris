@@ -2,9 +2,8 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-use Illuminate\Database\Seeder;
 use App\Models\GlobalTerRate;
+use Illuminate\Database\Seeder;
 
 class TerRateSeeder extends Seeder
 {
@@ -141,16 +140,16 @@ class TerRateSeeder extends Seeder
             [74500000, 83200000,  22.00],
             [83200000, 95600000,  23.00],
             [95600000, 110000000, 24.00],
-            [110000000,134000000, 25.00],
-            [134000000,169000000, 26.00],
-            [169000000,221000000, 27.00],
-            [221000000,390000000, 28.00],
-            [390000000,463000000, 29.00],
-            [463000000,561000000, 30.00],
-            [561000000,709000000, 31.00],
-            [709000000,965000000, 32.00],
-            [965000000,1419000000,33.00],
-            [1419000000,null,      34.00],
+            [110000000, 134000000, 25.00],
+            [134000000, 169000000, 26.00],
+            [169000000, 221000000, 27.00],
+            [221000000, 390000000, 28.00],
+            [390000000, 463000000, 29.00],
+            [463000000, 561000000, 30.00],
+            [561000000, 709000000, 31.00],
+            [709000000, 965000000, 32.00],
+            [965000000, 1419000000, 33.00],
+            [1419000000, null,      34.00],
         ];
 
         // 3. Proses Insert ke Database
@@ -165,7 +164,7 @@ class TerRateSeeder extends Seeder
         foreach ($data as $r) {
             $min = $r[0];
             $max = $r[1];
-            
+
             // LOGIKA PENTING: Tambahkan +1 pada batas bawah (kecuali baris pertama)
             // Agar tidak overlap. Contoh: 5.400.000 (Baris 1) vs 5.400.001 (Baris 2)
             if ($min > 0) {
@@ -181,7 +180,7 @@ class TerRateSeeder extends Seeder
                 'updated_at' => now(),
             ];
         }
-        
+
         GlobalTerRate::insert($rows);
     }
 }

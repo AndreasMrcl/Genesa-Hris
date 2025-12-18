@@ -12,13 +12,13 @@ class AnnouncementController extends Controller
 {
     public function index()
     {
-        if (!Auth::check()) {
+        if (! Auth::check()) {
             return redirect('/');
         }
 
         $userCompany = Auth::user()->compani;
 
-        if (!$userCompany) {
+        if (! $userCompany) {
             return redirect()->route('addcompany');
         }
 
@@ -44,12 +44,12 @@ class AnnouncementController extends Controller
         $userCompany = auth()->user()->compani;
 
         $data = $request->validate([
-            'content'     => 'required|string',
+            'content' => 'required|string',
         ]);
 
         $announcement = Announcement::create([
-            'content'     => $data['content'],
-            'compani_id'  => $userCompany->id,
+            'content' => $data['content'],
+            'compani_id' => $userCompany->id,
         ]);
 
         $this->logActivity(
@@ -123,11 +123,11 @@ class AnnouncementController extends Controller
     private function logActivity($type, $description, $companyId)
     {
         ActivityLog::create([
-            'user_id'       => Auth::id(),
-            'compani_id'    => $companyId,
+            'user_id' => Auth::id(),
+            'compani_id' => $companyId,
             'activity_type' => $type,
-            'description'   => $description,
-            'created_at'    => now(),
+            'description' => $description,
+            'created_at' => now(),
         ]);
 
         Cache::forget("activities_{$companyId}");

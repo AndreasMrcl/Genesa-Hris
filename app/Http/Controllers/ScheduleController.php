@@ -2,27 +2,26 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Schedule;
 use App\Models\ActivityLog;
-use App\Models\Branch;
+use App\Models\Schedule;
+use Carbon\Carbon;
+use Carbon\CarbonPeriod;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
-use Carbon\Carbon;
-use Carbon\CarbonPeriod;
 
 class ScheduleController extends Controller
 {
     public function index(Request $request)
     {
-        if (!Auth::check()) {
+        if (! Auth::check()) {
             return redirect('/');
         }
 
         $userCompany = Auth::user()->compani;
 
-        if (!$userCompany) {
+        if (! $userCompany) {
             return redirect()->route('addcompany');
         }
 
@@ -32,7 +31,7 @@ class ScheduleController extends Controller
             return redirect()->route('login');
         }
 
-        $branches = Cache::remember("branches_{$userCompany->id}", 180, function() use ($userCompany) {
+        $branches = Cache::remember("branches_{$userCompany->id}", 180, function () use ($userCompany) {
             return $userCompany->branches()->select('id', 'name')->get();
         });
 
@@ -44,13 +43,13 @@ class ScheduleController extends Controller
 
         if ($selectedBranchId) {
 
-            $allEmployees = Cache::remember("employees_{$userCompany->id}", 180, function() use ($userCompany) {
+            $allEmployees = Cache::remember("employees_{$userCompany->id}", 180, function () use ($userCompany) {
                 return $userCompany->employees()->orderBy('name')->get();
             });
 
             $employees = $allEmployees->where('branch_id', $selectedBranchId)->values();
 
-            $allShifts = Cache::remember("shifts_{$userCompany->id}", 180, function() use ($userCompany) {
+            $allShifts = Cache::remember("shifts_{$userCompany->id}", 180, function () use ($userCompany) {
                 return $userCompany->shifts()->get();
             });
 
@@ -60,21 +59,20 @@ class ScheduleController extends Controller
 
             $cacheKeySchedule = "schedules_{$userCompany->id}_branch_{$selectedBranchId}";
 
-            $schedules = Cache::remember($cacheKeySchedule, 180, function() use ($userCompany, $selectedBranchId) {
+            $schedules = Cache::remember($cacheKeySchedule, 180, function () use ($userCompany, $selectedBranchId) {
                 return $userCompany->schedules()
                     ->with(['employee', 'shift'])
-                    ->whereHas('employee', function($q) use ($selectedBranchId) {
+                    ->whereHas('employee', function ($q) use ($selectedBranchId) {
                         $q->where('branch_id', $selectedBranchId);
                     })
                     ->whereBetween('date', [
-                        now()->startOfMonth()->subWeek(), 
-                        now()->endOfMonth()->addWeek()
-                    ]) 
+                        now()->startOfMonth()->subWeek(),
+                        now()->endOfMonth()->addWeek(),
+                    ])
                     ->latest('date')
                     ->get();
             });
         }
-        
 
         return view('schedule', compact('branches', 'selectedBranchId', 'employees', 'shifts', 'schedules'));
     }
@@ -84,12 +82,12 @@ class ScheduleController extends Controller
         $userCompany = Auth::user()->compani;
 
         $request->validate([
-            'branch_id'      => 'required|exists:branches,id',
-            'employee_ids'   => 'required|array',
+            'branch_id' => 'required|exists:branches,id',
+            'employee_ids' => 'required|array',
             'employee_ids.*' => 'exists:employees,id',
-            'shift_id'       => 'required|exists:shifts,id',
-            'start_date'     => 'required|date',
-            'end_date'       => 'required|date|after_or_equal:start_date',
+            'shift_id' => 'required|exists:shifts,id',
+            'start_date' => 'required|date',
+            'end_date' => 'required|date|after_or_equal:start_date',
         ]);
 
         $startDate = Carbon::parse($request->start_date);
@@ -97,7 +95,7 @@ class ScheduleController extends Controller
         $period = CarbonPeriod::create($startDate, $endDate);
 
         $shift = $userCompany->shifts()->findOrFail($request->shift_id);
-        
+
         $count = 0;
 
         DB::beginTransaction();
@@ -106,18 +104,18 @@ class ScheduleController extends Controller
                 foreach ($period as $date) {
                     Schedule::updateOrCreate(
                         [
-                            'compani_id'  => $userCompany->id,
+                            'compani_id' => $userCompany->id,
                             'employee_id' => $empId,
-                            'date'        => $date->format('Y-m-d'),
+                            'date' => $date->format('Y-m-d'),
                         ],
                         [
-                            'shift_id' => $shift->id
+                            'shift_id' => $shift->id,
                         ]
                     );
                     $count++;
                 }
             }
-            
+
             DB::commit();
 
             $this->logActivity('Assign Schedule', "Assign Shift {$shift->name} ke {$count} hari kerja.", $userCompany->id);
@@ -127,7 +125,8 @@ class ScheduleController extends Controller
 
         } catch (\Exception $e) {
             DB::rollBack();
-            return back()->withErrors(['msg' => 'Error assigning schedule: ' . $e->getMessage()]);
+
+            return back()->withErrors(['msg' => 'Error assigning schedule: '.$e->getMessage()]);
         }
     }
 
@@ -141,11 +140,11 @@ class ScheduleController extends Controller
         ]);
 
         $schedule = $userCompany->schedules()->with('employee')->findOrFail($id);
-            
+
         if ($request->employee_id != $schedule->employee_id) {
             $exists = Schedule::where('compani_id', $userCompany->id)
-                ->where('employee_id', $request->employee_id) 
-                ->where('date', $schedule->date)            
+                ->where('employee_id', $request->employee_id)
+                ->where('date', $schedule->date)
                 ->exists();
 
             if ($exists) {
@@ -155,7 +154,7 @@ class ScheduleController extends Controller
 
         $schedule->update([
             'shift_id' => $request->shift_id,
-            'employee_id' => $request->employee_id
+            'employee_id' => $request->employee_id,
         ]);
 
         $this->logActivity('Update Schedule', "Ubah jadwal {$schedule->employee->name} tgl {$schedule->date}", $userCompany->id);
@@ -176,7 +175,7 @@ class ScheduleController extends Controller
             $branchId = $schedule->employee->branch_id;
 
             $schedule->delete();
-            
+
             $this->logActivity('Delete Schedule', "Hapus jadwal {$name} tgl {$date}", $userCompany->id);
             $this->clearCache($userCompany->id, $branchId);
         }
@@ -192,11 +191,11 @@ class ScheduleController extends Controller
     private function logActivity($type, $description, $companyId)
     {
         ActivityLog::create([
-            'user_id'       => Auth::id(),
-            'compani_id'    => $companyId,
+            'user_id' => Auth::id(),
+            'compani_id' => $companyId,
             'activity_type' => $type,
-            'description'   => $description,
-            'created_at'    => now(),
+            'description' => $description,
+            'created_at' => now(),
         ]);
 
         Cache::forget("activities_{$companyId}");

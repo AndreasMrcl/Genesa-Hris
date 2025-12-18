@@ -33,7 +33,7 @@ return new class extends Migration
                 'pending',   // menunggu approval
                 'approved',  // disetujui
                 'rejected',  // ditolak
-                'cancelled'  // dibatalkan oleh karyawan
+                'cancelled',  // dibatalkan oleh karyawan
             ])->default('pending');
             $table->timestamps();
         });

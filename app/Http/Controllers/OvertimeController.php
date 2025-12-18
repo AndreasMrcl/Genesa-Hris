@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Overtime;
 use App\Models\ActivityLog;
+use App\Models\Overtime;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
@@ -12,13 +12,13 @@ class OvertimeController extends Controller
 {
     public function index()
     {
-        if (!Auth::check()) {
+        if (! Auth::check()) {
             return redirect('/');
         }
 
         $userCompany = Auth::user()->compani;
 
-        if (!$userCompany) {
+        if (! $userCompany) {
             return redirect()->route('addcompany');
         }
 
@@ -53,13 +53,13 @@ class OvertimeController extends Controller
         ]);
 
         $overtime = Overtime::create([
-            'employee_id'     => $data['employee_id'],
-            'overtime_date'     => $data['overtime_date'],
-            'start_time'     => $data['start_time'],
-            'end_time'     => $data['end_time'],
-            'status'     => $data['status'],
-            'overtime_pay'     => $data['overtime_pay'],
-            'compani_id'  => $userCompany->id,
+            'employee_id' => $data['employee_id'],
+            'overtime_date' => $data['overtime_date'],
+            'start_time' => $data['start_time'],
+            'end_time' => $data['end_time'],
+            'status' => $data['status'],
+            'overtime_pay' => $data['overtime_pay'],
+            'compani_id' => $userCompany->id,
         ]);
 
         $this->logActivity(
@@ -93,12 +93,12 @@ class OvertimeController extends Controller
         $oldContent = $overtime->employee->name;
 
         $overtime->update([
-            'employee_id'     => $data['employee_id'],
-            'overtime_date'     => $data['overtime_date'],
-            'start_time'     => $data['start_time'],
-            'end_time'     => $data['end_time'],
-            'status'     => $data['status'],
-            'overtime_pay'     => $data['overtime_pay'],
+            'employee_id' => $data['employee_id'],
+            'overtime_date' => $data['overtime_date'],
+            'start_time' => $data['start_time'],
+            'end_time' => $data['end_time'],
+            'status' => $data['status'],
+            'overtime_pay' => $data['overtime_pay'],
         ]);
 
         $this->logActivity(
@@ -144,11 +144,11 @@ class OvertimeController extends Controller
     private function logActivity($type, $description, $companyId)
     {
         ActivityLog::create([
-            'user_id'       => Auth::id(),
-            'compani_id'    => $companyId,
+            'user_id' => Auth::id(),
+            'compani_id' => $companyId,
             'activity_type' => $type,
-            'description'   => $description,
-            'created_at'    => now(),
+            'description' => $description,
+            'created_at' => now(),
         ]);
 
         Cache::forget("activities_{$companyId}");

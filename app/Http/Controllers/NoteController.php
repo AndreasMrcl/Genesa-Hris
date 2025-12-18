@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Note;
-use App\Models\Employee;
 use App\Models\ActivityLog;
+use App\Models\Employee;
+use App\Models\Note;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
@@ -13,13 +13,13 @@ class NoteController extends Controller
 {
     public function index()
     {
-        if (!Auth::check()) {
+        if (! Auth::check()) {
             return redirect('/');
         }
 
         $userCompany = Auth::user()->compani;
 
-        if (!$userCompany) {
+        if (! $userCompany) {
             return redirect()->route('addcompany');
         }
 
@@ -52,17 +52,17 @@ class NoteController extends Controller
 
         $data = $request->validate([
             'employee_id' => 'required|exists:employees,id',
-            'note_date'   => 'required|date',
-            'type'        => 'required|string',
-            'content'     => 'required|string',
+            'note_date' => 'required|date',
+            'type' => 'required|string',
+            'content' => 'required|string',
         ]);
 
         $note = Note::create([
-            'employee_id'     => $data['employee_id'],
-            'note_date'     => $data['note_date'],
-            'type'     => $data['type'],
-            'content'     => $data['content'],
-            'compani_id'  => $userCompany->id,
+            'employee_id' => $data['employee_id'],
+            'note_date' => $data['note_date'],
+            'type' => $data['type'],
+            'content' => $data['content'],
+            'compani_id' => $userCompany->id,
         ]);
 
         $this->logActivity(
@@ -82,9 +82,9 @@ class NoteController extends Controller
 
         $data = $request->validate([
             'employee_id' => 'required|exists:employees,id',
-            'note_date'   => 'required|date',
-            'type'        => 'required|string',
-            'content'     => 'required|string',
+            'note_date' => 'required|date',
+            'type' => 'required|string',
+            'content' => 'required|string',
         ]);
 
         $note = Note::where('id', $id)
@@ -94,10 +94,10 @@ class NoteController extends Controller
         $oldContent = $note->content;
 
         $note->update([
-            'employee_id'     => $data['employee_id'],
-            'note_date'     => $data['note_date'],
-            'type'     => $data['type'],
-            'content'     => $data['content'],
+            'employee_id' => $data['employee_id'],
+            'note_date' => $data['note_date'],
+            'type' => $data['type'],
+            'content' => $data['content'],
         ]);
 
         $this->logActivity(
@@ -142,11 +142,11 @@ class NoteController extends Controller
     private function logActivity($type, $description, $companyId)
     {
         ActivityLog::create([
-            'user_id'       => Auth::id(),
-            'compani_id'    => $companyId,
+            'user_id' => Auth::id(),
+            'compani_id' => $companyId,
             'activity_type' => $type,
-            'description'   => $description,
-            'created_at'    => now(),
+            'description' => $description,
+            'created_at' => now(),
         ]);
 
         Cache::forget("activities_{$companyId}");

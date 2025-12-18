@@ -14,9 +14,9 @@ return new class extends Migration
         Schema::create('global_ptkps', function (Blueprint $table) {
             $table->id();
             $table->foreignId('compani_id')->constrained()->onUpdate('cascade')->onDelete('cascade');
-            $table->string('code')->unique(); 
+            $table->string('code')->unique();
             $table->decimal('amount', 15, 2);
-            $table->enum('ter_category', ['A', 'B', 'C']); 
+            $table->enum('ter_category', ['A', 'B', 'C']);
             $table->timestamps();
         });
     }

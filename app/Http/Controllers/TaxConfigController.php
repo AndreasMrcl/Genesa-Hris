@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ActivityLog;
 use App\Models\GlobalPtkp;
 use App\Models\GlobalTerRate;
-use App\Models\ActivityLog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
@@ -13,13 +13,13 @@ class TaxConfigController extends Controller
 {
     public function index()
     {
-        if (!Auth::check()) {
+        if (! Auth::check()) {
             return redirect('/');
         }
 
         $userCompany = Auth::user()->compani;
 
-        if (!$userCompany) {
+        if (! $userCompany) {
             return redirect()->route('addcompany');
         }
 
@@ -29,8 +29,8 @@ class TaxConfigController extends Controller
             return redirect()->route('login');
         }
 
-        $cacheKeyPtkp = 'global_ptkps_' . $userCompany->id;
-        $cacheKeyTerRates = 'global_ter_rates_' . $userCompany->id;
+        $cacheKeyPtkp = 'global_ptkps_'.$userCompany->id;
+        $cacheKeyTerRates = 'global_ter_rates_'.$userCompany->id;
 
         $ptkps = Cache::remember($cacheKeyPtkp, 180, function () use ($userCompany) {
             return $userCompany->globalPtkps()
@@ -45,7 +45,6 @@ class TaxConfigController extends Controller
                 ->get();
         });
 
-
         $terA = $allTerRates->where('ter_category', 'A');
         $terB = $allTerRates->where('ter_category', 'B');
         $terC = $allTerRates->where('ter_category', 'C');
@@ -56,7 +55,7 @@ class TaxConfigController extends Controller
     public function storePtkp(Request $request)
     {
         $userCompany = Auth::user()->compani;
-        
+
         $request->validate([
             'code' => 'required|string|unique:global_ptkps,code',
             'amount' => 'required|numeric|min:0',
@@ -70,10 +69,10 @@ class TaxConfigController extends Controller
             'ter_category' => $request->ter_category,
         ]);
 
-        Cache::forget('global_ptkps_' . $userCompany->id);
+        Cache::forget('global_ptkps_'.$userCompany->id);
 
         $this->logActivity('Create PTKP', "Menambah status PTKP: {$ptkp->code}", $userCompany->id);
-        
+
         return redirect()->back()->with('success', 'PTKP Status added')->with('active_tab', 'ptkp');
     }
 
@@ -84,9 +83,9 @@ class TaxConfigController extends Controller
         $ptkp = GlobalPtkp::where('id', $id)
             ->where('compani_id', $userCompany->id)
             ->firstOrFail();
-        
+
         $request->validate([
-            'code' => 'required|string|unique:global_ptkps,code,' . $id,
+            'code' => 'required|string|unique:global_ptkps,code,'.$id,
             'amount' => 'required|numeric|min:0',
             'ter_category' => 'required|in:A,B,C',
         ]);
@@ -97,7 +96,7 @@ class TaxConfigController extends Controller
             'ter_category' => $request->ter_category,
         ]);
 
-        Cache::forget('global_ptkps_' . $userCompany->id);
+        Cache::forget('global_ptkps_'.$userCompany->id);
 
         $this->logActivity('Update PTKP', "Mengubah status PTKP: {$ptkp->code}", $userCompany->id);
 
@@ -116,9 +115,10 @@ class TaxConfigController extends Controller
 
         $ptkp->delete();
 
-        Cache::forget('global_ptkps_' . $userCompany->id);
+        Cache::forget('global_ptkps_'.$userCompany->id);
 
         $this->logActivity('Delete PTKP', "Menghapus status PTKP: {$code}", $userCompany->id);
+
         return redirect()->back()->with('success', 'PTKP Status deleted')->with('active_tab', 'ptkp');
     }
 
@@ -141,11 +141,11 @@ class TaxConfigController extends Controller
             'rate_percentage' => $request->rate_percentage,
         ]);
 
-        Cache::forget('global_ter_rates_' . $userCompany->id);
+        Cache::forget('global_ter_rates_'.$userCompany->id);
 
         $this->logActivity('Create TER', "Menambah tarif TER Kategori {$ter->ter_category}", $userCompany->id);
 
-        return redirect()->back()->with('success', 'TER Rate added')->with('active_tab', 'ter' . $request->ter_category);
+        return redirect()->back()->with('success', 'TER Rate added')->with('active_tab', 'ter'.$request->ter_category);
     }
 
     public function updateTer(Request $request, $id)
@@ -170,11 +170,11 @@ class TaxConfigController extends Controller
 
         $category = $request->ter_category ?? $ter->ter_category;
 
-        Cache::forget('global_ter_rates_' . $userCompany->id);
+        Cache::forget('global_ter_rates_'.$userCompany->id);
 
         $this->logActivity('Update TER', "Mengubah tarif TER ID #{$id}", $userCompany->id);
 
-        return redirect()->back()->with('success', 'TER Rate updated')->with('active_tab', 'ter' . $category);
+        return redirect()->back()->with('success', 'TER Rate updated')->with('active_tab', 'ter'.$category);
     }
 
     public function destroyTer($id)
@@ -184,24 +184,25 @@ class TaxConfigController extends Controller
         $ter = GlobalTerRate::where('id', $id)
             ->where('compani_id', $userCompany->id)
             ->first();
-            
+
         $category = $ter->ter_category;
         $ter->delete();
 
-        Cache::forget('global_ter_rates_' . $userCompany->id);
+        Cache::forget('global_ter_rates_'.$userCompany->id);
 
         $this->logActivity('Delete TER', "Menghapus tarif TER ID #{$id}", $userCompany->id);
-        return redirect()->back()->with('success', 'TER Rate deleted')->with('active_tab', 'ter' . $category);
+
+        return redirect()->back()->with('success', 'TER Rate deleted')->with('active_tab', 'ter'.$category);
     }
-    
+
     private function logActivity($type, $description, $companyId)
     {
         ActivityLog::create([
-            'user_id'       => Auth::id(),
-            'compani_id'    => $companyId,
+            'user_id' => Auth::id(),
+            'compani_id' => $companyId,
             'activity_type' => $type,
-            'description'   => $description,
-            'created_at'    => now(),
+            'description' => $description,
+            'created_at' => now(),
         ]);
 
         Cache::forget("activities_{$companyId}");

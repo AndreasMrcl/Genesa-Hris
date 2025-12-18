@@ -2,12 +2,10 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-use Illuminate\Database\Seeder;
-use App\Models\Compani;
 use App\Models\CompanyPayrollConfig;
 use App\Models\GlobalBpjs;
 use App\Models\GlobalPtkp;
+use Illuminate\Database\Seeder;
 
 class PayrollConfigSeeder extends Seeder
 {
@@ -29,9 +27,8 @@ class PayrollConfigSeeder extends Seeder
             ]
         );
 
-
         GlobalBpjs::updateOrCreate(
-            ['id' => 1], 
+            ['id' => 1],
             [
                 'kes_comp_percent' => 4.00,
                 'kes_emp_percent' => 1.00,
@@ -51,7 +48,7 @@ class PayrollConfigSeeder extends Seeder
             ['code' => 'TK/0', 'amount' => 54000000, 'ter_category' => 'A'],
             ['code' => 'TK/1', 'amount' => 58500000, 'ter_category' => 'A'],
             ['code' => 'K/0',  'amount' => 58500000, 'ter_category' => 'A'],
-            
+
             // === KATEGORI B ===
             ['code' => 'TK/2', 'amount' => 63000000, 'ter_category' => 'B'],
             ['code' => 'TK/3', 'amount' => 67500000, 'ter_category' => 'B'],

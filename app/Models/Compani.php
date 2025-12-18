@@ -2,25 +2,26 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
 class Compani extends Model
 {
     use HasFactory;
+
     protected $fillable =
-    [
-        'user_id',
-        'name',
-        'no_telpon',
-        'ktp',
-        'atas_nama',
-        'bank',
-        'no_rek',
-        'company',
-        'status',
-        'location',
-    ];
+        [
+            'user_id',
+            'name',
+            'no_telpon',
+            'ktp',
+            'atas_nama',
+            'bank',
+            'no_rek',
+            'company',
+            'status',
+            'location',
+        ];
 
     public function user()
     {
@@ -56,6 +57,7 @@ class Compani extends Model
     {
         return $this->hasMany(Overtime::class);
     }
+
     public function payrolls()
     {
         return $this->hasMany(Payroll::class);
@@ -101,17 +103,17 @@ class Compani extends Model
         return $this->hasMany(AttendanceLog::class);
     }
 
-     public function globalTerRates()
+    public function globalTerRates()
     {
         return $this->hasMany(GlobalTerRate::class);
     }
-      
+
     public function globalPtkps()
     {
         return $this->hasMany(GlobalPtkp::class);
     }
 
-     public function schedules()
+    public function schedules()
     {
         return $this->hasMany(Schedule::class);
     }

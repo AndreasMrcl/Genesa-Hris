@@ -20,7 +20,7 @@ return new class extends Migration
                 'performance',
                 'warning',
                 'reward',
-                'other'
+                'other',
             ])->default('general');
             $table->longText('content');
             $table->timestamps();

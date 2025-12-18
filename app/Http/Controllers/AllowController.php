@@ -12,13 +12,13 @@ class AllowController extends Controller
 {
     public function index()
     {
-        if (!Auth::check()) {
+        if (! Auth::check()) {
             return redirect('/');
         }
 
         $userCompany = Auth::user()->compani;
 
-        if (!$userCompany) {
+        if (! $userCompany) {
             return redirect()->route('addcompany');
         }
 
@@ -67,7 +67,7 @@ class AllowController extends Controller
 
         $request->validate([
             'name' => 'required',
-            'type'  => 'required',
+            'type' => 'required',
         ]);
 
         $allow = Allow::where('id', $id)
@@ -75,14 +75,14 @@ class AllowController extends Controller
             ->firstOrFail();
 
         $old = [
-            'name'       => $allow->name,
-            'type'       => $allow->type,
-            'is_taxable' => $allow->is_taxable ? 'Yes' : 'No'
+            'name' => $allow->name,
+            'type' => $allow->type,
+            'is_taxable' => $allow->is_taxable ? 'Yes' : 'No',
         ];
 
         $new = [
-            'name'       => $request->name,
-            'type'       => $request->type,
+            'name' => $request->name,
+            'type' => $request->type,
             'is_taxable' => $request->boolean('is_taxable'),
         ];
 
@@ -140,10 +140,10 @@ class AllowController extends Controller
     private function logActivity($type, $description, $companyId)
     {
         ActivityLog::create([
-            'user_id'       => auth()->id(),
-            'compani_id'    => $companyId,
+            'user_id' => auth()->id(),
+            'compani_id' => $companyId,
             'activity_type' => $type,
-            'description'   => $description,
+            'description' => $description,
         ]);
 
         Cache::forget("activities_{$companyId}");

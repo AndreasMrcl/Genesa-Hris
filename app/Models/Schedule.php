@@ -2,9 +2,9 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
 class Schedule extends Model
 {
@@ -24,7 +24,7 @@ class Schedule extends Model
 
     public function getIsPastAttribute()
     {
-        return Carbon::parse($this->date)->isPast() && !$this->is_today;
+        return Carbon::parse($this->date)->isPast() && ! $this->is_today;
     }
 
     public function getShiftNameAttribute()
@@ -41,17 +41,18 @@ class Schedule extends Model
     {
         $border = $this->is_today ? 'border-indigo-500 ring-1 ring-indigo-100' : 'border-transparent';
         $bg = $this->is_past ? 'bg-gray-50 opacity-80' : 'bg-white';
-        
+
         return "{$bg} {$border}";
     }
 
     public function getDateFormattedAttribute()
     {
         $d = Carbon::parse($this->date);
+
         return [
             'day_name' => $d->format('D'),
-            'day_num'  => $d->format('d'),
-            'month'    => $d->format('M'), 
+            'day_num' => $d->format('d'),
+            'month' => $d->format('M'),
         ];
     }
 
