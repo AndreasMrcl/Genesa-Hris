@@ -107,4 +107,9 @@ class Employee extends Authenticatable
     {
         return $this->hasMany(AttendanceLog::class);
     }
+
+    public function schedules()
+    {
+        return $this->hasMany(Schedule::class);
+    }
 }

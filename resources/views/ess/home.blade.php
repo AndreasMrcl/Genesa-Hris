@@ -89,6 +89,15 @@
 
             <div class="grid grid-cols-3 gap-4 text-center">
 
+                <!-- Schedule -->
+                <a href="{{ route('ess-schedule') }}" class="flex flex-col items-center gap-2">
+                    <div
+                        class="w-14 h-14 flex items-center justify-center bg-cyan-100 text-cyan-600 rounded-xl shadow-sm">
+                        <i class="fas fa-calendar-alt text-xl"></i>
+                    </div>
+                    <p class="text-xs font-semibold text-gray-600">Schedule</p>
+                </a>
+
                 <!-- Attendance -->
                 <a href="{{ route('ess-attendance') }}" class="flex flex-col items-center gap-2">
                     <div
@@ -123,15 +132,6 @@
                         <i class="fas fa-note-sticky text-xl"></i>
                     </div>
                     <p class="text-xs font-semibold text-gray-600">Note</p>
-                </a>
-
-                <!-- Organization -->
-                <a href="{{ route('ess-organization') }}" class="flex flex-col items-center gap-2">
-                    <div
-                        class="w-14 h-14 flex items-center justify-center bg-gray-100 text-gray-600 rounded-xl shadow-sm">
-                        <i class="fas fa-user-circle text-xl"></i>
-                    </div>
-                    <p class="text-xs font-semibold text-gray-600">Organization</p>
                 </a>
 
                 <!-- Payroll -->

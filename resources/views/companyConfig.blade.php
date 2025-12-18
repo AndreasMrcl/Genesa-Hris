@@ -81,7 +81,7 @@
                             </h3>
                             
                             <!-- Master Switches -->
-                            <div class="flex gap-6 mb-6">
+                            <div class="md:flex gap-6 mb-6 space-y-2 md:space-y-0">
                                 <label class="inline-flex items-center cursor-pointer bg-gray-50 px-4 py-2 rounded-lg border border-gray-200 hover:bg-gray-100 transition">
                                     <input type="checkbox" name="bpjs_kes_active" value="1" {{ $config->bpjs_kes_active ? 'checked' : '' }} class="w-5 h-5 rounded border-gray-300 text-emerald-600 focus:ring-emerald-500">
                                     <span class="ml-2 text-sm font-semibold text-gray-700">Activate BPJS Kesehatan</span>
@@ -99,15 +99,15 @@
                                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                                         <div>
                                             <label class="block text-xs font-semibold text-gray-600 mb-1">Company (%)</label>
-                                            <input type="number" step="0.01" name="kes_comp_percent" value="{{ $config->kes_comp_percent }}" class="w-full rounded-lg border-gray-300 shadow-sm p-2 border text-sm" required>
+                                            <input type="number" step="0.01" name="kes_comp_percent" value="{{ $config->kes_comp_percent }}" class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-indigo-500" required>
                                         </div>
                                         <div>
                                             <label class="block text-xs font-semibold text-gray-600 mb-1">Employee (%)</label>
-                                            <input type="number" step="0.01" name="kes_emp_percent" value="{{ $config->kes_emp_percent }}" class="w-full rounded-lg border-gray-300 shadow-sm p-2 border text-sm" required>
+                                            <input type="number" step="0.01" name="kes_emp_percent" value="{{ $config->kes_emp_percent }}" class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-indigo-500" required>
                                         </div>
                                         <div>
                                             <label class="block text-xs font-semibold text-gray-600 mb-1">Max Cap Amount</label>
-                                            <input type="number" name="kes_cap_amount" value="{{ $config->kes_cap_amount }}" class="w-full rounded-lg border-gray-300 shadow-sm p-2 border text-sm" required>
+                                            <input type="number" name="kes_cap_amount" value="{{ $config->kes_cap_amount }}" class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-indigo-500" required>
                                         </div>
                                     </div>
                                 </div>
@@ -119,7 +119,7 @@
                                     <h4 class="text-xs font-bold text-gray-500 uppercase mb-2">JKK Rate (Jaminan Kecelakaan Kerja)</h4>
                                     <div>
                                         <label class="block text-xs font-semibold text-gray-600 mb-1">Company (%)</label>
-                                        <input type="number" step="0.01" name="bpjs_jkk_rate" value="{{ $config->bpjs_jkk_rate }}" class="w-full rounded-lg border-gray-300 shadow-sm p-2 border text-sm" required>
+                                        <input type="number" step="0.01" name="bpjs_jkk_rate" value="{{ $config->bpjs_jkk_rate }}" class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-indigo-500" required>
                                     </div>
                                     <p class="text-xs text-gray-500 mt-1">Company risk rate (0.24% - 1.74%).</p>
                                 </div>
@@ -127,7 +127,7 @@
                                     <h4 class="text-xs font-bold text-gray-500 uppercase mb-2">JKM (Jaminan Kematian)</h4>
                                     <div>
                                         <label class="block text-xs font-semibold text-gray-600 mb-1">Company (%)</label>
-                                        <input type="number" step="0.01" name="jkm_comp_percent" value="{{ $config->jkm_comp_percent }}" class="w-full rounded-lg border-gray-300 shadow-sm p-2 border text-sm" required>
+                                        <input type="number" step="0.01" name="jkm_comp_percent" value="{{ $config->jkm_comp_percent }}" class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-indigo-500" required>
                                     </div>
                                 </div>
                             </div>
@@ -139,11 +139,11 @@
                                     <div class="grid grid-cols-2 gap-4">
                                         <div>
                                             <label class="block text-xs font-semibold text-gray-600 mb-1">Company (%)</label>
-                                            <input type="number" step="0.01" name="jht_comp_percent" value="{{ $config->jht_comp_percent }}" class="w-full rounded-lg border-gray-300 shadow-sm p-2 border text-sm" required>
+                                            <input type="number" step="0.01" name="jht_comp_percent" value="{{ $config->jht_comp_percent }}" class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-indigo-500" required>
                                         </div>
                                         <div>
                                             <label class="block text-xs font-semibold text-gray-600 mb-1">Employee (%)</label>
-                                            <input type="number" step="0.01" name="jht_emp_percent" value="{{ $config->jht_emp_percent }}" class="w-full rounded-lg border-gray-300 shadow-sm p-2 border text-sm" required>
+                                            <input type="number" step="0.01" name="jht_emp_percent" value="{{ $config->jht_emp_percent }}" class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-indigo-500" required>
                                         </div>
                                     </div>
                                 </div>
@@ -154,15 +154,15 @@
                                     <div class="grid grid-cols-3 gap-4">
                                         <div>
                                             <label class="block text-xs font-semibold text-gray-600 mb-1">Comp (%)</label>
-                                            <input type="number" step="0.01" name="jp_comp_percent" value="{{ $config->jp_comp_percent }}" class="w-full rounded-lg border-gray-300 shadow-sm p-2 border text-sm" required>
+                                            <input type="number" step="0.01" name="jp_comp_percent" value="{{ $config->jp_comp_percent }}" class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-indigo-500" required>
                                         </div>
                                         <div>
                                             <label class="block text-xs font-semibold text-gray-600 mb-1">Emp (%)</label>
-                                            <input type="number" step="0.01" name="jp_emp_percent" value="{{ $config->jp_emp_percent }}" class="w-full rounded-lg border-gray-300 shadow-sm p-2 border text-sm" required>
+                                            <input type="number" step="0.01" name="jp_emp_percent" value="{{ $config->jp_emp_percent }}" class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-indigo-500" required>
                                         </div>
                                         <div>
                                             <label class="block text-xs font-semibold text-gray-600 mb-1">Cap Amount</label>
-                                            <input type="number" name="jp_cap_amount" value="{{ $config->jp_cap_amount }}" class="w-full rounded-lg border-gray-300 shadow-sm p-2 border text-sm" required>
+                                            <input type="number" name="jp_cap_amount" value="{{ $config->jp_cap_amount }}" class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-indigo-500" required>
                                         </div>
                                     </div>
                                 </div>
@@ -217,7 +217,7 @@
                                                         <span class="absolute left-3 top-2 text-gray-500 font-medium text-xs">Rp</span>
                                                         <input type="text" name="ptkp[{{ $ptkp->id }}][amount]" 
                                                                value="{{ number_format($ptkp->amount, 0, ',', '.') }}" 
-                                                               class="currency w-full pl-8 rounded-md border-gray-300 shadow-sm p-1.5 border text-sm font-semibold focus:ring-2 focus:ring-indigo-500">
+                                                               class="currency pl-10 w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-indigo-500">
                                                     </div>
                                                 </div>
                                             @endforeach

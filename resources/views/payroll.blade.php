@@ -16,7 +16,7 @@
         <div class="p-6 space-y-6">
 
             <!-- Header -->
-            <div class="flex justify-between items-center bg-white p-5 rounded-xl shadow-sm border border-gray-100">
+            <div class="md:flex justify-between items-center bg-white p-5 rounded-xl shadow-sm border border-gray-100 space-y-2 md:space-y-0">
                 <div>
                     <h1 class="font-bold text-2xl text-gray-800 flex items-center gap-2">
                         <i class="fas fa-money-check-alt text-indigo-600"></i> Payroll History
@@ -24,7 +24,7 @@
                     <p class="text-sm text-gray-500">List of generated payroll periods</p>
                 </div>
                 <a href="{{ route('createpayroll') }}" 
-                   class="px-6 py-3 bg-indigo-600 text-white rounded-lg shadow-md hover:bg-indigo-700 transition font-semibold flex items-center gap-2">
+                   class="px-6 py-3 bg-indigo-600 text-white rounded-lg shadow-md hover:bg-indigo-700 transition font-semibold flex items-center gap-2 w-fit">
                    <i class="fas fa-plus"></i> Run Payroll
                 </a>
             </div>

@@ -7,10 +7,12 @@ use App\Models\Payroll;
 use App\Models\Overtime;
 use App\Models\Attendance;
 use App\Models\ActivityLog;
-use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
+use Carbon\Carbon;
+
 
 class EssController extends Controller
 {
@@ -31,6 +33,57 @@ class EssController extends Controller
             ->first();
 
         return view('ess.home', compact('employee', 'compani', 'announcements',  'attendance'));
+    }
+
+    public function schedule()
+    {
+        if (!Auth::guard('employee')->check()) {
+            return redirect('/');
+        }
+
+        $schedules = Auth::guard('employee')->user()
+            ->schedules()
+            ->with('shift')
+            ->whereDate('date', '>=', Carbon::today())
+            ->orderBy('date', 'asc')
+            ->get();
+
+        $totalHours = $schedules->reduce(function ($carry, $item) {
+            if ($item->shift) {
+                $start = Carbon::parse($item->shift->start_time);
+                $end = Carbon::parse($item->shift->end_time);
+                
+                if ($item->shift->is_cross_day) {
+                    $end->addDay();
+                }
+                
+                return $carry + $start->diffInHours($end);
+            }
+            return $carry;
+        }, 0);
+
+        $nextShiftText = '-';
+        $nextItem = $schedules->first(); 
+
+        if ($nextItem) {
+            $nextDate = Carbon::parse($nextItem->date);
+            
+            if ($nextDate->isToday()) {
+                $dayStr = 'Today';
+            } elseif ($nextDate->isTomorrow()) {
+                $dayStr = 'Tomorrow';
+            } else {
+                $dayStr = $nextDate->format('d M');
+            }
+            
+            $timeStr = $nextItem->shift 
+                ? Carbon::parse($nextItem->shift->start_time)->format('H:i') 
+                : '(Off)';
+            
+            $nextShiftText = "$dayStr, $timeStr";
+        }
+        
+        return view('ess.schedule', compact('schedules', 'totalHours', 'nextShiftText'));
     }
 
     public function attendance()
@@ -65,7 +118,7 @@ class EssController extends Controller
             'start_date' => 'required',
             'end_date' => 'required',
             'type' => 'required',
-            'reason' => 'required',
+            'note' => 'required',
         ]);
 
         $leave = Leave::create([
@@ -73,7 +126,7 @@ class EssController extends Controller
             'start_date'     => $data['start_date'],
             'end_date'     => $data['end_date'],
             'type'     => $data['type'],
-            'reason'     => $data['reason'],
+            'note'     => $data['note'],
             'compani_id'  => $userCompany->id,
         ]);
 
@@ -141,7 +194,6 @@ class EssController extends Controller
         return view('ess.note', compact('notes'));
     }
 
-
     public function payroll()
     {
         if (!Auth::guard('employee')->check()) {
@@ -149,8 +201,6 @@ class EssController extends Controller
         }
 
         $payrolls = Auth::guard('employee')->user()->payrolls;
-
-
 
         return view('ess.payroll', compact('payrolls'));
     }
@@ -168,15 +218,6 @@ class EssController extends Controller
         $pdf->setPaper('A4', 'portrait');
 
         return $pdf->stream('Payslip-' . $payroll->employee->name . '-' . $payroll->pay_period_end . '.pdf');
-    }
-
-    public function organization()
-    {
-        if (!Auth::guard('employee')->check()) {
-            return redirect('/');
-        }
-
-        return view('ess.organization');
     }
 
     public function profil()

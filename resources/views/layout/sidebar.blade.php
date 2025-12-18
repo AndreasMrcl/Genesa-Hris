@@ -1,6 +1,6 @@
 <div class="flex">
     <aside id="sidebar"
-        class="font-poppins fixed inset-y-0 my-6 ml-4 w-full max-w-72 md:max-w-60 xl:max-w-64 2xl:max-w-64 z-50 rounded-lg bg-white overflow-y-scroll transform transition-transform duration-300 -translate-x-full md:translate-x-0 ease-in-out shadow-xl">
+        class="font-poppins fixed inset-y-0 my-6 ml-4 w-full max-w-72 md:max-w-60 xl:max-w-64 2xl:max-w-64 z-50 rounded-lg bg-white overflow-y-auto transform transition-transform duration-300 -translate-x-full md:translate-x-0 ease-in-out shadow-xl">
         <div class="p-2">
             <div class="p-4">
                 <a class="" href="{{ route('dashboard') }}">
@@ -53,8 +53,8 @@
                     </li>
                     <li class="p-4 mx-2">
                         <div class="ml-16 md:ml-14">
-                            <a href="{{ route('shift') }}">
-                                <h1 class="text-gray-500 hover:text-black text-base font-normal">Shift</h1>
+                            <a href="{{ route('schedule') }}">
+                                <h1 class="text-gray-500 hover:text-black text-base font-normal">Schedule</h1>
                             </a>
                         </div>
                     </li>

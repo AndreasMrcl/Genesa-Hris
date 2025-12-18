@@ -15,14 +15,16 @@ use App\Http\Controllers\PayrollController;
 use App\Http\Controllers\AllowEmpController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\OvertimeController;
-use App\Http\Controllers\PositionController;
 use App\Http\Controllers\DeductEmpController;
-use App\Http\Controllers\TaxConfigController;
 use App\Http\Controllers\AttendanceController;
-use App\Http\Controllers\FingerspotController;
 use App\Http\Controllers\ActivityLogController;
 use App\Http\Controllers\AnnouncementController;
 use App\Http\Controllers\CompanyPayrollConfigController;
+use App\Http\Controllers\PositionController;
+use App\Http\Controllers\FingerspotController;
+use App\Http\Controllers\TaxConfigController;
+use App\Http\Controllers\ScheduleController;
+
 
 Route::get('/', [AuthController::class, 'login'])->name('login');
 Route::get('/register', [AuthController::class, 'register'])->name('register');
@@ -38,6 +40,7 @@ Route::middleware('auth:web')->group(function () {
     Route::get('/dashboard', [PageController::class, 'dashboard'])->name('dashboard');
     Route::get('/setting', [PageController::class, 'setting'])->name('setting');
     Route::get('/profile', [PageController::class, 'profile'])->name('profile');
+    Route::get('/search', [PageController::class, 'search'])->name('search');
 
     //COMPANY
     Route::get('/company', [CompaniController::class, 'index'])->name('company');
@@ -91,6 +94,12 @@ Route::middleware('auth:web')->group(function () {
     Route::put('/shift/{id}/update', [ShiftController::class, 'update'])->name('updateshift');
     Route::delete('/shift/{id}/delete', [ShiftController::class, 'destroy'])->name('delshift');
 
+    //SCHEDULE
+    Route::get('/schedule', [ScheduleController::class, 'index'])->name('schedule');
+    Route::post('/postschedule', [ScheduleController::class, 'store'])->name('postschedule');
+    Route::put('/schedule/{id}/update', [ScheduleController::class, 'update'])->name('updateschedule');
+    Route::delete('/schedule/{id}/delete', [ScheduleController::class, 'destroy'])->name('delschedule');
+
     //ANNOUNCEMENT
     Route::get('/announcement', [AnnouncementController::class, 'index'])->name('announcement');
     Route::post('/postannouncement', [AnnouncementController::class, 'store'])->name('postannouncement');
@@ -133,12 +142,14 @@ Route::middleware('auth:web')->group(function () {
     Route::put('/deduction-employee/{id}/update', [DeductEmpController::class, 'update'])->name('updatedeductionEmp');
     Route::delete('/deduction-employee/{id}/delete', [DeductEmpController::class, 'destroy'])->name('deldeductionEmp');
 
-    // PAYROLL EXPORT EXCEL
+    //PAYROLL EXPORT EXCEL
     Route::get('/payrolls/export', [PayrollController::class, 'exportExcel'])->name('payrollExport');
+    Route::get('/payrolls/export-report', [PayrollController::class, 'exportReport'])->name('payrollReportExport');
 
     //PAYROLL
     Route::get('/payrolls', [PayrollController::class, 'index'])->name('payroll');
-    Route::get('/payrolls/period/{start}/{end}', [PayrollController::class, 'period'])->name('periodPayroll');
+    Route::get('/payrolls/period/{start}/{end}', [PayrollController::class, 'period'])->name('periodPayrollBranch');
+    Route::get('/payrolls/period/{start}/{end}/branch/{branch}', [PayrollController::class, 'branch'])->name('payrollBranchEmployees');
     Route::get('/payrolls/create', [PayrollController::class, 'create'])->name('createpayroll');
     Route::post('/payrolls', [PayrollController::class, 'store'])->name('postpayroll');
     Route::get('/payrolls/{id}', [PayrollController::class, 'show'])->name('showpayroll');
@@ -174,6 +185,8 @@ Route::middleware('auth:web')->group(function () {
 Route::middleware('auth:employee')->group(function () {
     Route::get('/ess-home', [EssController::class, 'home'])->name('ess-home');
 
+    Route::get('/ess-schedule', [EssController::class, 'schedule'])->name('ess-schedule');
+
     Route::get('/ess-attendance', [EssController::class, 'attendance'])->name('ess-attendance');
 
     Route::get('/ess-leave', [EssController::class, 'leave'])->name('ess-leave');
@@ -185,8 +198,7 @@ Route::middleware('auth:employee')->group(function () {
     Route::get('/ess-note', [EssController::class, 'note'])->name('ess-note');
 
     Route::get('/ess-payroll', [EssController::class, 'payroll'])->name('ess-payroll');
-
-    Route::get('/ess-organization', [EssController::class, 'organization'])->name('ess-organization');
+    Route::get('/ess-payroll/{id}/pdf', [EssController::class, 'downloadPdf'])->name('ess-pdf');
 
     Route::get('/ess-profil', [EssController::class, 'profil'])->name('ess-profil');
 });
