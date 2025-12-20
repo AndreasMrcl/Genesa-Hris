@@ -32,18 +32,18 @@ class PtkpSeeder extends Seeder
         // 2. Isi Aturan PTKP & Kategori TER (PP 58 Tahun 2023)
         $ptkps = [
             // === KATEGORI A ===
-            ['code' => 'TK/0', 'amount' => 54000000, 'ter_category' => 'A'],
-            ['code' => 'TK/1', 'amount' => 58500000, 'ter_category' => 'A'],
-            ['code' => 'K/0',  'amount' => 58500000, 'ter_category' => 'A'],
-            
+            ['compani_id' => 1, 'code' => 'TK/0', 'amount' => 54000000, 'ter_category' => 'A'],
+            ['compani_id' => 1, 'code' => 'TK/1', 'amount' => 58500000, 'ter_category' => 'A'],
+            ['compani_id' => 1, 'code' => 'K/0',  'amount' => 58500000, 'ter_category' => 'A'],
+
             // === KATEGORI B ===
-            ['code' => 'TK/2', 'amount' => 63000000, 'ter_category' => 'B'],
-            ['code' => 'TK/3', 'amount' => 67500000, 'ter_category' => 'B'],
-            ['code' => 'K/1',  'amount' => 63000000, 'ter_category' => 'B'],
-            ['code' => 'K/2',  'amount' => 67500000, 'ter_category' => 'B'],
+            ['compani_id' => 1, 'code' => 'TK/2', 'amount' => 63000000, 'ter_category' => 'B'],
+            ['compani_id' => 1, 'code' => 'TK/3', 'amount' => 67500000, 'ter_category' => 'B'],
+            ['compani_id' => 1, 'code' => 'K/1',  'amount' => 63000000, 'ter_category' => 'B'],
+            ['compani_id' => 1, 'code' => 'K/2',  'amount' => 67500000, 'ter_category' => 'B'],
 
             // === KATEGORI C ===
-            ['code' => 'K/3',  'amount' => 72000000, 'ter_category' => 'C'],
+            ['compani_id' => 1, 'code' => 'K/3',  'amount' => 72000000, 'ter_category' => 'C'],
         ];
 
         foreach ($ptkps as $ptkp) {

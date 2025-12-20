@@ -761,6 +761,8 @@
                 // Bank Info
                 $('#editBankName').val(btn.data('bank-name'));
                 $('#editBankNo').val(btn.data('bank-no'));
+                let payrollMethod = btn.data('payroll-method');
+                $('#editPayrollMethod').val(btn.data('payroll-method'));
 
                 toggleBankDetails(payrollMethod, '#editBankAccountSection', '#editBankAccountSection input');
             
@@ -770,7 +772,6 @@
                 $('#editBpjsJp').prop('checked', btn.data('part-jp') == 1);
 
                 $('#editWorkingDays').val(btn.data('working-days'));
-                $('#editPayrollMethod').val(btn.data('payroll-method'));
 
                 updatePositionDropdown(btn.data('branch'), '#editPositionSelect');
                 setTimeout(() => {

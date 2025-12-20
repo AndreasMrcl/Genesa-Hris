@@ -173,6 +173,7 @@ class TerRateSeeder extends Seeder
             }
 
             $rows[] = [
+                'compani_id' => 1,
                 'ter_category' => $category,
                 'gross_income_min' => $min,
                 'gross_income_max' => $max,

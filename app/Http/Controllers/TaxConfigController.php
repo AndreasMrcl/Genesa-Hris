@@ -29,8 +29,8 @@ class TaxConfigController extends Controller
             return redirect()->route('login');
         }
 
-        $cacheKeyPtkp = 'global_ptkps_' . $userCompany->id;
-        $cacheKeyTerRates = 'global_ter_rates_' . $userCompany->id;
+        $cacheKeyPtkp = "global_ptkps_{$userCompany->id}";
+        $cacheKeyTerRates = "global_ter_rates_{$userCompany->id}";
 
         $ptkps = Cache::remember($cacheKeyPtkp, 180, function () use ($userCompany) {
             return $userCompany->globalPtkps()
@@ -70,7 +70,7 @@ class TaxConfigController extends Controller
             'ter_category' => $request->ter_category,
         ]);
 
-        Cache::forget('global_ptkps_' . $userCompany->id);
+        Cache::forget("global_ptkps_{$userCompany->id}");
 
         $this->logActivity('Create PTKP', "Menambah status PTKP: {$ptkp->code}", $userCompany->id);
         
@@ -97,7 +97,7 @@ class TaxConfigController extends Controller
             'ter_category' => $request->ter_category,
         ]);
 
-        Cache::forget('global_ptkps_' . $userCompany->id);
+        Cache::forget("global_ptkps_{$userCompany->id}");
 
         $this->logActivity('Update PTKP', "Mengubah status PTKP: {$ptkp->code}", $userCompany->id);
 
@@ -116,7 +116,7 @@ class TaxConfigController extends Controller
 
         $ptkp->delete();
 
-        Cache::forget('global_ptkps_' . $userCompany->id);
+        Cache::forget("global_ptkps_{$userCompany->id}");
 
         $this->logActivity('Delete PTKP', "Menghapus status PTKP: {$code}", $userCompany->id);
         return redirect()->back()->with('success', 'PTKP Status deleted')->with('active_tab', 'ptkp');
@@ -141,7 +141,7 @@ class TaxConfigController extends Controller
             'rate_percentage' => $request->rate_percentage,
         ]);
 
-        Cache::forget('global_ter_rates_' . $userCompany->id);
+        Cache::forget("global_ter_rates_{$userCompany->id}");
 
         $this->logActivity('Create TER', "Menambah tarif TER Kategori {$ter->ter_category}", $userCompany->id);
 
@@ -170,7 +170,7 @@ class TaxConfigController extends Controller
 
         $category = $request->ter_category ?? $ter->ter_category;
 
-        Cache::forget('global_ter_rates_' . $userCompany->id);
+        Cache::forget("global_ter_rates_{$userCompany->id}");
 
         $this->logActivity('Update TER', "Mengubah tarif TER ID #{$id}", $userCompany->id);
 
@@ -188,7 +188,7 @@ class TaxConfigController extends Controller
         $category = $ter->ter_category;
         $ter->delete();
 
-        Cache::forget('global_ter_rates_' . $userCompany->id);
+        Cache::forget("global_ter_rates_{$userCompany->id}");
 
         $this->logActivity('Delete TER', "Menghapus tarif TER ID #{$id}", $userCompany->id);
         return redirect()->back()->with('success', 'TER Rate deleted')->with('active_tab', 'ter' . $category);

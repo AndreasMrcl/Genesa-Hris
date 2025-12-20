@@ -162,11 +162,6 @@
                             @endforelse
                         </tbody>
                     </table>
-
-                    <!-- Pagination -->
-                    <div class="mt-4 px-2">
-                        {{ $batches->links() }}
-                    </div>
                 </div>
             </div>
         </div>
