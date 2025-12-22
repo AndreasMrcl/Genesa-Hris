@@ -12,8 +12,6 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
-use Carbon\Carbon;
-
 
 class EssController extends Controller
 {
@@ -88,59 +86,7 @@ class EssController extends Controller
         return view('ess.schedule', compact('schedules', 'totalHours', 'nextShiftText'));
     }
 
-    public function schedule()
-    {
-        if (! Auth::guard('employee')->check()) {
-            return redirect('/');
-        }
-
-        $schedules = Auth::guard('employee')->user()
-            ->schedules()
-            ->with('shift')
-            ->whereDate('date', '>=', Carbon::today())
-            ->orderBy('date', 'asc')
-            ->get();
-
-        $totalHours = $schedules->reduce(function ($carry, $item) {
-            if ($item->shift) {
-                $start = Carbon::parse($item->shift->start_time);
-                $end = Carbon::parse($item->shift->end_time);
-
-                if ($item->shift->is_cross_day) {
-                    $end->addDay();
-                }
-
-                return $carry + $start->diffInHours($end);
-            }
-
-            return $carry;
-        }, 0);
-
-        $nextShiftText = '-';
-        $nextItem = $schedules->first();
-
-        if ($nextItem) {
-            $nextDate = Carbon::parse($nextItem->date);
-
-            if ($nextDate->isToday()) {
-                $dayStr = 'Today';
-            } elseif ($nextDate->isTomorrow()) {
-                $dayStr = 'Tomorrow';
-            } else {
-                $dayStr = $nextDate->format('d M');
-            }
-
-            $timeStr = $nextItem->shift
-                ? Carbon::parse($nextItem->shift->start_time)->format('H:i')
-                : '(Off)';
-
-            $nextShiftText = "$dayStr, $timeStr";
-        }
-
-        return view('ess.schedule', compact('schedules', 'totalHours', 'nextShiftText'));
-    }
-
-    public function schedule()
+    public function attendance()
     {
         if (! Auth::guard('employee')->check()) {
             return redirect('/');

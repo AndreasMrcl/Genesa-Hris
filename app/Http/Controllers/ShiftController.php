@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\ActivityLog;
 use App\Models\Shift;
-use App\Models\ActivityLog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
