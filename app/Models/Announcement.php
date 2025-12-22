@@ -2,17 +2,18 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
 class Announcement extends Model
 {
     use HasFactory;
+
     protected $fillable =
-    [
-        'compani_id',
-        'content',
-    ];
+        [
+            'compani_id',
+            'content',
+        ];
 
     public function compani()
     {

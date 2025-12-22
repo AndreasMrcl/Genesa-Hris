@@ -2,18 +2,19 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
 class Deduct extends Model
 {
     use HasFactory;
+
     protected $fillable =
-    [
-        'compani_id',
-        'name',
-        'type',
-    ];
+        [
+            'compani_id',
+            'name',
+            'type',
+        ];
 
     public function compani()
     {

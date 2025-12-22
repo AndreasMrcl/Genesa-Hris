@@ -1,11 +1,12 @@
-<nav id="navbar" class="font-poppins mx-3 xl:mx-4 rounded-xl bg-white bg-opacity-90 sticky top-0 z-40 transform transition-transform duration-300">
+<nav id="navbar"
+    class="font-poppins mx-3 xl:mx-4 rounded-xl bg-white bg-opacity-90 sticky top-0 z-40 transform transition-transform duration-300">
     <div class="flex justify-around md:justify-end p-4 space-x-2 md:space-x-4">
         <div class="flex justify-end">
             <div class="my-auto">
-                <form method="get" action="">
+                <form method="get" action="{{ route('search') }}" data-page-loading>
                     <div class="md:border-2 border p-1 rounded-xl md:px-4 bg-white flex">
                         <span class="">
-                        <i class="material-icons">search</i>
+                            <i class="material-icons">search</i>
                         </span>
                         <input type="search" name="search" class="p-1 bg-white" placeholder="Search..." />
                         <button type="submit" class=""></button>
@@ -13,7 +14,8 @@
                 </form>
             </div>
         </div>
-        @if(auth()->check())
+
+        @if (auth()->check())
             <a href="{{ route('profile') }}" class="my-auto">
                 <div class="flex space-x-2 md:space-x-4">
                     <div class="hidden md:block my-auto">
@@ -22,18 +24,12 @@
                         </h1>
                     </div>
                     <div class="my-auto">
-                    <i class="material-icons">person</i>
+                        <i class="material-icons">person</i>
                     </div>
                 </div>
             </a>
-        @else
-            <div class="flex space-x-4 my-auto">
-                <h1 class="text-sm font-base">Guest</h1>
-                <div class="my-auto">
-                    <i class="fa fa-user my-auto"></i>
-                </div>
-            </div>
         @endif
+
         <div class="md:hidden flex justify-end items-end my-auto">
             <button id="toggle-button" class="transform transition-transform duration-300">
                 <!-- Hamburger icon -->
@@ -68,3 +64,5 @@
         menuOpen.classList.toggle('rotate');
     });
 </script>
+
+@include('layout.loading')

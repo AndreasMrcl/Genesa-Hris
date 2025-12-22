@@ -39,7 +39,7 @@ class CompaniController extends Controller
 
         if ($request->hasFile('ktp')) {
             $uploadedKtp = $request->file('ktp');
-            $ktpName = time() . '_' . $uploadedKtp->getClientOriginalName(); // Prefix with timestamp for uniqueness
+            $ktpName = time().'_'.$uploadedKtp->getClientOriginalName(); // Prefix with timestamp for uniqueness
             $ktpPath = $uploadedKtp->storeAs('ktp', $ktpName, 'public');
             $data['ktp'] = $ktpPath; // Path is relative to 'storage/app/public'
         }
@@ -54,17 +54,17 @@ class CompaniController extends Controller
         $userCompany = auth()->user()->compani;
 
         $validated = $request->validate([
-            'company'  => 'required|string|max:255',
-            'bank'     => 'nullable|string|max:255',
-            'no_rek'   => 'nullable|string|max:50',
+            'company' => 'required|string|max:255',
+            'bank' => 'nullable|string|max:255',
+            'no_rek' => 'nullable|string|max:50',
             'location' => 'required|string|max:255',
-            'ktp'      => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'ktp' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
         ]);
 
         // Upload KTP if exists
         if ($request->hasFile('ktp')) {
             $file = $request->file('ktp');
-            $filename = time() . '_' . $file->getClientOriginalName();
+            $filename = time().'_'.$file->getClientOriginalName();
             $path = $file->storeAs('ktp', $filename, 'public');
             $validated['ktp'] = $path;
         }

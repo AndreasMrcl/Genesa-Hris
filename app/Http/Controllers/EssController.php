@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Leave;
-use App\Models\Payroll;
-use App\Models\Overtime;
-use App\Models\Attendance;
 use App\Models\ActivityLog;
+use App\Models\Attendance;
+use App\Models\Leave;
+use App\Models\Overtime;
+use App\Models\Payroll;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
@@ -18,7 +19,7 @@ class EssController extends Controller
 {
     public function home()
     {
-        if (!Auth::guard('employee')->check()) {
+        if (! Auth::guard('employee')->check()) {
             return redirect('/');
         }
 
@@ -32,12 +33,12 @@ class EssController extends Controller
             ->latest()
             ->first();
 
-        return view('ess.home', compact('employee', 'compani', 'announcements',  'attendance'));
+        return view('ess.home', compact('employee', 'compani', 'announcements', 'attendance'));
     }
 
     public function schedule()
     {
-        if (!Auth::guard('employee')->check()) {
+        if (! Auth::guard('employee')->check()) {
             return redirect('/');
         }
 
@@ -52,22 +53,23 @@ class EssController extends Controller
             if ($item->shift) {
                 $start = Carbon::parse($item->shift->start_time);
                 $end = Carbon::parse($item->shift->end_time);
-                
+
                 if ($item->shift->is_cross_day) {
                     $end->addDay();
                 }
-                
+
                 return $carry + $start->diffInHours($end);
             }
+
             return $carry;
         }, 0);
 
         $nextShiftText = '-';
-        $nextItem = $schedules->first(); 
+        $nextItem = $schedules->first();
 
         if ($nextItem) {
             $nextDate = Carbon::parse($nextItem->date);
-            
+
             if ($nextDate->isToday()) {
                 $dayStr = 'Today';
             } elseif ($nextDate->isTomorrow()) {
@@ -75,31 +77,87 @@ class EssController extends Controller
             } else {
                 $dayStr = $nextDate->format('d M');
             }
-            
-            $timeStr = $nextItem->shift 
-                ? Carbon::parse($nextItem->shift->start_time)->format('H:i') 
+
+            $timeStr = $nextItem->shift
+                ? Carbon::parse($nextItem->shift->start_time)->format('H:i')
                 : '(Off)';
-            
+
             $nextShiftText = "$dayStr, $timeStr";
         }
-        
+
         return view('ess.schedule', compact('schedules', 'totalHours', 'nextShiftText'));
     }
 
-    public function attendance()
+    public function schedule()
     {
-        if (!Auth::guard('employee')->check()) {
+        if (! Auth::guard('employee')->check()) {
             return redirect('/');
         }
 
-        $attendances = Auth::guard('employee')->user()->attendances;
+        $schedules = Auth::guard('employee')->user()
+            ->schedules()
+            ->with('shift')
+            ->whereDate('date', '>=', Carbon::today())
+            ->orderBy('date', 'asc')
+            ->get();
+
+        $totalHours = $schedules->reduce(function ($carry, $item) {
+            if ($item->shift) {
+                $start = Carbon::parse($item->shift->start_time);
+                $end = Carbon::parse($item->shift->end_time);
+
+                if ($item->shift->is_cross_day) {
+                    $end->addDay();
+                }
+
+                return $carry + $start->diffInHours($end);
+            }
+
+            return $carry;
+        }, 0);
+
+        $nextShiftText = '-';
+        $nextItem = $schedules->first();
+
+        if ($nextItem) {
+            $nextDate = Carbon::parse($nextItem->date);
+
+            if ($nextDate->isToday()) {
+                $dayStr = 'Today';
+            } elseif ($nextDate->isTomorrow()) {
+                $dayStr = 'Tomorrow';
+            } else {
+                $dayStr = $nextDate->format('d M');
+            }
+
+            $timeStr = $nextItem->shift
+                ? Carbon::parse($nextItem->shift->start_time)->format('H:i')
+                : '(Off)';
+
+            $nextShiftText = "$dayStr, $timeStr";
+        }
+
+        return view('ess.schedule', compact('schedules', 'totalHours', 'nextShiftText'));
+    }
+
+    public function schedule()
+    {
+        if (! Auth::guard('employee')->check()) {
+            return redirect('/');
+        }
+
+        $attendances = Auth::guard('employee')
+            ->user()
+            ->attendances()
+            ->latest('period_start')
+            ->get();
 
         return view('ess.attendance', compact('attendances'));
     }
 
     public function leave()
     {
-        if (!Auth::guard('employee')->check()) {
+        if (! Auth::guard('employee')->check()) {
             return redirect('/');
         }
 
@@ -122,12 +180,12 @@ class EssController extends Controller
         ]);
 
         $leave = Leave::create([
-            'employee_id'     => $data['employee_id'],
-            'start_date'     => $data['start_date'],
-            'end_date'     => $data['end_date'],
-            'type'     => $data['type'],
-            'note'     => $data['note'],
-            'compani_id'  => $userCompany->id,
+            'employee_id' => $data['employee_id'],
+            'start_date' => $data['start_date'],
+            'end_date' => $data['end_date'],
+            'type' => $data['type'],
+            'note' => $data['note'],
+            'compani_id' => $userCompany->id,
         ]);
 
         $this->logActivity(
@@ -143,7 +201,7 @@ class EssController extends Controller
 
     public function overtime()
     {
-        if (!Auth::guard('employee')->check()) {
+        if (! Auth::guard('employee')->check()) {
             return redirect('/');
         }
 
@@ -165,11 +223,11 @@ class EssController extends Controller
         ]);
 
         $overtime = Overtime::create([
-            'employee_id'     => $data['employee_id'],
-            'overtime_date'     => $data['overtime_date'],
-            'start_time'     => $data['start_time'],
-            'end_time'     => $data['end_time'],
-            'compani_id'  => $userCompany->id,
+            'employee_id' => $data['employee_id'],
+            'overtime_date' => $data['overtime_date'],
+            'start_time' => $data['start_time'],
+            'end_time' => $data['end_time'],
+            'compani_id' => $userCompany->id,
         ]);
 
         $this->logActivity(
@@ -185,7 +243,7 @@ class EssController extends Controller
 
     public function note()
     {
-        if (!Auth::guard('employee')->check()) {
+        if (! Auth::guard('employee')->check()) {
             return redirect('/');
         }
 
@@ -196,7 +254,7 @@ class EssController extends Controller
 
     public function payroll()
     {
-        if (!Auth::guard('employee')->check()) {
+        if (! Auth::guard('employee')->check()) {
             return redirect('/');
         }
 
@@ -207,7 +265,7 @@ class EssController extends Controller
 
     public function downloadPdf($id)
     {
-        if (!Auth::guard('employee')->check()) {
+        if (! Auth::guard('employee')->check()) {
             return redirect('/');
         }
 
@@ -220,18 +278,9 @@ class EssController extends Controller
         return $pdf->stream('Payslip-' . $payroll->employee->name . '-' . $payroll->pay_period_end . '.pdf');
     }
 
-    public function organization()
-    {
-        if (!Auth::guard('employee')->check()) {
-            return redirect('/');
-        }
-
-        return view('ess.organization');
-    }
-
     public function profil()
     {
-        if (!Auth::guard('employee')->check()) {
+        if (! Auth::guard('employee')->check()) {
             return redirect('/');
         }
 
@@ -247,11 +296,11 @@ class EssController extends Controller
     private function logActivity($type, $description, $companyId)
     {
         ActivityLog::create([
-            'employee_id'       => Auth::guard('employee')->id(),
-            'compani_id'    => $companyId,
+            'employee_id' => Auth::guard('employee')->id(),
+            'compani_id' => $companyId,
             'activity_type' => $type,
-            'description'   => $description,
-            'created_at'    => now(),
+            'description' => $description,
+            'created_at' => now(),
         ]);
 
         Cache::forget("activities_{$companyId}");

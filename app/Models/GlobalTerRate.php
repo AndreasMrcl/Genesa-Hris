@@ -11,16 +11,16 @@ class GlobalTerRate extends Model
 
     protected $fillable = [
         'compani_id',
-        'ter_category',    
-        'gross_income_min', 
-        'gross_income_max', 
-        'rate_percentage', 
+        'ter_category',
+        'gross_income_min',
+        'gross_income_max',
+        'rate_percentage',
     ];
 
     protected $casts = [
         'gross_income_min' => 'decimal:2',
         'gross_income_max' => 'decimal:2',
-        'rate_percentage'  => 'float',
+        'rate_percentage' => 'float',
     ];
 
     public static function getRateFor($category, $grossIncome)

@@ -2,9 +2,8 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
-use App\Models\Profil;
 use App\Models\Employee;
+use App\Models\User;
 use Illuminate\Database\Seeder;
 
 class ProfilSeeder extends Seeder

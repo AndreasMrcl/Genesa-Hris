@@ -2,42 +2,42 @@
 
 namespace App\Models;
 
-use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
 class Employee extends Authenticatable
 {
-    use HasFactory, HasApiTokens, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable;
+
     protected $fillable =
-    [
-        'name',
-        'compani_id',
-        'branch_id',
-        'position_id',
-        'email',
-        'nik',
-        'fingerprint_id',
-        'npwp',
-        'ktp',
-        'bpjs_kesehatan_no',
-        'bpjs_ketenagakerjaan_no',
-        'phone',
-        'address',
-        'base_salary',
-        'working_days',
-        'payroll_method',
-        'bank_name',
-        'bank_account_no',
-        'participates_bpjs_kes',
-        'participates_bpjs_tk',
-        'participates_bpjs_jp',
-        'join_date',
-        'status',
-        'password',
-    ];
+        [
+            'name',
+            'compani_id',
+            'branch_id',
+            'position_id',
+            'email',
+            'nik',
+            'fingerprint_id',
+            'npwp',
+            'ktp',
+            'bpjs_kesehatan_no',
+            'bpjs_ketenagakerjaan_no',
+            'phone',
+            'address',
+            'base_salary',
+            'working_days',
+            'payroll_method',
+            'bank_name',
+            'bank_account_no',
+            'participates_bpjs_kes',
+            'participates_bpjs_tk',
+            'participates_bpjs_jp',
+            'join_date',
+            'status',
+            'password',
+        ];
 
     protected $hidden = [
         'password',

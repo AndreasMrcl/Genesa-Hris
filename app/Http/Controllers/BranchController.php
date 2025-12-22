@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Branch;
 use App\Models\ActivityLog;
+use App\Models\Branch;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
@@ -12,13 +12,13 @@ class BranchController extends Controller
 {
     public function index()
     {
-        if (!Auth::check()) {
+        if (! Auth::check()) {
             return redirect('/');
         }
 
         $userCompany = Auth::user()->compani;
 
-        if (!$userCompany) {
+        if (! $userCompany) {
             return redirect()->route('addcompany');
         }
 
@@ -51,11 +51,11 @@ class BranchController extends Controller
         $data['compani_id'] = $userCompany->id;
 
         $branch = Branch::create([
-            'name'      => $data['name'],
-            'address'   => $data['address'],
-            'phone'     => $data['phone'],
-            'category'  => $data['category'],
-            'compani_id'  => $userCompany->id,
+            'name' => $data['name'],
+            'address' => $data['address'],
+            'phone' => $data['phone'],
+            'category' => $data['category'],
+            'compani_id' => $userCompany->id,
         ]);
 
         $this->logActivity(
@@ -150,11 +150,11 @@ class BranchController extends Controller
     private function logActivity($type, $description, $companyId)
     {
         ActivityLog::create([
-            'user_id'       => Auth::id(),
-            'compani_id'    => $companyId,
+            'user_id' => Auth::id(),
+            'compani_id' => $companyId,
             'activity_type' => $type,
-            'description'   => $description,
-            'created_at'    => now(),
+            'description' => $description,
+            'created_at' => now(),
         ]);
 
         Cache::forget("activities_{$companyId}");

@@ -6,24 +6,26 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
+    /**
+     * Run the migrations.
+     */
     public function up(): void
     {
-        Schema::create('attendance_logs', function (Blueprint $table) {
+        Schema::create('schedules', function (Blueprint $table) {
             $table->id();
             $table->foreignId('compani_id')->constrained()->onUpdate('cascade')->onDelete('cascade');
             $table->foreignId('employee_id')->constrained()->onUpdate('cascade')->onDelete('cascade');
-            $table->string('fingerprint_id');
-            $table->string('device_sn');
-            $table->dateTime('scan_time');
-            $table->string('verification_mode')->nullable();
-            $table->string('scan_status')->nullable();
-            $table->boolean('is_processed')->default(false);
+            $table->foreignId('shift_id')->constrained()->onUpdate('cascade')->onDelete('cascade');
+            $table->date('date');
             $table->timestamps();
         });
     }
 
+    /**
+     * Reverse the migrations.
+     */
     public function down(): void
     {
-        Schema::dropIfExists('attendance_logs');
+        Schema::dropIfExists('schedules');
     }
 };

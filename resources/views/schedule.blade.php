@@ -61,7 +61,7 @@
                     </form>
                 </div>
 
-                <div class="flex gap-2">
+                <div class="md:flex gap-2 space-y-2 md:space-y-0">
                     <a href="{{ route('shift') }}" class="px-5 py-2.5 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition font-bold flex items-center gap-2">
                         <i class="fas fa-clock"></i> Manage Master Shifts
                     </a>
@@ -157,7 +157,7 @@
                 </div>
             @else
                 <!-- EMPTY STATE -->
-                <div class="flex flex-col items-center justify-center h-96 bg-white rounded-xl shadow-sm border border-dashed border-gray-300 text-center p-10">
+                <div class="flex flex-col items-center justify-center h-96 bg-white p-5 rounded-xl shadow-sm border border-gray-100 text-center p-10">
                     <div class="bg-indigo-50 p-4 rounded-full mb-4">
                         <i class="fas fa-building text-4xl text-indigo-400"></i>
                     </div>

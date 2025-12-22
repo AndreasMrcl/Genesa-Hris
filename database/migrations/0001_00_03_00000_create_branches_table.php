@@ -25,7 +25,7 @@ return new class extends Migration
                 'education',
                 'creative',
                 'health_beauty',
-                'logistics'
+                'logistics',
             ])->default('general');
             $table->timestamps();
         });

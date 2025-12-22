@@ -3,9 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\ActivityLog;
-use App\Models\Employee;
 use App\Models\Allow;
 use App\Models\AllowEmp;
+use App\Models\Employee;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
@@ -14,13 +14,13 @@ class AllowEmpController extends Controller
 {
     public function index($employeeId)
     {
-        if (!Auth::check()) {
+        if (! Auth::check()) {
             return redirect('/');
         }
 
         $userCompany = Auth::user()->compani;
 
-        if (!$userCompany) {
+        if (! $userCompany) {
             return redirect()->route('addcompany');
         }
 
@@ -58,7 +58,7 @@ class AllowEmpController extends Controller
             ->where('id', $request->allow_id)
             ->first();
 
-        if (!$Allow) {
+        if (! $Allow) {
             return back()->withErrors(['msg' => 'Invalid Allowance Data for this Company']);
         }
 
@@ -98,7 +98,7 @@ class AllowEmpController extends Controller
         $oldAmount = $assignment->amount;
 
         $assignment->update([
-            'amount' => $request->amount
+            'amount' => $request->amount,
         ]);
 
         $employeeId = $assignment->employee_id;
@@ -149,11 +149,11 @@ class AllowEmpController extends Controller
     private function logActivity($type, $description, $companyId)
     {
         ActivityLog::create([
-            'user_id'       => Auth::id(),
-            'compani_id'    => $companyId,
+            'user_id' => Auth::id(),
+            'compani_id' => $companyId,
             'activity_type' => $type,
-            'description'   => $description,
-            'created_at'    => now(),
+            'description' => $description,
+            'created_at' => now(),
         ]);
 
         Cache::forget("activities_{$companyId}");

@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Employee;
+use App\Models\ActivityLog;
 use App\Models\Deduct;
 use App\Models\DeductEmp;
-use App\Models\ActivityLog;
+use App\Models\Employee;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
@@ -62,7 +62,7 @@ class DeductEmpController extends Controller
             ->where('id', $request->deduct_id)
             ->first();
 
-        if (!$Deduct) {
+        if (! $Deduct) {
             return back()->withErrors(['msg' => 'Invalid Deduction Data for this Company']);
         }
 
@@ -102,7 +102,7 @@ class DeductEmpController extends Controller
         $oldAmount = $assignment->amount;
 
         $assignment->update([
-            'amount' => $request->amount
+            'amount' => $request->amount,
         ]);
 
         $this->logActivity(
@@ -143,7 +143,6 @@ class DeductEmpController extends Controller
         return back()->with('success', 'Deduction removed from employee!');
     }
 
-
     private function clearCache($employeeId)
     {
         Cache::forget("deduct_emp_{$employeeId}");
@@ -152,11 +151,11 @@ class DeductEmpController extends Controller
     private function logActivity($type, $description, $companyId)
     {
         ActivityLog::create([
-            'user_id'       => Auth::id(),
-            'compani_id'    => $companyId,
+            'user_id' => Auth::id(),
+            'compani_id' => $companyId,
             'activity_type' => $type,
-            'description'   => $description,
-            'created_at'    => now(),
+            'description' => $description,
+            'created_at' => now(),
         ]);
 
         Cache::forget("activities_{$companyId}");

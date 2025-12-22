@@ -2,10 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ActivityLog;
 use App\Models\Branch;
 use App\Models\Employee;
-use App\Models\ActivityLog;
-use App\Models\GlobalPtkp;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
@@ -14,13 +13,13 @@ class EmployeeController extends Controller
 {
     public function index()
     {
-        if (!Auth::check()) {
+        if (! Auth::check()) {
             return redirect('/');
         }
 
         $userCompany = Auth::user()->compani;
 
-        if (!$userCompany) {
+        if (! $userCompany) {
             return redirect()->route('addcompany');
         }
 
@@ -167,8 +166,8 @@ class EmployeeController extends Controller
             }
         }
 
-        if (!empty($changes)) {
-            $desc = "Update Employee {$employee->name}: " . implode(', ', $changes);
+        if (! empty($changes)) {
+            $desc = "Update Employee {$employee->name}: ".implode(', ', $changes);
         } else {
             $desc = "Update Employee {$employee->name} (Minor details)";
         }
@@ -191,7 +190,7 @@ class EmployeeController extends Controller
         $oldContent = $employee->name;
 
         $employee->delete();
-        
+
         $this->logActivity(
             'Delete Employee',
             "Menghapus karyawan: {$oldContent}",
@@ -211,11 +210,11 @@ class EmployeeController extends Controller
     private function logActivity($type, $description, $companyId)
     {
         ActivityLog::create([
-            'user_id'       => Auth::id(),
-            'compani_id'    => $companyId,
+            'user_id' => Auth::id(),
+            'compani_id' => $companyId,
             'activity_type' => $type,
-            'description'   => $description,
-            'created_at'    => now(),
+            'description' => $description,
+            'created_at' => now(),
         ]);
 
         Cache::forget("activities_{$companyId}");

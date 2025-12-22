@@ -134,15 +134,6 @@
                     <p class="text-xs font-semibold text-gray-600">Note</p>
                 </a>
 
-                <!-- Organization -->
-                <a href="{{ route('ess-organization') }}" class="flex flex-col items-center gap-2">
-                    <div
-                        class="w-14 h-14 flex items-center justify-center bg-gray-100 text-gray-600 rounded-xl shadow-sm">
-                        <i class="fas fa-user-circle text-xl"></i>
-                    </div>
-                    <p class="text-xs font-semibold text-gray-600">Organization</p>
-                </a>
-
                 <!-- Payroll -->
                 <a href="{{ route('ess-payroll') }}" class="flex flex-col items-center gap-2">
                     <div

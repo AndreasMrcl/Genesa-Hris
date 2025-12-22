@@ -74,12 +74,9 @@
     <div class="p-2">
         <div class="bg-yellow-100 border border-yellow-300 text-yellow-800 rounded-xl p-3 shadow-sm overflow-hidden">
             <div class="animate-marquee whitespace-nowrap text-sm font-semibold">
-                📢
-                @forelse ($announcements ?? [] as $item)
-                    {{ $item->content }} .
-                @empty
-                    null
-                @endforelse
+                @foreach ($announcements as $item)
+                    📢 {{ $item->content ?? 'N/A' }}
+                @endforeach
             </div>
         </div>
     </div>
@@ -183,23 +180,23 @@
                 </div>
             </div>
 
-            <hr>
+            @if ($employee->payroll_method === 'transfer')
+                <!-- BANK -->
+                <div>
+                    <h3 class="text-lg font-bold text-gray-800 mb-2">Bank</h3>
+                    <div class="space-y-2 text-sm">
+                        <div class="flex justify-between">
+                            <span class="text-gray-500">Bank</span>
+                            <span class="font-semibold">{{ $employee->bank_name }}</span>
+                        </div>
 
-            <!-- BANK -->
-            <div>
-                <h3 class="text-lg font-bold text-gray-800 mb-2">Bank</h3>
-                <div class="space-y-2 text-sm">
-                    <div class="flex justify-between">
-                        <span class="text-gray-500">Bank</span>
-                        <span class="font-semibold">{{ $employee->bank_name }}</span>
-                    </div>
-
-                    <div class="flex justify-between">
-                        <span class="text-gray-500">No. Rekening</span>
-                        <span class="font-semibold">{{ $employee->bank_account_no }}</span>
+                        <div class="flex justify-between">
+                            <span class="text-gray-500">No. Rekening</span>
+                            <span class="font-semibold">{{ $employee->bank_account_no }}</span>
+                        </div>
                     </div>
                 </div>
-            </div>
+            @endif
 
         </div>
     </div>

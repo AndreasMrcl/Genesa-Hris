@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Position;
 use App\Models\ActivityLog;
+use App\Models\Position;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
@@ -12,13 +12,13 @@ class PositionController extends Controller
 {
     public function index()
     {
-        if (!Auth::check()) {
+        if (! Auth::check()) {
             return redirect('/');
         }
 
         $userCompany = Auth::user()->compani;
 
-        if (!$userCompany) {
+        if (! $userCompany) {
             return redirect()->route('addcompany');
         }
 
@@ -48,10 +48,10 @@ class PositionController extends Controller
         ]);
 
         $position = Position::create([
-            'name'     => $data['name'],
-            'category'     => $data['category'],
-            'base_salary_default'     => $data['base_salary_default'],
-            'compani_id'  => $userCompany->id,
+            'name' => $data['name'],
+            'category' => $data['category'],
+            'base_salary_default' => $data['base_salary_default'],
+            'compani_id' => $userCompany->id,
         ]);
 
         $this->logActivity(
@@ -82,9 +82,9 @@ class PositionController extends Controller
         $oldContent = $position->name;
 
         $position->update([
-            'name'     => $data['name'],
-            'category'     => $data['category'],
-            'base_salary_default'     => $data['base_salary_default'],
+            'name' => $data['name'],
+            'category' => $data['category'],
+            'base_salary_default' => $data['base_salary_default'],
         ]);
 
         $this->logActivity(
@@ -127,11 +127,11 @@ class PositionController extends Controller
     private function logActivity($type, $description, $companyId)
     {
         ActivityLog::create([
-            'user_id'       => Auth::id(),
-            'compani_id'    => $companyId,
+            'user_id' => Auth::id(),
+            'compani_id' => $companyId,
             'activity_type' => $type,
-            'description'   => $description,
-            'created_at'    => now(),
+            'description' => $description,
+            'created_at' => now(),
         ]);
 
         Cache::forget("activities_{$companyId}");

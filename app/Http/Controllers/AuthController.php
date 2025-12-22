@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
 use App\Models\Employee;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -17,7 +17,7 @@ class AuthController extends Controller
     public function signin(Request $request)
     {
         $request->validate([
-            'email'    => 'required|email',
+            'email' => 'required|email',
             'password' => 'required',
         ]);
 
@@ -27,8 +27,8 @@ class AuthController extends Controller
         $user = User::where('email', $request->email)->first();
 
         if ($user) {
-            
-                if (!Auth::guard('web')->attempt($credentials)) {
+
+            if (! Auth::guard('web')->attempt($credentials)) {
                 return back()->withErrors(['email' => 'Email atau password salah']);
             }
 
@@ -38,17 +38,17 @@ class AuthController extends Controller
 
             // Redirect berdasarkan level
             return redirect()->route('dashboard')
-                    ->with('auth_token', $token)
-                    ->with('toast_success', 'Login Success!');
+                ->with('auth_token', $token)
+                ->with('toast_success', 'Login Success!');
 
-            }
+        }
 
         // Employee Login
         $employee = Employee::where('email', $request->email)->first();
 
         if ($employee) {
 
-            if (!Auth::guard('employee')->attempt($credentials)) {
+            if (! Auth::guard('employee')->attempt($credentials)) {
                 return back()->withErrors(['email' => 'Email atau password salah']);
             }
 
@@ -58,9 +58,9 @@ class AuthController extends Controller
 
             // Redirect berdasarkan level employee
             return redirect()->route('ess-home')
-                    ->with('auth_token', $token)
-                    ->with('toast_success', 'Login Success!');
-            }
+                ->with('auth_token', $token)
+                ->with('toast_success', 'Login Success!');
+        }
 
         return back()->withErrors(['email' => 'Akun tidak ditemukan']);
     }

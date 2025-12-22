@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Attendance;
 use App\Models\ActivityLog;
+use App\Models\Attendance;
 use App\Models\AttendanceLog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -14,13 +14,13 @@ class AttendanceController extends Controller
 {
     public function index()
     {
-        if (!Auth::check()) {
+        if (! Auth::check()) {
             return redirect('/');
         }
 
         $userCompany = Auth::user()->compani;
 
-        if (!$userCompany) {
+        if (! $userCompany) {
             return redirect()->route('addcompany');
         }
 
@@ -32,8 +32,8 @@ class AttendanceController extends Controller
 
         $page = request()->get('page', 1);
 
-        $cacheTag = 'attendance_batches_' . $userCompany->id;
-        $cacheKey = 'page_' . $page;
+        $cacheTag = 'attendance_batches_'.$userCompany->id;
+        $cacheKey = 'page_'.$page;
 
         $batches = Cache::tags([$cacheTag])->remember($cacheKey, now()->addMinutes(60), function () use ($userCompany) {
             return $userCompany->attendances()
@@ -74,7 +74,7 @@ class AttendanceController extends Controller
 
             // Ambil logs dari device / Fingerspot, hitung per hari
             $rawLogs = AttendanceLog::where('compani_id', $userCompany->id)
-                ->whereBetween('scan_time', [$start . ' 00:00:00', $end . ' 23:59:59'])
+                ->whereBetween('scan_time', [$start.' 00:00:00', $end.' 23:59:59'])
                 ->select('employee_id', DB::raw('DATE(scan_time) as scan_date'))
                 ->distinct()
                 ->get();
@@ -85,7 +85,7 @@ class AttendanceController extends Controller
 
                 $machineData[$empId] = [
                     'present' => $uniqueDays,
-                    'late'    => 0 // bisa hitung berdasarkan jam masuk nanti
+                    'late' => 0, // bisa hitung berdasarkan jam masuk nanti
                 ];
             }
         }
@@ -100,8 +100,8 @@ class AttendanceController extends Controller
 
         $request->validate([
             'period_start' => 'required|date',
-            'period_end'   => 'required|date|after_or_equal:period_start',
-            'data'         => 'required|array',
+            'period_end' => 'required|date|after_or_equal:period_start',
+            'data' => 'required|array',
             'data.*.present' => 'required|integer|min:0',
         ]);
 
@@ -110,20 +110,20 @@ class AttendanceController extends Controller
             foreach ($request->data as $empId => $row) {
                 Attendance::updateOrCreate(
                     [
-                        'compani_id'   => $userCompany->id,
-                        'employee_id'  => $empId,
+                        'compani_id' => $userCompany->id,
+                        'employee_id' => $empId,
                         'period_start' => $request->period_start,
-                        'period_end'   => $request->period_end,
+                        'period_end' => $request->period_end,
                     ],
                     [
-                        'total_present'    => $row['present'] ?? 0,
-                        'total_late'       => $row['late'] ?? 0,
-                        'total_sick'       => $row['sick'] ?? 0,
+                        'total_present' => $row['present'] ?? 0,
+                        'total_late' => $row['late'] ?? 0,
+                        'total_sick' => $row['sick'] ?? 0,
                         'total_permission' => $row['permission'] ?? 0,
                         'total_permission_letter' => $row['permission_letter'] ?? 0,
-                        'total_alpha'      => $row['alpha'] ?? 0,
-                        'total_leave'      => $row['leave'] ?? 0,
-                        'note'             => $row['note'] ?? null,
+                        'total_alpha' => $row['alpha'] ?? 0,
+                        'total_leave' => $row['leave'] ?? 0,
+                        'note' => $row['note'] ?? null,
                     ]
                 );
             }
@@ -136,12 +136,13 @@ class AttendanceController extends Controller
                 $userCompany->id
             );
 
-            Cache::tags(['attendance_batches_' . $userCompany->id])->flush();
+            Cache::tags(['attendance_batches_'.$userCompany->id])->flush();
 
             return redirect()->route('attendance')->with('success', 'Attendance data saved successfully!');
         } catch (\Exception $e) {
             DB::rollBack();
-            return back()->withErrors(['msg' => 'Error saving data: ' . $e->getMessage()])->withInput();
+
+            return back()->withErrors(['msg' => 'Error saving data: '.$e->getMessage()])->withInput();
         }
     }
 
@@ -151,7 +152,7 @@ class AttendanceController extends Controller
 
         $request->validate([
             'start' => 'required|date',
-            'end'   => 'required|date',
+            'end' => 'required|date',
         ]);
 
         $deleted = $userCompany->attendances()
@@ -165,7 +166,7 @@ class AttendanceController extends Controller
             $userCompany->id
         );
 
-        Cache::tags(['attendance_batches_' . $userCompany->id])->flush();
+        Cache::tags(['attendance_batches_'.$userCompany->id])->flush();
 
         return redirect()->route('attendance')->with('success', 'Attendance data deleted successfully!');
     }
@@ -173,11 +174,11 @@ class AttendanceController extends Controller
     private function logActivity($type, $description, $companyId)
     {
         ActivityLog::create([
-            'user_id'       => Auth::id(),
-            'compani_id'    => $companyId,
+            'user_id' => Auth::id(),
+            'compani_id' => $companyId,
             'activity_type' => $type,
-            'description'   => $description,
-            'created_at'    => now(),
+            'description' => $description,
+            'created_at' => now(),
         ]);
 
         Cache::forget("activities_{$companyId}");
