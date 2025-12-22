@@ -89,7 +89,7 @@
                     <li class="p-4 mx-2">
                         <div class="ml-16 md:ml-14">
                             <a href="{{ route('attendance') }}">
-                                <h1 class="text-gray-500 hover:text-black text-base font-normal">Attendace</h1>
+                                <h1 class="text-gray-500 hover:text-black text-base font-normal">Attendance</h1>
                             </a>
                         </div>
                     </li>

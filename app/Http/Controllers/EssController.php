@@ -92,7 +92,11 @@ class EssController extends Controller
             return redirect('/');
         }
 
-        $attendances = Auth::guard('employee')->user()->attendances;
+        $attendances = Auth::guard('employee')
+            ->user()
+            ->attendances()
+            ->latest('period_start')
+            ->get();
 
         return view('ess.attendance', compact('attendances'));
     }
@@ -217,7 +221,7 @@ class EssController extends Controller
 
         $pdf->setPaper('A4', 'portrait');
 
-        return $pdf->stream('Payslip-'.$payroll->employee->name.'-'.$payroll->pay_period_end.'.pdf');
+        return $pdf->stream('Payslip-' . $payroll->employee->name . '-' . $payroll->pay_period_end . '.pdf');
     }
 
     public function profil()

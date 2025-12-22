@@ -16,7 +16,8 @@
         <div class="p-6 space-y-6">
 
             <!-- HEADER -->
-            <div class="md:flex justify-between items-center bg-white p-5 rounded-xl shadow-sm border border-gray-100 space-y-2 md:space-y-0">
+            <div
+                class="md:flex justify-between items-center bg-white p-5 rounded-xl shadow-sm border border-gray-100 space-y-2 md:space-y-0">
                 <div>
                     <h1 class="text-2xl font-bold text-gray-800 flex items-center gap-2">
                         <i class="fa-solid fa-chart-line text-indigo-600"></i>
@@ -53,16 +54,18 @@
                 </div>
 
                 <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-100">
-                    <p class="text-xs text-gray-500 uppercase tracking-wide">Overtime Pay</p>
-                    <h2 class="text-2xl font-bold text-gray-800 mt-1">Rp {{ number_format($totalOvertime, 0, ',', '.') }}</h2>
+                    <p class="text-xs text-gray-500 uppercase tracking-wide">Overtime Request</p>
+                    <h2 class="text-2xl font-bold text-gray-800 mt-1">{{ $totalOvertime }}</h2>
+                    <p class="text-xs text-emerald-600 mt-2 flex items-center gap-1">
+                        <i class="fa-solid fa-arrow-up"></i>
+                        +{{ $newOvertimesThisMonth }} this month
+                    </p>
                 </div>
 
                 <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-100">
-                    <p class="text-xs text-gray-500 uppercase tracking-wide">Total Expense</p>
-                    <h2 class="text-2xl font-bold text-gray-800 mt-1">Rp 68M</h2>
-                    <p class="text-xs text-rose-600 mt-2 flex items-center gap-1">
-                        <i class="fa-solid fa-arrow-up"></i> Operational
-                    </p>
+                    <p class="text-xs text-gray-500 uppercase tracking-wide">Overtime Pay</p>
+                    <h2 class="text-2xl font-bold text-gray-800 mt-1">Rp {{ number_format($overtimePay, 0, ',', '.') }}
+                    </h2>
                 </div>
 
             </div>
@@ -77,7 +80,7 @@
 
                 <div class="grid grid-cols-1 xl:grid-cols-2 gap-6">
 
-                    <!-- TOTAL ORDER -->
+                    <!-- TOTAL ATTENDANCE -->
                     <div class="border border-gray-100 rounded-xl p-5">
                         <h3 class="font-semibold text-gray-700 mb-2">Attendance History</h3>
                         <canvas id="grafikHistoy" height="120"></canvas>
@@ -86,111 +89,111 @@
                     <!-- REVENUE -->
                     <div class="border border-gray-100 rounded-xl p-5">
                         <h3 class="font-semibold text-gray-700 mb-2">Payroll Distribution</h3>
-                        <canvas id="grafikRevenue" height="120"></canvas>
+                        <canvas id="grafikPayroll" height="120"></canvas>
                     </div>
 
-                    <!-- SETTLEMENT -->
-                    <div class="border border-gray-100 rounded-xl p-5">
-                        <div class="flex justify-between items-center mb-2">
-                            <h3 class="font-semibold text-gray-700">Settlement Report</h3>
-                            <select id="dateSelect"
-                                class="border border-gray-300 rounded-lg px-3 py-1 text-sm bg-gray-50"
-                                onchange="updateChart()"></select>
-                        </div>
-                        <canvas id="grafikSettlement" height="120"></canvas>
-                    </div>
-
-                    <!-- EXPENSE -->
-                    <div class="border border-gray-100 rounded-xl p-5">
-                        <h3 class="font-semibold text-gray-700 mb-2">Operational Expense</h3>
-                        <canvas id="grafikExpense" height="120"></canvas>
-                    </div>
 
                 </div>
             </div>
+
+            
         </div>
     </main>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+const ctx = document.getElementById('grafikHistoy').getContext('2d');
 
-    <script>
-        const dummyOrder = {
-            labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
-            data: [120, 150, 180, 200, 170, 210]
-        };
-
-        const dummyRevenue = {
-            labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
-            data: [22, 25, 28, 35, 30, 37]
-        };
-
-        const dummySettlementByDate = {
-            "2025-01-01": [5, 7, 6, 8, 9, 10],
-            "2025-01-02": [3, 6, 5, 7, 4, 8],
-            "2025-01-03": [6, 9, 8, 10, 7, 12]
-        };
-
-        const dummyExpense = {
-            labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
-            data: [5, 7, 6.5, 6, 7.2, 6.8]
-        };
-
-        new Chart(grafikHistoy, {
-            type: "line",
-            data: {
-                labels: dummyOrder.labels,
-                datasets: [{
-                    data: dummyOrder.data,
-                    borderColor: "#6366f1",
-                    tension: 0.4
-                }]
+new Chart(ctx, {
+    type: 'line',
+    data: {
+        labels: @json($labels),
+        datasets: [
+            {
+                label: 'Present',
+                data: @json($present),
+                borderWidth: 2,
+                tension: 0.4
+            },
+            {
+                label: 'Late',
+                data: @json($late),
+                borderWidth: 2,
+                tension: 0.4
+            },
+            {
+                label: 'Alpha',
+                data: @json($alpha),
+                borderWidth: 2,
+                tension: 0.4
+            },
+            {
+                label: 'Leave',
+                data: @json($leave),
+                borderWidth: 2,
+                tension: 0.4
             }
-        });
-
-        new Chart(grafikRevenue, {
-            type: "bar",
-            data: {
-                labels: dummyRevenue.labels,
-                datasets: [{
-                    data: dummyRevenue.data,
-                    backgroundColor: "#22c55e"
-                }]
+        ]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: {
+                position: 'bottom'
             }
-        });
-
-        Object.keys(dummySettlementByDate).forEach(date => {
-            dateSelect.innerHTML += `<option value="${date}">${date}</option>`;
-        });
-
-        let settlementChart = new Chart(grafikSettlement, {
-            type: "line",
-            data: {
-                labels: ["A", "B", "C", "D", "E", "F"],
-                datasets: [{
-                    data: dummySettlementByDate["2025-01-01"],
-                    borderColor: "#f59e0b",
-                    tension: 0.4
-                }]
+        },
+        scales: {
+            y: {
+                beginAtZero: true
             }
-        });
-
-        function updateChart() {
-            settlementChart.data.datasets[0].data =
-                dummySettlementByDate[dateSelect.value];
-            settlementChart.update();
         }
+    }
+});
 
-        new Chart(grafikExpense, {
-            type: "bar",
-            data: {
-                labels: dummyExpense.labels,
-                datasets: [{
-                    data: dummyExpense.data,
-                    backgroundColor: "#ef4444"
-                }]
+const payrollCtx = document.getElementById('grafikPayroll').getContext('2d');
+
+new Chart(payrollCtx, {
+    type: 'line',
+    data: {
+        labels: @json($payrollLabels),
+        datasets: [
+            {
+                label: 'Total Payroll Expense',
+                data: @json($payrollExpense),
+                borderWidth: 3,
+                tension: 0.4,
+                fill: true
             }
-        });
-    </script>
+        ]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: {
+                position: 'bottom'
+            },
+            tooltip: {
+                callbacks: {
+                    label: function(context) {
+                        return 'Rp ' + context.parsed.y.toLocaleString('id-ID');
+                    }
+                }
+            }
+        },
+        scales: {
+            y: {
+                beginAtZero: true,
+                ticks: {
+                    callback: function(value) {
+                        return 'Rp ' + value.toLocaleString('id-ID');
+                    }
+                }
+            }
+        }
+    }
+});
+</script>
+
 
     @include('sweetalert::alert')
 

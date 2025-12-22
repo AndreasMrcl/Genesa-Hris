@@ -6,11 +6,22 @@
     @include('layout.head')
     <link href="//cdn.datatables.net/2.0.2/css/dataTables.dataTables.min.css" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    
+
     <style>
-        .dataTables_wrapper .dataTables_length select { padding-right: 2rem; border-radius: 0.5rem; }
-        .dataTables_wrapper .dataTables_filter input { padding: 0.5rem; border-radius: 0.5rem; border: 1px solid #d1d5db; }
-        table.dataTable.no-footer { border-bottom: 1px solid #e5e7eb; }
+        .dataTables_wrapper .dataTables_length select {
+            padding-right: 2rem;
+            border-radius: 0.5rem;
+        }
+
+        .dataTables_wrapper .dataTables_filter input {
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            border: 1px solid #d1d5db;
+        }
+
+        table.dataTable.no-footer {
+            border-bottom: 1px solid #e5e7eb;
+        }
     </style>
 </head>
 
@@ -22,14 +33,16 @@
         <div class="p-6 space-y-6">
 
             <!-- Header Section -->
-            <div class="md:flex justify-between items-center bg-white p-5 rounded-xl shadow-sm border border-gray-100 space-y-2 md:space-y-0">
+            <div
+                class="md:flex justify-between items-center bg-white p-5 rounded-xl shadow-sm border border-gray-100 space-y-2 md:space-y-0">
                 <div>
                     <h1 class="font-bold text-2xl text-gray-800 flex items-center gap-2">
                         <i class="fa-solid fa-bullhorn text-red-700"></i> Company Announcements
                     </h1>
                     <p class="text-sm text-gray-500">Your central hub for company-wide updates.</p>
                 </div>
-                <button id="addBtn" class="px-6 py-3 bg-red-600 text-white rounded-lg shadow-md hover:bg-red-700 transition font-semibold flex items-center gap-2">
+                <button id="addBtn"
+                    class="px-6 py-3 bg-red-600 text-white rounded-lg shadow-md hover:bg-red-700 transition font-semibold flex items-center gap-2">
                     <i class="fas fa-plus"></i> Add Announcement
                 </button>
             </div>
@@ -50,7 +63,11 @@
                             @php $no = 1; @endphp
                             @foreach ($announcements as $item)
                                 <tr class="hover:bg-gray-50 transition duration-150">
-                                    <td class="p-4 font-medium">{{ $no++ }}</td>
+                                    <td class="p-4 font-medium">
+                                        <div class="flex items-center justify-center">
+                                            {{ $no++ }}
+                                        </div>
+                                    </td>
                                     <td class="p-4 font-medium">
                                         {{ \Carbon\Carbon::parse($item->created_at)->format('d M Y') }}
                                     </td>
@@ -60,18 +77,22 @@
                                     <td class="p-4">
                                         <div class="flex justify-center items-center gap-2">
                                             {{-- Edit Button --}}
-                                            <button class="editBtn w-9 h-9 flex items-center justify-center bg-blue-500 text-white rounded-lg shadow hover:bg-blue-600 hover:scale-105 transition"
-                                                data-id="{{ $item->id }}"
-                                                data-content="{{ $item->content }}"
+                                            <button
+                                                class="editBtn w-9 h-9 flex items-center justify-center bg-blue-500 text-white rounded-lg shadow hover:bg-blue-600 hover:scale-105 transition"
+                                                data-id="{{ $item->id }}" data-content="{{ $item->content }}"
                                                 title="Edit">
                                                 <i class="fas fa-edit"></i>
                                             </button>
 
                                             {{-- Delete Button --}}
-                                            <form method="post" action="{{ route('delannouncement', ['id' => $item->id]) }}" class="inline deleteForm">
+                                            <form method="post"
+                                                action="{{ route('delannouncement', ['id' => $item->id]) }}"
+                                                class="inline deleteForm">
                                                 @csrf
                                                 @method('delete')
-                                                <button type="button" class="delete-confirm w-9 h-9 flex items-center justify-center bg-red-500 text-white rounded-lg shadow hover:bg-red-600 hover:scale-105 transition" title="Delete">
+                                                <button type="button"
+                                                    class="delete-confirm w-9 h-9 flex items-center justify-center bg-red-500 text-white rounded-lg shadow hover:bg-red-600 hover:scale-105 transition"
+                                                    title="Delete">
                                                     <i class="fas fa-trash"></i>
                                                 </button>
                                             </form>
@@ -83,12 +104,13 @@
                     </table>
                 </div>
             </div>
-            
+
         </div>
     </main>
 
     <!-- ADD MODAL -->
-    <div id="addModal" class="hidden fixed inset-0 bg-gray-900/60 backdrop-blur-sm flex items-center justify-center z-50 overflow-y-auto px-4 py-6">
+    <div id="addModal"
+        class="hidden fixed inset-0 bg-gray-900/60 backdrop-blur-sm flex items-center justify-center z-50 overflow-y-auto px-4 py-6">
         <div class="bg-white rounded-2xl p-8 w-full max-w-lg shadow-2xl relative transform transition-all scale-100">
             <button id="closeAddModal" class="absolute top-5 right-5 text-gray-400 hover:text-gray-600 transition">
                 <i class="fas fa-times text-xl"></i>
@@ -97,15 +119,19 @@
                 <i class="fa-solid fa-bullhorn text-red-700"></i> Add Announcement
             </h2>
 
-            <form id="addForm" method="post" action="{{ route('postannouncement') }}" enctype="multipart/form-data" class="space-y-5">
+            <form id="addForm" method="post" action="{{ route('postannouncement') }}" enctype="multipart/form-data"
+                class="space-y-5">
                 @csrf @method('post')
 
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-1">Content / Description</label>
-                    <textarea name="content" rows="4" class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-red-500" placeholder="Write note details here..." required></textarea>
+                    <textarea name="content" rows="4"
+                        class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-red-500"
+                        placeholder="Write note details here..." required></textarea>
                 </div>
 
-                <button type="submit" class="w-full py-3 bg-red-600 text-white font-bold rounded-lg shadow-md hover:bg-red-700 transition flex justify-center items-center gap-2">
+                <button type="submit"
+                    class="w-full py-3 bg-red-600 text-white font-bold rounded-lg shadow-md hover:bg-red-700 transition flex justify-center items-center gap-2">
                     <i class="fas fa-check"></i> Save Announcement
                 </button>
             </form>
@@ -113,7 +139,8 @@
     </div>
 
     <!-- EDIT MODAL -->
-    <div id="editModal" class="hidden fixed inset-0 bg-gray-900/60 backdrop-blur-sm flex items-center justify-center z-50 overflow-y-auto px-4 py-6">
+    <div id="editModal"
+        class="hidden fixed inset-0 bg-gray-900/60 backdrop-blur-sm flex items-center justify-center z-50 overflow-y-auto px-4 py-6">
         <div class="bg-white rounded-2xl p-8 w-full max-w-lg shadow-2xl relative transform transition-all scale-100">
             <button id="closeModal" class="absolute top-5 right-5 text-gray-400 hover:text-gray-600 transition">
                 <i class="fas fa-times text-xl"></i>
@@ -127,10 +154,12 @@
 
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-1">Content / Description</label>
-                    <textarea id="editContent" name="content" rows="4" class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-red-500" required></textarea>
+                    <textarea id="editContent" name="content" rows="4"
+                        class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-red-500" required></textarea>
                 </div>
 
-                <button type="submit" class="w-full py-3 bg-red-600 text-white font-bold rounded-lg shadow-md hover:bg-red-700 transition flex justify-center items-center gap-2">
+                <button type="submit"
+                    class="w-full py-3 bg-red-600 text-white font-bold rounded-lg shadow-md hover:bg-red-700 transition flex justify-center items-center gap-2">
                     <i class="fas fa-save"></i> Update Announcement
                 </button>
             </form>
@@ -138,13 +167,13 @@
     </div>
 
     <!-- SCRIPTS -->
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"
+        integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
     <script src="//cdn.datatables.net/2.0.2/js/dataTables.min.js"></script>
     <script>
         $(document).ready(function() {
             // Init DataTable
-            new DataTable('#myTable', {
-            });
+            new DataTable('#myTable', {});
 
             // Modal Logic
             const addModal = $('#addModal');
@@ -152,14 +181,14 @@
 
             $('#addBtn').click(() => addModal.removeClass('hidden'));
             $('#closeAddModal').click(() => addModal.addClass('hidden'));
-            
+
             // Edit Logic
             $(document).on('click', '.editBtn', function() {
                 const btn = $(this);
                 $('#editContent').val(btn.data('content'));
-                
+
                 $('#editForm').attr('action', `/announcement/${btn.data('id')}/update`);
-                
+
                 editModal.removeClass('hidden');
             });
 
@@ -193,4 +222,5 @@
     @include('layout.loading')
 
 </body>
+
 </html>

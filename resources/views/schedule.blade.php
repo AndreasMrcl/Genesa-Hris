@@ -157,7 +157,7 @@
                 </div>
             @else
                 <!-- EMPTY STATE -->
-                <div class="flex flex-col items-center justify-center h-96 bg-white rounded-xl shadow-sm border border-dashed border-gray-300 text-center p-10">
+                <div class="flex flex-col items-center justify-center h-96 bg-white p-5 rounded-xl shadow-sm border border-gray-100 text-center p-10">
                     <div class="bg-indigo-50 p-4 rounded-full mb-4">
                         <i class="fas fa-building text-4xl text-indigo-400"></i>
                     </div>

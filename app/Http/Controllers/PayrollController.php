@@ -2,21 +2,22 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Payroll;
-use App\Models\PayrollDetail;
-use App\Models\Employee;
-use App\Models\CompanyPayrollConfig;
-use App\Models\GlobalPtkp;
-use App\Models\GlobalTerRate;
-use App\Models\ActivityLog;
+use Carbon\Carbon;
 use App\Models\Branch;
+use App\Models\Payroll;
+use App\Models\Employee;
+use App\Models\GlobalPtkp;
+use App\Models\ActivityLog;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\DB;
+use App\Models\GlobalTerRate;
+use App\Models\PayrollDetail;
 use App\Exports\PayrollExport;
+use Illuminate\Support\Facades\DB;
 use App\Exports\PayrollReportExport;
+use App\Models\CompanyPayrollConfig;
+use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Support\Facades\Cache;
 
 class PayrollController extends Controller
 {
@@ -38,23 +39,19 @@ class PayrollController extends Controller
             return redirect()->route('login');
         }
 
-        $cacheKey = "payroll_{$userCompany->id}";
-
-        $batches = Cache::remember($cacheKey, 180, function () use ($userCompany) {
-            return $userCompany->payrolls()
-                ->join('employees', 'payrolls.employee_id', '=', 'employees.id')
-                ->select(
-                    'payrolls.pay_period_start',
-                    'payrolls.pay_period_end',
-                    DB::raw('count(distinct employees.branch_id) as total_branches'),
-                    DB::raw('sum(payrolls.net_salary) as total_spent'),
-                    DB::raw('max(payrolls.status) as status'),
-                    DB::raw('max(payrolls.created_at) as created_at')
-                )
-                ->groupBy('payrolls.pay_period_start', 'payrolls.pay_period_end')
-                ->orderBy(DB::raw('MAX(payrolls.created_at)'), 'desc')
-                ->get();
-        });
+        $batches = $userCompany->payrolls()
+            ->join('employees', 'payrolls.employee_id', '=', 'employees.id')
+            ->select(
+                'payrolls.pay_period_start',
+                'payrolls.pay_period_end',
+                DB::raw('count(distinct employees.branch_id) as total_branches'),
+                DB::raw('sum(payrolls.net_salary) as total_spent'),
+                DB::raw('max(payrolls.status) as status'),
+                DB::raw('max(payrolls.created_at) as created_at')
+            )
+            ->groupBy('payrolls.pay_period_start', 'payrolls.pay_period_end')
+            ->orderBy(DB::raw('MAX(payrolls.created_at)'), 'desc')
+            ->get();
 
         return view('payroll', compact('batches'));
     }
@@ -63,26 +60,22 @@ class PayrollController extends Controller
     {
         $userCompany = Auth::user()->compani;
 
-        $cacheKey = "payroll_period_{$userCompany->id}_{$start}_{$end}";
-
-        $branchStats = Cache::remember($cacheKey, 180, function () use ($userCompany, $start, $end) {
-            return Payroll::query()
-                ->join('employees', 'payrolls.employee_id', '=', 'employees.id')
-                ->join('branches', 'employees.branch_id', '=', 'branches.id')
-                ->where('payrolls.compani_id', $userCompany->id)
-                ->where('payrolls.pay_period_start', $start)
-                ->where('payrolls.pay_period_end', $end)
-                ->select(
-                    'branches.id',
-                    'branches.name',
-                    'branches.category',
-                    DB::raw('count(payrolls.id) as employee_count'),
-                    DB::raw('sum(payrolls.net_salary) as total_expense')
-                )
-                ->groupBy('branches.id', 'branches.name', 'branches.category')
-                ->orderBy('branches.name')
-                ->get();
-        });
+        $branchStats = Payroll::query()
+            ->join('employees', 'payrolls.employee_id', '=', 'employees.id')
+            ->join('branches', 'employees.branch_id', '=', 'branches.id')
+            ->where('payrolls.compani_id', $userCompany->id)
+            ->where('payrolls.pay_period_start', $start)
+            ->where('payrolls.pay_period_end', $end)
+            ->select(
+                'branches.id',
+                'branches.name',
+                'branches.category',
+                DB::raw('count(payrolls.id) as employee_count'),
+                DB::raw('sum(payrolls.net_salary) as total_expense')
+            )
+            ->groupBy('branches.id', 'branches.name', 'branches.category')
+            ->orderBy('branches.name')
+            ->get();
 
         if ($branchStats->isEmpty()) {
             return redirect()->route('payroll')->withErrors(['msg' => 'Payroll data not found.']);
@@ -96,13 +89,13 @@ class PayrollController extends Controller
         $userCompany = Auth::user()->compani;
 
         $payrolls = Payroll::with(['employee', 'employee.position'])
-                ->where('compani_id', $userCompany->id)
-                ->where('pay_period_start', $start)
-                ->where('pay_period_end', $end)
-                ->whereHas('employee', function ($q) use ($branchId) {
-                    $q->where('branch_id', $branchId);
-                })
-                ->get();
+            ->where('compani_id', $userCompany->id)
+            ->where('pay_period_start', $start)
+            ->where('pay_period_end', $end)
+            ->whereHas('employee', function ($q) use ($branchId) {
+                $q->where('branch_id', $branchId);
+            })
+            ->get();
 
         $branchName = Branch::where('id', $branchId)->value('name');
 
@@ -427,8 +420,6 @@ class PayrollController extends Controller
 
             DB::commit();
 
-            Cache::forget("payroll_{$userCompany->id}");
-
             return redirect()->route('payroll')->with('success', "Generated $countProcessed slips for period $start to $end.");
         } catch (\Exception $e) {
             DB::rollBack();
@@ -457,8 +448,8 @@ class PayrollController extends Controller
         $userCompany = Auth::user()->compani;
 
         $payroll = $userCompany->payrolls()
-                ->with(['employee', 'payrollDetails'])
-                ->findOrFail($id);
+            ->with(['employee', 'payrollDetails'])
+            ->findOrFail($id);
 
         return view('payrollShow', compact('payroll'));
     }
@@ -474,12 +465,9 @@ class PayrollController extends Controller
             ->where('pay_period_end', $end)
             ->delete();
 
-        $formattedStart = \Carbon\Carbon::parse($start)->format('d M Y');
-        $formattedEnd = \Carbon\Carbon::parse($end)->format('d M Y');
+        $formattedStart = Carbon::parse($start)->format('d M Y');
+        $formattedEnd = Carbon::parse($end)->format('d M Y');
         $this->logActivity('Delete Payroll Batch', "Menghapus seluruh data gaji periode {$formattedStart} s/d {$formattedEnd}", $userCompany->id);
-
-        Cache::forget("payroll_{$userCompany->id}");
-        Cache::forget("payroll_period_{$userCompany->id}_{$start}_{$end}");
 
         return redirect()->route('payroll')->with('success', "Deleted payroll batch ($deleted records).");
     }
@@ -496,9 +484,6 @@ class PayrollController extends Controller
         $payroll->delete();
 
         $this->logActivity('Delete Payroll Slip', "Menghapus slip gaji milik {$employeeName} untuk periode {$start}", $userCompany->id);
-
-        Cache::forget("payroll_{$userCompany->id}");
-        Cache::forget("payroll_period_{$userCompany->id}_{$start}_{$end}");
 
         return back()->with('success', 'Single payroll record deleted.');
     }
@@ -531,20 +516,6 @@ class PayrollController extends Controller
         return Excel::download(new PayrollExport($userCompany->id, $start, $end), $filename);
     }
 
-
-    private function logActivity($type, $description, $companyId)
-    {
-        ActivityLog::create([
-            'user_id'       => Auth::id(),
-            'compani_id'    => $companyId,
-            'activity_type' => $type,
-            'description'   => $description,
-            'created_at'    => now(),
-        ]);
-
-        Cache::tags(['activities_' . $companyId])->flush();
-    }
-
     public function exportReport(Request $request)
     {
         $userCompany = Auth::user()->compani;
@@ -568,5 +539,18 @@ class PayrollController extends Controller
         $filename = 'Laporan_Gaji_' . $request->start . '.xlsx';
 
         return Excel::download(new PayrollReportExport($userCompany->id, $request->start, $request->end), $filename);
+    }
+
+    private function logActivity($type, $description, $companyId)
+    {
+        ActivityLog::create([
+            'user_id'       => Auth::id(),
+            'compani_id'    => $companyId,
+            'activity_type' => $type,
+            'description'   => $description,
+            'created_at'    => now(),
+        ]);
+
+        Cache::forget("activities_{$companyId}");
     }
 }

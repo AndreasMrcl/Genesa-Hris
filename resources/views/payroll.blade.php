@@ -83,6 +83,7 @@
                                             Rp {{ number_format($batch->total_spent, 0, ',', '.') }}
                                         </div>
                                     </td>
+
                                     {{-- <td class="p-4 text-center">
                                         @if ($batch->status == 'paid')
                                             <span
@@ -96,6 +97,7 @@
                                             </span>
                                         @endif
                                     </td> --}}
+
                                     <td class="p-4 text-center">
                                         <div class="flex items-center justify-center gap-2">
 
@@ -112,11 +114,11 @@
                                             </a>
 
                                             <!-- TOMBOL EXPORT REPORT EXCEL -->
-                                            <a href="{{ route('payrollReportExport', ['start' => $batch->pay_period_start, 'end' => $batch->pay_period_end]) }}"
+                                            {{-- <a href="{{ route('payrollReportExport', ['start' => $batch->pay_period_start, 'end' => $batch->pay_period_end]) }}"
                                                 class="p-2 text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-full transition shadow-sm"
                                                 title="Download Laporan Lengkap">
                                                 <i class="fas fa-chart-pie"></i>
-                                            </a>
+                                            </a> --}}
 
                                             <!-- TOMBOL DELETE BATCH -->
                                             <form action="{{ route('delpayrollBatch') }}" method="POST"
