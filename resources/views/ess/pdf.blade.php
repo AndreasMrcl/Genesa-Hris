@@ -80,7 +80,6 @@
 </head>
 <body>
 
-    <!-- Header -->
     <table class="header-table">
         <tr>
             <td class="logo-cell">
@@ -98,10 +97,6 @@
                 </div>
             </td>
             <td class="logo-cell text-right">
-                <div style="font-size: 10px; color: #9ca3af;">PAYSLIP</div>
-                <div style="font-size: 10px; font-weight: bold;">
-                    {{ \Carbon\Carbon::parse($payroll->pay_period_end)->format('M Y') }}
-                </div>
             </td>
         </tr>
     </table>
@@ -119,31 +114,20 @@
             <td width="25%">
                 <div class="info-label">Period</div>
                 <div class="info-value">
-                    {{ \Carbon\Carbon::parse($payroll->pay_period_start)->format('d M') }} - 
-                    {{ \Carbon\Carbon::parse($payroll->pay_period_end)->format('d M Y') }}
+                    {{ \Carbon\Carbon::parse($payroll->pay_period_end)->format('M Y') }}
                 </div>
             </td>
         </tr>
         <tr>
             <td>
-                <div class="info-label">Employee ID</div>
-                <div class="info-value">{{ $payroll->employee->nik }}</div>
-            </td>
-            <td>
                 <div class="info-label">Branch</div>
                 <div class="info-value">{{ $payroll->employee->branch->name ?? '-' }}</div>
-            </td>
-            <td>
-                <div class="info-label">Payment Method</div>
-                <div class="info-value">{{ ucfirst($payroll->payroll_method ?? 'Transfer') }}</div>
             </td>
         </tr>
     </table>
 
-    <!-- Earnings & Deductions -->
     <div class="columns-container">
-        
-        <!-- EARNINGS -->
+
         <div class="col-left">
             <div class="section-title">Earnings (Pendapatan)</div>
             <table class="item-table">
@@ -167,7 +151,6 @@
             </div>
         </div>
 
-        <!-- DEDUCTIONS -->
         <div class="col-right">
             <div class="section-title">Deductions (Potongan)</div>
             <table class="item-table">
@@ -196,7 +179,6 @@
         <div class="clear"></div>
     </div>
 
-    <!-- Benefits -->
     @php $benefits = $payroll->benefits;; @endphp
     @if($benefits->count() > 0)
         <div class="benefit-section">
@@ -228,7 +210,6 @@
         </div>
     @endif
 
-    <!-- Net Pay -->
     <div class="net-pay-box">
         <table class="net-table">
             <tr>
