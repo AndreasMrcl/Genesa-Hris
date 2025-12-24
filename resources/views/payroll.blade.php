@@ -6,6 +6,23 @@
     @include('layout.head')
     <link href="//cdn.datatables.net/2.0.2/css/dataTables.dataTables.min.css" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <style>
+        .dataTables_wrapper .dataTables_length select {
+            padding-right: 2rem;
+            border-radius: 0.5rem;
+        }
+
+        .dataTables_wrapper .dataTables_filter input {
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            border: 1px solid #d1d5db;
+        }
+
+        table.dataTable.no-footer {
+            border-bottom: 1px solid #e5e7eb;
+        }
+    </style>
 </head>
 
 <body class="bg-gray-50">
@@ -50,18 +67,30 @@
             <!-- Table -->
             <div class="w-full bg-white rounded-xl shadow-md border border-gray-100">
                 <div class="p-5 overflow-auto">
-                    <table class="w-full text-left">
+                    <table id="myTable" class="w-full text-left">
                         <thead class="bg-gray-100 text-gray-600 text-sm leading-normal">
                             <tr>
                                 <th class="p-4 font-bold">Period Range</th>
-                                <th class="p-4 font-bold text-center">Total Branches</th>
-                                <th class="p-4 font-bold text-center">Total Expense</th>
-                                <th class="p-4 font-bold text-center">Action</th>
+                                <th class="p-4 font-bold ">
+                                    <div class="flex justify-center">
+                                        Total Branches
+                                    </div>  
+                                </th>
+                                <th class="p-4 font-bold">
+                                    <div class="flex justify-center">
+                                        Total Expense
+                                    </div> 
+                                </th>
+                                <th class="p-4 font-bold">
+                                    <div class="flex justify-center">
+                                        Action
+                                    </div> 
+                                </th>
                             </tr>
                         </thead>
                         <tbody class="text-gray-700 text-sm">
                             @forelse ($batches as $batch)
-                                <tr class="hover:bg-cyan-50 transition group">
+                                <tr class="cursor-pointer group">
                                     <td class="p-4">
                                         <div class="flex flex-col">
                                             <a href="{{ route('periodPayrollBranch', ['start' => $batch->pay_period_start, 'end' => $batch->pay_period_end]) }}"
@@ -73,10 +102,12 @@
                                                 {{ \Carbon\Carbon::parse($batch->created_at)->diffForHumans() }}</span>
                                         </div>
                                     </td>
-                                    <td class="p-4 text-center">
-                                        <span class="font-bold text-gray-800 text-base">
+                                    <td class="p-4">
+                                        <div class="flex justify-center">
+                                            <span class="font-bold text-gray-800 text-base">
                                             {{ $batch->total_branches }}
-                                        </span>
+                                            </span>
+                                        </div>  
                                     </td>
                                     <td class="p-4 text-center">
                                         <div class="font-bold text-gray-800 text-base">
@@ -168,27 +199,30 @@
         </div>
     </main>
 
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="//cdn.datatables.net/2.0.2/js/dataTables.min.js"></script>
     <script>
-        // SweetAlert untuk Delete Batch
-        document.querySelectorAll('.delete-batch-form').forEach(form => {
-            form.addEventListener('submit', function(e) {
+        $(document).ready(function() {
+            new DataTable('#myTable', {});
+
+            $('.delete-confirm').click(function(e) {
                 e.preventDefault();
+                const form = $(this).closest('form');
                 Swal.fire({
-                    title: 'Delete this period?',
-                    text: "This will delete ALL salary slips for this period. This action cannot be undone!",
+                    title: 'Delete Payroll Batch?',
+                    text: "This will delete ALL data for this period!",
                     icon: 'warning',
                     showCancelButton: true,
                     confirmButtonColor: '#d33',
-                    cancelButtonColor: '#3085d6',
                     confirmButtonText: 'Yes, delete all!'
                 }).then((result) => {
-                    if (result.isConfirmed) {
-                        this.submit();
-                    }
+                    if (result.isConfirmed) form.submit();
                 });
             });
         });
     </script>
+    @include('sweetalert::alert')
+    @include('layout.loading')
 </body>
 
 </html>

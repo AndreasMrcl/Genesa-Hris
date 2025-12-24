@@ -56,7 +56,7 @@
                                 <th class="p-4 font-bold">Name / Branch</th>
                                 <th class="p-4 font-bold">Position / Status</th>
                                 <th class="p-4 font-bold">Contacts</th>
-                                <th class="p-4 font-bold text-center rounded-tr-lg" width="15%">Actions</th>
+                                <th class="p-4 font-bold rounded-tr-lg" width="15%">Actions</th>
                             </tr>
                         </thead>
                         <tbody class="text-gray-700 text-sm">
@@ -94,17 +94,22 @@
                                             {{-- Tombol Edit --}}
                                             <button
                                                 class="editBtn w-9 h-9 flex items-center justify-center bg-blue-500 text-white rounded-lg shadow hover:bg-blue-600 hover:scale-105 transition cursor-pointer"
-                                                data-id="{{ $item->id }}" data-name="{{ $item->name }}"
-                                                data-branch="{{ $item->branch_id }}" data-email="{{ $item->email }}"
+                                                data-id="{{ $item->id }}" 
+                                                data-name="{{ $item->name }}"
+                                                data-branch="{{ $item->branch_id }}" 
+                                                data-email="{{ $item->email }}"
                                                 data-nik="{{ $item->nik }}"
                                                 data-fingerprint_id="{{ $item->fingerprint_id }}"
-                                                data-ktp="{{ $item->ktp }}" data-npwp="{{ $item->npwp }}"
+                                                data-ktp="{{ $item->ktp }}" 
+                                                data-npwp="{{ $item->npwp }}"
                                                 data-bpjs-kes-no="{{ $item->bpjs_kesehatan_no }}"
                                                 data-bpjs-tk-no="{{ $item->bpjs_ketenagakerjaan_no }}"
-                                                data-phone="{{ $item->phone }}" data-address="{{ $item->address }}"
+                                                data-phone="{{ $item->phone }}" 
+                                                data-address="{{ $item->address }}"
                                                 data-position-id="{{ $item->position_id }}"
                                                 data-base-salary="{{ $item->base_salary }}"
-                                                data-join="{{ $item->join_date }}" data-status="{{ $item->status }}"
+                                                data-join="{{ $item->join_date }}" 
+                                                data-status="{{ $item->status }}"
                                                 data-ptkp="{{ $item->ptkp_status ?? 'TK/0' }}"
                                                 data-working-days="{{ $item->working_days }}"
                                                 data-payroll-method="{{ $item->payroll_method }}"
@@ -112,7 +117,8 @@
                                                 data-part-tk="{{ $item->participates_bpjs_tk }}"
                                                 data-part-jp="{{ $item->participates_bpjs_jp }}"
                                                 data-bank-name="{{ $item->bank_name }}"
-                                                data-bank-no="{{ $item->bank_account_no }}" title="Edit">
+                                                data-bank-no="{{ $item->bank_account_no }}" 
+                                                title="Edit">
                                                 <i class="fas fa-edit"></i>
                                             </button>
 
@@ -216,15 +222,16 @@
                             </div>
                             <div class="md:col-span-1">
                                 <label class="block text-xs font-bold text-gray-500 uppercase mb-1">KTP (National
-                                    ID)</label>
+                                    ID) <span class="text-red-500">*</span></label>
                                 <input type="number" name="ktp"
-                                    class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-indigo-500">
+                                    class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-indigo-500"
+                                    required>
                             </div>
 
                             <div class="md:col-span-3">
-                                <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Address</label>
+                                <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Address <span class="text-red-500">*</span></label>
                                 <textarea name="address" rows="2"
-                                    class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-indigo-500"></textarea>
+                                    class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-indigo-500" required></textarea>
                             </div>
                         </div>
                     </div>
@@ -297,7 +304,7 @@
                             <div>
                                 <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Work Days <span
                                         class="text-red-500">*</span></label>
-                                <input type="number" name="working_days" value="27"
+                                <input type="number" name="working_days" value="26"
                                     class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-indigo-500 bg-white"
                                     required>
                             </div>
@@ -328,9 +335,9 @@
                             </div>
                             <div>
                                 <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Fingerprint.
-                                    Id</label>
+                                    Id <span class="text-red-500">*</span></label>
                                 <input type="number" name="fingerprint_id"
-                                    class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-indigo-500 bg-white">
+                                    class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-indigo-500 bg-white" required>
                             </div>
                         </div>
 
@@ -466,13 +473,13 @@
                             <div class="md:col-span-1">
                                 <label class="block text-xs font-bold text-gray-500 uppercase mb-1">KTP</label>
                                 <input type="number" id="editKtp" name="ktp"
-                                    class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border">
+                                    class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border" required>
                             </div>
 
                             <div class="md:col-span-3">
                                 <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Address</label>
                                 <textarea id="editAddress" name="address" rows="2"
-                                    class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border"></textarea>
+                                    class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border" required></textarea>
                             </div>
                         </div>
                     </div>
@@ -566,7 +573,7 @@
                                 <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Fingerprint.
                                     Id</label>
                                 <input type="number" id="editFingerprint" name="fingerprint_id"
-                                    class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-indigo-500 bg-white">
+                                    class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-indigo-500 bg-white" required>
                             </div>
 
                         </div>
@@ -703,17 +710,6 @@
                     }
                 }
 
-                $('#payrollMethod').change(function() {
-                    toggleBankDetails($(this).val(), '#bankAccountSection', '#bankAccountSection input');
-                });
-
-                $('#editPayrollMethod').change(function() {
-                    toggleBankDetails($(this).val(), '#editBankAccountSection',
-                    '#editBankAccountSection input');
-                });
-
-                toggleBankDetails($('#payrollMethod').val(), '#bankAccountSection', '#bankAccountSection input');
-
                 const allPositions = @json($positions);
 
                 function updatePositionDropdown(branchId, targetSelectId) {
@@ -800,13 +796,14 @@
                     $('#editBpjsTkNo').val(btn.data('bpjs-tk-no'));
 
                     // Bank Info
-                    $('#editBankName').val(btn.data('bank-name'));
-                    $('#editBankNo').val(btn.data('bank-no'));
                     let payrollMethod = btn.data('payroll-method');
                     $('#editPayrollMethod').val(btn.data('payroll-method'));
-
+                    
                     toggleBankDetails(payrollMethod, '#editBankAccountSection',
                     '#editBankAccountSection input');
+                    
+                    $('#editBankName').val(btn.data('bank-name'));
+                    $('#editBankNo').val(btn.data('bank-no'));
 
                     // Checkboxes
                     $('#editBpjsKes').prop('checked', btn.data('part-kes') == 1);

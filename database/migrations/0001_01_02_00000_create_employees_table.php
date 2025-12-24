@@ -29,7 +29,7 @@ return new class extends Migration
             $table->string('phone');
             $table->string('address');
             $table->decimal('base_salary', 15, 2);
-            $table->integer('working_days')->default(27);
+            $table->integer('working_days')->default(26);
             $table->enum('payroll_method', ['transfer', 'cash'])->default('transfer');
             $table->string('bank_name')->nullable();
             $table->string('bank_account_no')->nullable();

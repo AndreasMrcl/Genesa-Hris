@@ -32,10 +32,9 @@ class AttendanceController extends Controller
 
         $page = request()->get('page', 1);
 
-        $cacheTag = 'attendance_batches_'.$userCompany->id;
-        $cacheKey = 'page_'.$page;
+        $cacheKey = "attendance_batches_{$userCompany->id}";
 
-        $batches = Cache::tags([$cacheTag])->remember($cacheKey, now()->addMinutes(60), function () use ($userCompany) {
+        $batches = Cache::remember($cacheKey, 180, function () use ($userCompany) {
             return $userCompany->attendances()
                 ->select(
                     'period_start',
@@ -45,7 +44,7 @@ class AttendanceController extends Controller
                 )
                 ->groupBy('period_start', 'period_end')
                 ->latest('last_updated')
-                ->paginate(10);
+                ->get();
         });
 
         return view('attendance', compact('batches'));
@@ -136,7 +135,7 @@ class AttendanceController extends Controller
                 $userCompany->id
             );
 
-            Cache::tags(['attendance_batches_'.$userCompany->id])->flush();
+            $this->clearCache($userCompany->id);
 
             return redirect()->route('attendance')->with('success', 'Attendance data saved successfully!');
         } catch (\Exception $e) {
@@ -166,9 +165,14 @@ class AttendanceController extends Controller
             $userCompany->id
         );
 
-        Cache::tags(['attendance_batches_'.$userCompany->id])->flush();
+        $this->clearCache($userCompany->id);
 
         return redirect()->route('attendance')->with('success', 'Attendance data deleted successfully!');
+    }
+
+    private function clearCache($companyId)
+    {
+        Cache::forget("attendance_batches_{$companyId}");
     }
 
     private function logActivity($type, $description, $companyId)

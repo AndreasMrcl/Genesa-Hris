@@ -70,19 +70,19 @@
                                     <td class="p-4">
                                         <div class="flex flex-col">
                                             <a href="{{ route('manageattendance', ['start' => $batch->period_start, 'end' => $batch->period_end]) }}"
-                                                class="text-lg font-bold text-blue-600 hover:underline mb-1">
+                                                class="text-lg font-bold text-blue-600 mb-1">
                                                 {{ \Carbon\Carbon::parse($batch->period_start)->format('d M Y') }} -
                                                 {{ \Carbon\Carbon::parse($batch->period_end)->format('d M Y') }}
                                             </a>
                                         </div>
                                     </td>
-                                    <td class="p-4 text-center">
+                                    <td class="p-4">
                                         <span
                                             class="bg-blue-100 text-blue-800 text-xs font-medium px-3 py-1 rounded-full">
                                             {{ $batch->total_records }} Records
                                         </span>
                                     </td>
-                                    <td class="p-4 text-right text-gray-500">
+                                    <td class="p-4 text-gray-500">
                                         {{ \Carbon\Carbon::parse($batch->last_updated)->diffForHumans() }}
                                     </td>
                                     <td class="p-4 text-center">
@@ -111,10 +111,6 @@
                             @endforelse
                         </tbody>
                     </table>
-                    <!-- Pagination -->
-                    <div class="mt-4 px-2">
-                        {{ $batches->links() }}
-                    </div>
                 </div>
             </div>
         </div>
@@ -160,13 +156,15 @@
         </div>
     </div>
 
-    <!-- SCRIPTS -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="//cdn.datatables.net/2.0.2/js/dataTables.min.js"></script>
     <script>
-        document.querySelectorAll('.delete-confirm').forEach(button => {
-            button.addEventListener('click', function(e) {
+        $(document).ready(function() {
+            new DataTable('#myTable', {});
+
+            $('.delete-confirm').click(function(e) {
                 e.preventDefault();
                 const form = this.closest('form');
-
                 Swal.fire({
                     title: 'Delete this period?',
                     text: "This will delete ALL attendance data for this date range. Cannot be undone!",
