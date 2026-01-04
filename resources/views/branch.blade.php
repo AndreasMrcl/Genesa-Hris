@@ -69,9 +69,11 @@
                                         </div>
                                     </td>
                                     <td class="p-4 space-y-1">
-                                        <div class="font-bold text-gray-900 text-base">{{ $item->name }}</div>
-                                        <div class="text-xs text-gray-400">Created:
-                                            {{ $item->created_at ? $item->created_at->format('Y-m-d') : '-' }}</div>
+                                        <a href="{{ route('outlet', ['branchId' => $item->id]) }}" class="group block">
+                                            <div class="font-bold text-gray-900 text-base group-hover:text-cyan-600">{{ $item->name }}</div>
+                                            <div class="text-xs text-gray-400">Created:
+                                                {{ $item->created_at ? $item->created_at->format('Y-m-d') : '-' }}</div>
+                                        </a>
                                     </td>
                                     <td class="p-4">
                                         <span

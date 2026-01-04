@@ -7,11 +7,18 @@ use App\Models\Attendance;
 use App\Models\Leave;
 use App\Models\Overtime;
 use App\Models\Payroll;
+use App\Models\Shift;
+use App\Models\Schedule;
+use App\Models\Branch;
+use App\Models\Outlet;
+use App\Models\Employee;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
+use Carbon\CarbonPeriod;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 
 class EssController extends Controller
 {
@@ -217,6 +224,8 @@ class EssController extends Controller
 
         $payroll = Payroll::with(['employee', 'payrollDetails'])->findOrFail($id);
 
+        if($payroll->employee_id != Auth::guard('employee')->id()) abort(403);
+
         $pdf = Pdf::loadView('ess.pdf', compact('payroll'));
 
         $pdf->setPaper('A4', 'portrait');
@@ -237,6 +246,184 @@ class EssController extends Controller
         $announcements = $compani->announcements;
 
         return view('ess.profil', compact('employee', 'compani', 'announcements'));
+    }
+
+    private function checkCoordinator() 
+    {
+        $user = Auth::guard('employee')->user();
+
+        if (!$user || !$user->position->is_head) { 
+             abort(403, 'Access Denied. Coordinator only.');
+        }
+        return $user;
+    }
+
+    public function coordinatorSchedule(Request $request)
+    {
+        $coordinator = $this->checkCoordinator();
+
+        $branchId = $coordinator->branch_id;
+        $userCompany = $coordinator->compani;
+
+        $selectedOutletId = $request->get('outlet_id');
+
+        $employeesQuery = Employee::where('compani_id', $userCompany->id)
+            ->where('branch_id', $branchId)
+            ->orderBy('name');
+            
+        if ($selectedOutletId) {
+            $employeesQuery->where('outlet_id', $selectedOutletId);
+        }
+        $employees = $employeesQuery->get();
+
+        $shifts = Shift::where('compani_id', $userCompany->id)
+            ->where(function($q) use ($branchId) {
+                $q->whereNull('branch_id')->orWhere('branch_id', $branchId);
+            })->get();
+
+        $outlets = Outlet::where('branch_id', $branchId)->get();
+
+        $schedulesQuery = Schedule::with(['employee', 'shift'])
+            ->where('compani_id', $userCompany->id)
+            ->whereHas('employee', function($q) use ($branchId) {
+                $q->where('branch_id', $branchId);
+            });
+            
+        if ($selectedOutletId) {
+            $schedulesQuery->whereHas('employee', function($q) use ($selectedOutletId) {
+                $q->where('outlet_id', $selectedOutletId);
+            });
+        }
+
+        $schedules = $schedulesQuery->whereBetween('date', [now()->startOfMonth()->subWeek(), now()->endOfMonth()->addWeek()])
+            ->get();
+            
+        $branches = Branch::where('id', $branchId)->get(); 
+        $selectedBranchId = $branchId; 
+
+        $isEss = true; 
+
+        return view('schedule', compact(
+            'branches', 'outlets', 'selectedBranchId', 'selectedOutletId', 
+            'employees', 'shifts', 'schedules', 'isEss'
+        ));
+    }
+
+    public function coordinatorStoreSchedule(Request $request) 
+    {
+        $coordinator = $this->checkCoordinator();
+        $userCompany = $coordinator->compani;
+
+        $request->validate([
+            'employee_ids'   => 'required|array',
+            'employee_ids.*' => 'exists:employees,id', 
+            'shift_id'       => 'required|exists:shifts,id',
+            'start_date'     => 'required|date',
+            'end_date'       => 'required|date|after_or_equal:start_date',
+        ]);
+
+        $startDate = Carbon::parse($request->start_date);
+        $endDate = Carbon::parse($request->end_date);
+        $period = CarbonPeriod::create($startDate, $endDate);
+        $shift = Shift::find($request->shift_id);
+        $count = 0;
+
+        DB::beginTransaction();
+        try {
+            foreach ($request->employee_ids as $empId) {
+
+                $targetEmp = Employee::find($empId);
+
+                if($targetEmp->branch_id != $coordinator->branch_id) continue;
+
+                foreach ($period as $date) {
+                    Schedule::updateOrCreate(
+                        ['compani_id' => $userCompany->id, 'employee_id' => $empId, 'date' => $date->format('Y-m-d')],
+                        ['shift_id' => $shift->id]
+                    );
+                    $count++;
+                }
+            }
+            DB::commit();
+
+            $this->logActivity('Assign Schedule (Coord)', "Assign Shift {$shift->name} ke {$count} hari.", $userCompany->id);
+
+            return redirect()->route('ess-coordinator-schedule', ['outlet_id' => $request->outlet_id])
+                ->with('success', "Schedule updated! $count shifts assigned.");
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->withErrors(['msg' => $e->getMessage()]);
+        }
+    }
+
+    public function coordinatorUpdateSchedule(Request $request, $id)
+    {
+        $coordinator = $this->checkCoordinator();
+        $userCompany = $coordinator->compani;
+
+        $request->validate([
+            'shift_id'    => 'required|exists:shifts,id',
+            'employee_id' => 'required|exists:employees,id',
+        ]);
+
+        $schedule = Schedule::where('id', $id)
+            ->where('compani_id', $userCompany->id)
+            ->with('employee')
+            ->firstOrFail();
+
+        if ($schedule->employee->branch_id != $coordinator->branch_id) {
+             abort(403, 'Anda tidak memiliki akses untuk mengedit jadwal karyawan cabang lain.');
+        }
+
+        if ($request->employee_id != $schedule->employee_id) {
+            $newEmp = Employee::find($request->employee_id);
+            if ($newEmp->branch_id != $coordinator->branch_id) {
+                return back()->withErrors(['msg' => 'Karyawan pengganti harus dari cabang yang sama.']);
+            }
+
+            $exists = Schedule::where('compani_id', $userCompany->id)
+                ->where('employee_id', $request->employee_id)
+                ->where('date', $schedule->date)
+                ->exists();
+            if ($exists) {
+                return back()->withErrors(['msg' => 'Karyawan pengganti sudah memiliki jadwal di tanggal tersebut.']);
+            }
+        }
+
+        $schedule->update([
+            'shift_id'    => $request->shift_id,
+            'employee_id' => $request->employee_id
+        ]);
+
+        $this->logActivity('Update Schedule (Coord)', "Ubah jadwal {$schedule->employee->name}", $userCompany->id);
+
+        return redirect()->back()->with('success', 'Schedule updated successfully');
+    }
+
+    public function coordinatorDestroySchedule($id)
+    {
+        $coordinator = $this->checkCoordinator();
+        $userCompany = $coordinator->compani;
+
+        $schedule = Schedule::where('id', $id)
+            ->where('compani_id', $userCompany->id)
+            ->with('employee')
+            ->first();
+
+        if ($schedule) {
+            if ($schedule->employee->branch_id != $coordinator->branch_id) {
+                abort(403, 'Akses Ditolak.');
+            }
+
+            $name = $schedule->employee->name;
+            $date = $schedule->date;
+            $schedule->delete();
+
+            $this->logActivity('Delete Schedule (Coord)', "Hapus jadwal {$name} tgl {$date}", $userCompany->id);
+        }
+
+        return redirect()->back()->with('success', 'Schedule removed successfully');
     }
 
     private function logActivity($type, $description, $companyId)

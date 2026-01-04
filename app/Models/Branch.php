@@ -32,4 +32,9 @@ class Branch extends Model
     {
         return $this->hasMany(Shift::class);
     }
+
+    public function outlets()
+    {
+        return $this->hasMany(Outlet::class);
+    }
 }

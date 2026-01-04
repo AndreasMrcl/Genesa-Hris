@@ -16,6 +16,7 @@ class Employee extends Authenticatable
             'name',
             'compani_id',
             'branch_id',
+            'outlet_id',
             'position_id',
             'email',
             'nik',
@@ -56,6 +57,11 @@ class Employee extends Authenticatable
     public function branch()
     {
         return $this->belongsTo(Branch::class);
+    }
+
+    public function outlet()
+    {
+        return $this->belongsTo(Outlet::class);
     }
 
     public function position()

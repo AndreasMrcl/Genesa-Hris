@@ -58,6 +58,12 @@
                                         <span class="bg-gray-100 text-gray-600 text-xs px-3 py-1 rounded-full font-bold border border-gray-200 uppercase">
                                             {{ str_replace('_', ' ', $item->category) }}
                                         </span>
+                                        
+                                        @if($item->is_head)
+                                            <span class="bg-indigo-100 text-indigo-700 text-[10px] mx-2 px-2 py-0.5 rounded border border-indigo-200 w-fit font-bold">
+                                                <i class="fas fa-crown mr-1"></i> HEAD / COORD
+                                            </span>
+                                        @endif
                                     </td>
                                     <td class="p-4 font-mono text-slate-600 ">
                                         Rp {{ number_format($item->base_salary_default, 0, ',', '.') }}
@@ -69,6 +75,7 @@
                                                 data-name="{{ $item->name }}"
                                                 data-category="{{ $item->category }}"
                                                 data-salary="{{ $item->base_salary_default }}"
+                                                data-is-head="{{ $item->is_head }}"
                                                 title="Edit">
                                                 <i class="fas fa-edit"></i>
                                             </button>
@@ -126,6 +133,16 @@
                     </div>
                 </div>
 
+                <div class="bg-indigo-50 p-3 rounded-lg border border-indigo-100">
+                    <label class="flex items-center gap-3 cursor-pointer">
+                        <input type="checkbox" name="is_head" value="1" class="w-5 h-5 text-indigo-600 rounded border-gray-300 focus:ring-indigo-500">
+                        <div>
+                            <span class="block text-sm font-bold text-indigo-800">Is Coordinator / Head?</span>
+                            <span class="block text-xs text-indigo-500">Enable this to allow ESS Coordinator access.</span>
+                        </div>
+                    </label>
+                </div>
+
                 <button type="submit" class="w-full py-3 bg-slate-700 text-white font-bold rounded-lg shadow-md hover:bg-slate-800 transition flex justify-center items-center gap-2">
                     <i class="fas fa-save"></i> Save Position
                 </button>
@@ -167,6 +184,16 @@
                         <label class="block text-sm font-semibold text-gray-700 mb-1">Default Salary (Rp)</label>
                         <input type="text" id="editSalary" name="base_salary_default" value="0" class="currency w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-blue-500">
                     </div>
+                </div>
+
+                <div class="bg-indigo-50 p-3 rounded-lg border border-indigo-100">
+                    <label class="flex items-center gap-3 cursor-pointer">
+                        <input type="checkbox" id="editIsHead" name="is_head" value="1" class="w-5 h-5 text-indigo-600 rounded border-gray-300 focus:ring-indigo-500">
+                        <div>
+                            <span class="block text-sm font-bold text-indigo-800">Is Coordinator / Head?</span>
+                            <span class="block text-xs text-indigo-500">Enable this to allow ESS Coordinator access.</span>
+                        </div>
+                    </label>
                 </div>
 
                 <button type="submit" class="w-full py-3 bg-blue-600 text-white font-bold rounded-lg shadow-md hover:bg-blue-700 transition flex justify-center items-center gap-2">
@@ -225,6 +252,7 @@
                 let rawSalary = btn.data('salary');
                 let salaryStr = String(rawSalary).split('.')[0];
                 $('#editSalary').val(formatCurrency(salaryStr));
+                $('#editIsHead').prop('checked', btn.data('is-head') == 1);
 
                 $('#editForm').attr('action', `/position/${btn.data('id')}/update`);
                 $('#editModal').removeClass('hidden');

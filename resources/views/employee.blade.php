@@ -71,7 +71,7 @@
                                     <td class="p-4 space-y-1">
                                         <div class="font-bold text-gray-900 text-base">{{ $item->name }}</div>
                                         <div class="text-xs text-gray-500"><i class="fas fa-building"></i>
-                                            {{ $item->branch->name ?? '-' }}</div>
+                                            {{ $item->branch->name ?? '-' }} | {{ $item->outlet->name }}</div>
                                         <div class="text-xs text-gray-400">NIK: {{ $item->nik }}</div>
                                     </td>
                                     <td class="p-4 space-y-1">
@@ -97,6 +97,7 @@
                                                 data-id="{{ $item->id }}" 
                                                 data-name="{{ $item->name }}"
                                                 data-branch="{{ $item->branch_id }}" 
+                                                data-outlet="{{ $item->outlet_id }}" 
                                                 data-email="{{ $item->email }}"
                                                 data-nik="{{ $item->nik }}"
                                                 data-fingerprint_id="{{ $item->fingerprint_id }}"
@@ -253,6 +254,12 @@
                                             {{ $bra->name }}
                                         </option>
                                     @endforeach
+                                </select>
+                            </div>
+                            <div class="md:col-span-1">
+                                <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Outlet</label>
+                                <select name="outlet_id" id="outletSelect" class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-indigo-500">
+                                    <option value="">-- Select Branch First --</option>
                                 </select>
                             </div>
                             <div class="md:col-span-1">
@@ -501,6 +508,12 @@
                                 </select>
                             </div>
                             <div class="md:col-span-1">
+                                <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Outlet</label>
+                                <select id="editOutletSelect" name="outlet_id" class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border">
+                                    <option value="">-- Select Branch First --</option>
+                                </select>
+                            </div>
+                            <div class="md:col-span-1">
                                 <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Position</label>
                                 <select id="editPositionSelect" name="position_id"
                                     class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border" required>
@@ -710,6 +723,17 @@
                     }
                 }
 
+                $('#payrollMethod').change(function() {
+                    toggleBankDetails($(this).val(), '#bankAccountSection', '#bankAccountSection input');
+                });
+
+                $('#editPayrollMethod').change(function() {
+                    toggleBankDetails($(this).val(), '#editBankAccountSection',
+                    '#editBankAccountSection input');
+                });
+
+                toggleBankDetails($('#payrollMethod').val(), '#bankAccountSection', '#bankAccountSection input');
+
                 const allPositions = @json($positions);
 
                 function updatePositionDropdown(branchId, targetSelectId) {
@@ -730,6 +754,21 @@
                     }
                 }
 
+                const allOutlets = @json($outlets);
+
+                function updateOutletDropdown(branchId, targetSelectId) {
+                    const targetSelect = $(targetSelectId);
+                    targetSelect.empty().append('<option value="">-- Select Outlet --</option>');
+
+                    if (branchId) {
+                        const filtered = allOutlets.filter(o => o.branch_id == branchId);
+                        
+                        filtered.forEach(o => {
+                            targetSelect.append(`<option value="${o.id}">${o.name}</option>`);
+                        });
+                    }
+                }
+
                 function autofillSalary(posSelectId, salaryInputId) {
                     const selected = $(posSelectId).find('option:selected');
                     const salary = selected.data('salary');
@@ -738,15 +777,18 @@
                     }
                 }
 
-                $('#branchSelect').change(function() {
-                    updatePositionDropdown($(this).val(), '#positionSelect');
+                $('#branchSelect').change(function() { 
+                    let bId = $(this).val();
+                    updatePositionDropdown(bId, '#positionSelect');
+                    updateOutletDropdown(bId, '#outletSelect'); 
+                });
+                $('#editBranch').change(function() { 
+                    let bId = $(this).val();
+                    updatePositionDropdown(bId, '#editPositionSelect');
+                    updateOutletDropdown(bId, '#editOutletSelect');
                 });
                 $('#positionSelect').change(function() {
                     autofillSalary('#positionSelect', 'input[name="base_salary"]');
-                });
-
-                $('#editBranch').change(function() {
-                    updatePositionDropdown($(this).val(), '#editPositionSelect');
                 });
                 $('#editPositionSelect').change(function() {
                     autofillSalary('#editPositionSelect', '#editBaseSalary');
@@ -800,7 +842,7 @@
                     $('#editPayrollMethod').val(btn.data('payroll-method'));
                     
                     toggleBankDetails(payrollMethod, '#editBankAccountSection',
-                    '#editBankAccountSection input');
+                    '');
                     
                     $('#editBankName').val(btn.data('bank-name'));
                     $('#editBankNo').val(btn.data('bank-no'));
@@ -813,8 +855,10 @@
                     $('#editWorkingDays').val(btn.data('working-days'));
 
                     updatePositionDropdown(btn.data('branch'), '#editPositionSelect');
+                    updateOutletDropdown(btn.data('branch'), '#editOutletSelect');
                     setTimeout(() => {
                         $('#editPositionSelect').val(btn.data('position-id'));
+                        $('#editOutletSelect').val(btn.data('outlet'));
                     }, 50);
 
                     $('#editForm').attr('action', `/employee/${id}/update`);

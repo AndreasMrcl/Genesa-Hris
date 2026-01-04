@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\ActivityLog;
 use App\Models\Branch;
 use App\Models\Employee;
+use App\Models\Outlet;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
@@ -32,16 +33,22 @@ class EmployeeController extends Controller
         $cacheKey = "employees_{$userCompany->id}";
 
         $employees = Cache::remember($cacheKey, 180, function () use ($userCompany) {
-            return $userCompany->employees()->with('compani', 'branch', 'position')->get();
+            return $userCompany->employees()->with('compani', 'branch', 'position', 'outlet')->get();
         });
 
         $branch = Branch::where('compani_id', $userCompany->id)->select('id', 'name', 'category')->get();
 
         $positions = $userCompany->positions()->select('id', 'name', 'category', 'base_salary_default')->get();
 
+        $outlets = Outlet::join('branches', 'outlets.branch_id', '=', 'branches.id')
+            ->where('branches.compani_id', $userCompany->id)
+            ->select('outlets.id', 'outlets.name', 'outlets.branch_id')
+            ->orderBy('outlets.name')
+            ->get();
+
         $ptkps = $userCompany->globalPtkps()->orderBy('code')->get();
 
-        return view('employee', compact('employees', 'branch', 'positions', 'ptkps'));
+        return view('employee', compact('employees', 'branch', 'positions', 'ptkps', 'outlets'));
     }
 
     public function store(Request $request)
@@ -52,6 +59,7 @@ class EmployeeController extends Controller
             // Data Pribadi
             'name' => 'required|string',
             'branch_id' => 'required|exists:branches,id',
+            'outlet_id' => 'nullable|exists:outlets,id',
             'email' => 'required|email|unique:employees,email',
             'password' => 'required|min:6',
             'nik' => 'required|numeric',
@@ -112,6 +120,7 @@ class EmployeeController extends Controller
         $data = $request->validate([
             'name' => 'required|string',
             'branch_id' => 'required|exists:branches,id',
+            'outlet_id' => 'nullable|exists:outlets,id',
             'email' => 'required|email',
             'nik' => 'required|numeric',
             'fingerprint_id' => 'required|numeric',

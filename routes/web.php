@@ -23,6 +23,7 @@ use App\Http\Controllers\PositionController;
 use App\Http\Controllers\ScheduleController;
 use App\Http\Controllers\ShiftController;
 use App\Http\Controllers\TaxConfigController;
+use App\Http\Controllers\OutletController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [AuthController::class, 'login'])->name('login');
@@ -177,6 +178,13 @@ Route::middleware('auth:web')->group(function () {
     Route::put('/position/{id}/update', [PositionController::class, 'update'])->name('updateposition');
     Route::delete('/position/{id}/delete', [PositionController::class, 'destroy'])->name('desposition');
 
+    // OUTLET
+    Route::get('/branch/{branchId}/outlets', [OutletController::class, 'index'])->name('outlet');
+    Route::post('/outlet', [OutletController::class, 'store'])->name('postoutlet');
+    Route::put('/outlet/{id}/update', [OutletController::class, 'update'])->name('updateoutlet');
+    Route::delete('/outlet/{id}/delete', [OutletController::class, 'destroy'])->name('deloutlet');
+    Route::get('/api/outlets/{branchId}', [OutletController::class, 'getByBranch']);
+
     // FINGERSPOT SYNC
     Route::post('/fingerspot/fetch', [FingerspotController::class, 'fetchFromApi'])->name('fingerspotFetch');
 });
@@ -200,4 +208,9 @@ Route::middleware('auth:employee')->group(function () {
     Route::get('/ess-payroll/{id}/pdf', [EssController::class, 'downloadPdf'])->name('ess-pdf');
 
     Route::get('/ess-profil', [EssController::class, 'profil'])->name('ess-profil');
+
+    Route::get('/coordinator/schedule', [EssController::class, 'coordinatorSchedule'])->name('ess-coordinator-schedule');
+    Route::post('/coordinator/schedule/assign', [EssController::class, 'coordinatorStoreSchedule'])->name('ess-coordinator-schedule-store');
+    Route::put('/coordinator/schedule/{id}', [EssController::class, 'coordinatorUpdateSchedule'])->name('ess-coordinator-schedule-update');
+    Route::delete('/coordinator/schedule/{id}', [EssController::class, 'coordinatorDestroySchedule'])->name('ess-coordinator-schedule-destroy');
 });

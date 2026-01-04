@@ -47,16 +47,19 @@ class PositionController extends Controller
             'base_salary_default' => 'nullable|numeric',
         ]);
 
+        $isHead = $request->has('is_head');
+
         $position = Position::create([
             'name' => $data['name'],
             'category' => $data['category'],
             'base_salary_default' => $data['base_salary_default'],
             'compani_id' => $userCompany->id,
+            'is_head' => $isHead
         ]);
 
         $this->logActivity(
             'Create Position',
-            "Menambahkan Position '{$position->name}'",
+            "Menambahkan posisi '{$position->name}'",
             $userCompany->id
         );
 
@@ -75,23 +78,17 @@ class PositionController extends Controller
             'base_salary_default' => 'nullable|numeric',
         ]);
 
-        $position = Position::where('id', $id)
-            ->where('compani_id', $userCompany->id)
-            ->firstOrFail();
-
-        $oldContent = $position->name;
+        $position = $userCompany->positions()->findOrFail($id);
+        $oldName = $position->name;
 
         $position->update([
             'name' => $data['name'],
             'category' => $data['category'],
             'base_salary_default' => $data['base_salary_default'],
+            'is_head' => $request->has('is_head'),
         ]);
 
-        $this->logActivity(
-            'Update Position',
-            "Mengubah Position '{$position->name}'",
-            $userCompany->id
-        );
+        $this->logActivity('Update Position', "Mengubah nama posisi {$oldName} menjadi {$position->name}", $userCompany->id);
 
         $this->clearCache($userCompany->id);
 
@@ -102,17 +99,15 @@ class PositionController extends Controller
     {
         $userCompany = auth()->user()->compani;
 
-        $position = Position::where('id', $id)
-            ->where('compani_id', $userCompany->id)
-            ->firstOrFail();
+        $position = $userCompany->positions()->find($id);
 
-        $oldContent = $position->name;
+        $name = $position->name;
 
         $position->delete();
 
         $this->logActivity(
             'Delete Position',
-            "Menghapus position {$oldContent}'",
+            "Menghapus posisi {$name}'",
             $userCompany->id
         );
 

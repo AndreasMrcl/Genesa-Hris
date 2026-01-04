@@ -143,6 +143,17 @@
                     <p class="text-xs font-semibold text-gray-600">Payroll</p>
                 </a>
 
+                <!-- Manage Shift -->
+                @if(Auth::guard('employee')->user()->position->is_head)
+                    <a href="{{ route('ess-coordinator-schedule') }}" class="flex flex-col items-center gap-2">
+                        <div
+                            class="w-14 h-14 flex items-center justify-center bg-gray-700 text-white rounded-xl shadow-sm">
+                            <i class="fas fa-users-cog"></i>
+                        </div>
+                        <p class="text-xs font-semibold text-gray-600">Manage Shift</p>
+                    </a>
+                @endif
+
             </div>
 
         </div>

@@ -75,7 +75,7 @@
                     'sakit' => 'fa-procedures',       
                     'cuti' => 'fa-umbrella-beach',      
                     'meninggalkan_pekerjaan' => 'fa-running', 
-                    'tukar_shift' => 'fa-exchange-alt',  t
+                    'tukar_shift' => 'fa-exchange-alt',
                     default => 'fa-circle-info'          
                 };
             @endphp
