@@ -198,9 +198,15 @@ Route::middleware('auth:employee')->group(function () {
 
     Route::get('/ess-leave', [EssController::class, 'leave'])->name('ess-leave');
     Route::post('/req-leave', [EssController::class, 'reqLeave'])->name('req-leave');
-
+    Route::get('/coordinator/leave', [EssController::class, 'coordinatorLeave'])->name('ess-coordinator-leave');
+    Route::post('/coordinator/leave', [EssController::class, 'storeCoordinatorLeave'])->name('ess-coordinator-leave-store');
+    Route::put('/coordinator/leave/{id}', [EssController::class, 'coordinatorUpdateLeave'])->name('ess-coordinator-leave-update');
+    
     Route::get('/ess-overtime', [EssController::class, 'overtime'])->name('ess-overtime');
     Route::post('/req-overtime', [EssController::class, 'reqOvertime'])->name('req-overtime');
+    Route::get('/coordinator/overtime', [EssController::class, 'coordinatorOvertime'])->name('ess-coordinator-overtime');
+    Route::post('/coordinator/overtime', [EssController::class, 'storeCoordinatorOvertime'])->name('ess-coordinator-overtime-store');
+    Route::put('/coordinator/overtime/{id}', [EssController::class, 'coordinatorUpdateOvertime'])->name('ess-coordinator-overtime-update');
 
     Route::get('/ess-note', [EssController::class, 'note'])->name('ess-note');
 

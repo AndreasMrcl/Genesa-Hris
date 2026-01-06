@@ -142,20 +142,41 @@
                     </div>
                     <p class="text-xs font-semibold text-gray-600">Payroll</p>
                 </a>
-
-                <!-- Manage Shift -->
-                @if(Auth::guard('employee')->user()->position->is_head)
-                    <a href="{{ route('ess-coordinator-schedule') }}" class="flex flex-col items-center gap-2">
-                        <div
-                            class="w-14 h-14 flex items-center justify-center bg-gray-700 text-white rounded-xl shadow-sm">
-                            <i class="fas fa-users-cog"></i>
-                        </div>
-                        <p class="text-xs font-semibold text-gray-600">Manage Shift</p>
-                    </a>
-                @endif
-
             </div>
 
+            @if(Auth::guard('employee')->user()->position->is_head)
+                <div class="pt-6">
+                    <p class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-4">Team Management</p>
+                    
+                    <div class="grid grid-cols-3 gap-y-6 gap-x-4 text-center">
+                        
+                        <!-- Manage Schedule -->
+                        <a href="{{ route('ess-coordinator-schedule') }}" class="flex flex-col items-center gap-2 group">
+                            <div class="w-14 h-14 flex items-center justify-center bg-gray-800 text-white rounded-xl shadow-md group-hover:scale-105 transition duration-300">
+                                <i class="fas fa-users-cog text-xl"></i>
+                            </div>
+                            <p class="text-xs font-semibold text-gray-700">Team Roster</p>
+                        </a>
+
+                        <!-- Manage Leave -->
+                        <a href="{{ route('ess-coordinator-leave') }}" class="flex flex-col items-center gap-2 group">
+                            <div class="w-14 h-14 flex items-center justify-center bg-gray-800 text-white rounded-xl shadow-md group-hover:scale-105 transition duration-300">
+                                <i class="fas fa-calendar-check text-xl"></i>
+                            </div>
+                            <p class="text-xs font-semibold text-gray-700">Manage Leave</p>
+                        </a>
+
+                        <!-- Manage Overtime -->
+                        <a href="{{ route('ess-coordinator-overtime') }}" class="flex flex-col items-center gap-2 group">
+                            <div class="w-14 h-14 flex items-center justify-center bg-gray-800 text-white rounded-xl shadow-md group-hover:scale-105 transition duration-300">
+                                <i class="fas fa-clock text-xl"></i>
+                            </div>
+                            <p class="text-xs font-semibold text-gray-700">Manage Overtime</p>
+                        </a>
+
+                    </div>
+                </div>
+            @endif
         </div>
     </div>
 

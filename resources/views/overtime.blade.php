@@ -237,7 +237,6 @@
                     </div>
                     <div>
                         <label class="block text-sm font-semibold text-gray-700 mb-1">Overtime Pay (Rp)</label>
-                        <!-- FIX: type="text" class="currency" -->
                         <input type="text" id="editPay" name="overtime_pay" class="currency w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-blue-500" required>
                     </div>
                 </div>
