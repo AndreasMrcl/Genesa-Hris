@@ -25,6 +25,7 @@ class Employee extends Authenticatable
             'ktp',
             'bpjs_kesehatan_no',
             'bpjs_ketenagakerjaan_no',
+            'ptkp_status',
             'phone',
             'address',
             'base_salary',

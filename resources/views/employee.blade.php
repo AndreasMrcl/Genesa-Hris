@@ -56,6 +56,7 @@
                                 <th class="p-4 font-bold">Name / Branch</th>
                                 <th class="p-4 font-bold">Position / Status</th>
                                 <th class="p-4 font-bold">Contacts</th>
+                                <th class="p-4 font-bold">Masa Kerja</th>
                                 <th class="p-4 font-bold rounded-tr-lg" width="15%">Actions</th>
                             </tr>
                         </thead>
@@ -88,6 +89,19 @@
                                                 class="fas fa-envelope text-gray-400 w-4"></i> {{ $item->email }}</div>
                                         <div class="flex items-center gap-2"><i
                                                 class="fas fa-phone text-gray-400 w-4"></i> {{ $item->phone }}</div>
+                                    </td>
+                                    <td class="p-4">
+                                        <div class="flex flex-col gap-1">
+                                            @php
+                                                $joinDate = \Carbon\Carbon::parse($item->join_date);
+                                                $diff = $joinDate->diff(\Carbon\Carbon::now());
+                                            @endphp
+
+                                            <span class="inline-flex items-center w-fit bg-indigo-50 text-indigo-700 text-xs font-bold px-2 py-0.5 rounded border border-indigo-100">
+                                                <i class="far fa-clock mr-1"></i>
+                                                {{ $diff->days }} Hari
+                                            </span>
+                                        </div>
                                     </td>
                                     <td class="p-4">
                                         <div class="flex justify-center items-center gap-2">
