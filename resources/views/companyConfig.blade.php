@@ -107,7 +107,10 @@
                                         </div>
                                         <div>
                                             <label class="block text-xs font-semibold text-gray-600 mb-1">Max Cap Amount</label>
-                                            <input type="number" name="kes_cap_amount" value="{{ $config->kes_cap_amount }}" class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-indigo-500" required>
+                                            <div class="relative">
+                                                <span class="absolute left-3 top-2.5 text-gray-500 font-medium">Rp</span>
+                                                <input type="text" name="kes_cap_amount" value="{{ number_format($config->kes_cap_amount, 0, ',', '.') }}" class="currency pl-10 w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-indigo-500" required>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -162,7 +165,10 @@
                                         </div>
                                         <div>
                                             <label class="block text-xs font-semibold text-gray-600 mb-1">Cap Amount</label>
-                                            <input type="number" name="jp_cap_amount" value="{{ $config->jp_cap_amount }}" class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-indigo-500" required>
+                                            <div class="relative">
+                                                <span class="absolute left-3 top-2.5 text-gray-500 font-medium">Rp</span>
+                                                <input type="text" name="jp_cap_amount" value="{{ number_format($config->jp_cap_amount, 0, ',', '.') }}" class="currency pl-10 w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-indigo-500" required>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>

@@ -65,7 +65,7 @@
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-200 text-gray-700 text-sm">
-                            @forelse ($batches as $batch)
+                            @foreach ($batches as $batch)
                                 <tr class="hover:bg-gray-50 transition">
                                     <td class="p-4">
                                         <div class="flex flex-col">
@@ -102,13 +102,7 @@
                                         </form>
                                     </td>
                                 </tr>
-                            @empty
-                                <tr>
-                                    <td colspan="4" class="p-8 text-center text-gray-500">
-                                        No attendance recap found. Click "New Recap" to start.
-                                    </td>
-                                </tr>
-                            @endforelse
+                            @endforeach
                         </tbody>
                     </table>
                 </div>
