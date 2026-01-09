@@ -11,6 +11,7 @@ class Position extends Model
 
     protected $fillable = [
         'compani_id',
+        'is_head',
         'name',
         'category',
         'base_salary_default',

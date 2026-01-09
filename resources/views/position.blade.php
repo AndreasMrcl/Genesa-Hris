@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 
 <head>
-    <title>Manajemen Jabatan</title>
+    <title>Position Management</title>
     @include('layout.head')
     <link href="//cdn.datatables.net/2.0.2/css/dataTables.dataTables.min.css" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -26,12 +26,12 @@
             <div class="md:flex justify-between items-center bg-white p-5 rounded-xl shadow-sm border border-gray-100 space-y-2 md:space-y-0">
                 <div>
                     <h1 class="font-bold text-2xl text-gray-800 flex items-center gap-2">
-                        <i class="fas fa-id-badge text-slate-600"></i> Daftar Jabatan
+                        <i class="fas fa-id-badge text-slate-600"></i> Job Positions
                     </h1>
-                    <p class="text-sm text-gray-500 mt-1">Kelola jabatan dan gaji default</p>
+                    <p class="text-sm text-gray-500 mt-1">Manage job titles and default salaries</p>
                 </div>
                 <button id="addBtn" class="px-6 py-3 bg-slate-700 text-white rounded-lg shadow-md hover:bg-slate-800 transition font-semibold flex items-center gap-2">
-                    <i class="fas fa-plus"></i> Tambah Jabatan
+                    <i class="fas fa-plus"></i> Add Position
                 </button>
             </div>
 
@@ -42,10 +42,10 @@
                         <thead class="bg-gray-100 text-gray-600 text-sm leading-normal">
                             <tr>
                                 <th class="p-4 font-bold rounded-tl-lg text-center" width="5%">No</th>
-                                <th class="p-4 font-bold">Nama Jabatan</th>
-                                <th class="p-4 font-bold">Kategori</th>
-                                <th class="p-4 font-bold text-right">Gaji</th>
-                                <th class="p-4 font-bold text-center rounded-tr-lg" width="15%">Aksi</th>
+                                <th class="p-4 font-bold">Name</th>
+                                <th class="p-4 font-bold">Category</th>
+                                <th class="p-4 font-bold text-right">Salary</th>
+                                <th class="p-4 font-bold text-center rounded-tr-lg" width="15%">Actions</th>
                             </tr>
                         </thead>
                         <tbody class="text-gray-700 text-sm divide-y divide-gray-200">
@@ -58,8 +58,14 @@
                                         <span class="bg-gray-100 text-gray-600 text-xs px-3 py-1 rounded-full font-bold border border-gray-200 uppercase">
                                             {{ str_replace('_', ' ', $item->category) }}
                                         </span>
+                                        
+                                        @if($item->is_head)
+                                            <span class="bg-indigo-100 text-indigo-700 text-[10px] mx-2 px-2 py-0.5 rounded border border-indigo-200 w-fit font-bold">
+                                                <i class="fas fa-crown mr-1"></i> HEAD / COORD
+                                            </span>
+                                        @endif
                                     </td>
-                                    <td class="p-4 text-right font-mono text-slate-600">
+                                    <td class="p-4 font-mono text-slate-600 ">
                                         Rp {{ number_format($item->base_salary_default, 0, ',', '.') }}
                                     </td>
                                     <td class="p-4">
@@ -69,13 +75,14 @@
                                                 data-name="{{ $item->name }}"
                                                 data-category="{{ $item->category }}"
                                                 data-salary="{{ $item->base_salary_default }}"
+                                                data-is-head="{{ $item->is_head }}"
                                                 title="Edit">
                                                 <i class="fas fa-edit"></i>
                                             </button>
 
                                             <form method="post" action="{{ route('desposition', $item->id) }}" class="inline deleteForm">
                                                 @csrf @method('delete')
-                                                <button type="button" class="delete-confirm w-9 h-9 flex items-center justify-center bg-red-500 text-white rounded-lg shadow hover:bg-red-600 transition" title="Hapus">
+                                                <button type="button" class="delete-confirm w-9 h-9 flex items-center justify-center bg-red-500 text-white rounded-lg shadow hover:bg-red-600 transition" title="Delete">
                                                     <i class="fas fa-trash"></i>
                                                 </button>
                                             </form>
@@ -91,90 +98,106 @@
         </div>
     </main>
 
-    <!-- MODAL TAMBAH -->
+    <!-- ADD MODAL -->
     <div id="addModal" class="hidden fixed inset-0 bg-gray-900/60 backdrop-blur-sm flex items-center justify-center z-50 overflow-y-auto px-4 py-6">
-        <div class="bg-white rounded-2xl p-8 w-full max-w-lg shadow-2xl relative">
-            <button id="closeAddModal" class="absolute top-5 right-5 text-gray-400 hover:text-gray-600 transition">
-                <i class="fas fa-times text-xl"></i>
-            </button>
+        <div class="bg-white rounded-2xl p-8 w-full max-w-lg shadow-2xl relative transform transition-all scale-100">
+            <button id="closeAddModal" class="absolute top-5 right-5 text-gray-400 hover:text-gray-600 transition"><i class="fas fa-times text-xl"></i></button>
             <h2 class="text-2xl font-bold mb-6 text-gray-800 flex items-center gap-2">
-                <i class="fas fa-id-badge text-slate-600"></i> Tambah Jabatan
+                <i class="fas fa-id-badge text-slate-600"></i> Add Position
             </h2>
 
             <form action="{{ route('postposition') }}" method="POST" class="space-y-5">
                 @csrf
                 <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-1">Nama Jabatan</label>
-                    <input type="text" name="name" class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border" required placeholder="Contoh: Senior Barista">
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">Position Name</label>
+                    <input type="text" name="name" class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-slate-500" required placeholder="e.g. Senior Barista">
                 </div>
 
                 <div class="grid grid-cols-2 gap-5">
                     <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1">Kategori</label>
-                        <select name="category" class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border" required>
-                            <option value="general">Umum</option>
-                            <option value="food_beverage">Makanan & Minuman</option>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Category</label>
+                        <select name="category" class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-slate-500" required>
+                            <option value="general">General</option>
+                            <option value="food_beverage">Food & Beverage</option>
                             <option value="retail">Retail</option>
-                            <option value="hospitality">Perhotelan</option>
-                            <option value="education">Pendidikan</option>
-                            <option value="creative">Kreatif</option>
-                            <option value="health_beauty">Kesehatan & Kecantikan</option>
-                            <option value="logistics">Logistik</option>
+                            <option value="hospitality">Hospitality</option>
+                            <option value="education">Education</option>
+                            <option value="creative">Creative</option>
+                            <option value="health_beauty">Health & Beauty</option>
+                            <option value="logistics">Logistics</option>
                         </select>
                     </div>
                     <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1">Gaji Default (Rp)</label>
-                        <input type="text" name="base_salary_default" class="currency w-full rounded-lg border-gray-300 shadow-sm p-2.5 border" placeholder="0" required>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Default Salary (Rp)</label>
+                        <input type="text" name="base_salary_default" value="0" class="currency w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-slate-500" placeholder="0">
                     </div>
                 </div>
 
-                <button type="submit" class="w-full py-3 bg-slate-700 text-white font-bold rounded-lg shadow-md hover:bg-slate-800 transition">
-                    <i class="fas fa-save"></i> Simpan Jabatan
+                <div class="bg-indigo-50 p-3 rounded-lg border border-indigo-100">
+                    <label class="flex items-center gap-3 cursor-pointer">
+                        <input type="checkbox" name="is_head" value="1" class="w-5 h-5 text-indigo-600 rounded border-gray-300 focus:ring-indigo-500">
+                        <div>
+                            <span class="block text-sm font-bold text-indigo-800">Is Coordinator / Head?</span>
+                            <span class="block text-xs text-indigo-500">Enable this to allow ESS Coordinator access.</span>
+                        </div>
+                    </label>
+                </div>
+
+                <button type="submit" class="w-full py-3 bg-slate-700 text-white font-bold rounded-lg shadow-md hover:bg-slate-800 transition flex justify-center items-center gap-2">
+                    <i class="fas fa-save"></i> Save Position
                 </button>
             </form>
         </div>
     </div>
 
-    <!-- MODAL EDIT -->
+    <!-- EDIT MODAL -->
     <div id="editModal" class="hidden fixed inset-0 bg-gray-900/60 backdrop-blur-sm flex items-center justify-center z-50 overflow-y-auto px-4 py-6">
-        <div class="bg-white rounded-2xl p-8 w-full max-w-lg shadow-2xl relative">
-            <button id="closeModal" class="absolute top-5 right-5 text-gray-400 hover:text-gray-600 transition">
-                <i class="fas fa-times text-xl"></i>
-            </button>
+        <div class="bg-white rounded-2xl p-8 w-full max-w-lg shadow-2xl relative transform transition-all scale-100">
+            <button id="closeModal" class="absolute top-5 right-5 text-gray-400 hover:text-gray-600 transition"><i class="fas fa-times text-xl"></i></button>
             <h2 class="text-2xl font-bold mb-6 text-gray-800 flex items-center gap-2">
-                <i class="fas fa-edit text-blue-600"></i> Edit Jabatan
+                <i class="fas fa-edit text-blue-600"></i> Edit Position
             </h2>
 
             <form id="editForm" method="POST" class="space-y-5">
                 @csrf @method('PUT')
                 
                 <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-1">Nama Jabatan</label>
-                    <input type="text" id="editName" name="name" class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border" required>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">Position Name</label>
+                    <input type="text" id="editName" name="name" class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-blue-500" required>
                 </div>
 
                 <div class="grid grid-cols-2 gap-5">
                     <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1">Kategori</label>
-                        <select id="editCategory" name="category" class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border" required>
-                            <option value="general">Umum</option>
-                            <option value="food_beverage">Makanan & Minuman</option>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Category</label>
+                        <select id="editCategory" name="category" class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-blue-500" required>
+                            <option value="general">General</option>
+                            <option value="food_beverage">Food & Beverage</option>
                             <option value="retail">Retail</option>
-                            <option value="hospitality">Perhotelan</option>
-                            <option value="education">Pendidikan</option>
-                            <option value="creative">Kreatif</option>
-                            <option value="health_beauty">Kesehatan & Kecantikan</option>
-                            <option value="logistics">Logistik</option>
+                            <option value="hospitality">Hospitality</option>
+                            <option value="education">Education</option>
+                            <option value="creative">Creative</option>
+                            <option value="health_beauty">Health & Beauty</option>
+                            <option value="logistics">Logistics</option>
                         </select>
                     </div>
                     <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1">Gaji Default (Rp)</label>
-                        <input type="text" id="editSalary" name="base_salary_default" class="currency w-full rounded-lg border-gray-300 shadow-sm p-2.5 border" required>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Default Salary (Rp)</label>
+                        <input type="text" id="editSalary" name="base_salary_default" value="0" class="currency w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-blue-500">
                     </div>
                 </div>
 
-                <button type="submit" class="w-full py-3 bg-blue-600 text-white font-bold rounded-lg shadow-md hover:bg-blue-700 transition">
-                    <i class="fas fa-save"></i> Perbarui Jabatan
+                <div class="bg-indigo-50 p-3 rounded-lg border border-indigo-100">
+                    <label class="flex items-center gap-3 cursor-pointer">
+                        <input type="checkbox" id="editIsHead" name="is_head" value="1" class="w-5 h-5 text-indigo-600 rounded border-gray-300 focus:ring-indigo-500">
+                        <div>
+                            <span class="block text-sm font-bold text-indigo-800">Is Coordinator / Head?</span>
+                            <span class="block text-xs text-indigo-500">Enable this to allow ESS Coordinator access.</span>
+                        </div>
+                    </label>
+                </div>
+
+                <button type="submit" class="w-full py-3 bg-blue-600 text-white font-bold rounded-lg shadow-md hover:bg-blue-700 transition flex justify-center items-center gap-2">
+                    <i class="fas fa-save"></i> Update Position
                 </button>
             </form>
         </div>
@@ -185,23 +208,30 @@
     <script src="//cdn.datatables.net/2.0.2/js/dataTables.min.js"></script>
     <script>
         $(document).ready(function() {
-            new DataTable('#myTable');
+            // Init DataTable
+            new DataTable('#myTable', {
+            });
 
+            // Currency Formatter
             function formatCurrency(value) {
                 let rawValue = value.replace(/\D/g, '');
                 if (rawValue === '') return '';
-                return rawValue.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+                let numberValue = parseInt(rawValue, 10);
+                return numberValue.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
             }
 
             $('.currency').on('input', function() {
-                $(this).val(formatCurrency($(this).val()));
+                let val = $(this).val();
+                $(this).val(formatCurrency(val));
             });
 
             $('form').on('submit', function() {
                 $('.currency').each(function() {
-                    $(this).val($(this).val().replace(/\./g, ''));
+                    let cleanVal = $(this).val().replace(/\./g, '');
+                    $(this).val(cleanVal);
                 });
             });
+
             // Modal Logic
             $('#addBtn').click(() => $('#addModal').removeClass('hidden'));
             $('#closeAddModal').click(() => $('#addModal').addClass('hidden'));
@@ -222,6 +252,7 @@
                 let rawSalary = btn.data('salary');
                 let salaryStr = String(rawSalary).split('.')[0];
                 $('#editSalary').val(formatCurrency(salaryStr));
+                $('#editIsHead').prop('checked', btn.data('is-head') == 1);
 
                 $('#editForm').attr('action', `/position/${btn.data('id')}/update`);
                 $('#editModal').removeClass('hidden');
@@ -242,7 +273,6 @@
             });
         });
     </script>
-
     @include('sweetalert::alert')
     @include('layout.loading')
 </body>

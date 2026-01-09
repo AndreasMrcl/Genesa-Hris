@@ -10,13 +10,13 @@ class Branch extends Model
     use HasFactory;
 
     protected $fillable =
-        [
-            'compani_id',
-            'name',
-            'address',
-            'phone',
-            'category',
-        ];
+    [
+        'compani_id',
+        'name',
+        'address',
+        'phone',
+        'category',
+    ];
 
     public function compani()
     {
@@ -31,5 +31,10 @@ class Branch extends Model
     public function shifts()
     {
         return $this->hasMany(Shift::class);
+    }
+
+    public function outlets()
+    {
+        return $this->hasMany(Outlet::class);
     }
 }

@@ -23,6 +23,7 @@ use App\Http\Controllers\PositionController;
 use App\Http\Controllers\ScheduleController;
 use App\Http\Controllers\ShiftController;
 use App\Http\Controllers\TaxConfigController;
+use App\Http\Controllers\OutletController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [AuthController::class, 'login'])->name('login');
@@ -141,7 +142,7 @@ Route::middleware('auth:web')->group(function () {
     Route::put('/deduction-employee/{id}/update', [DeductEmpController::class, 'update'])->name('updatedeductionEmp');
     Route::delete('/deduction-employee/{id}/delete', [DeductEmpController::class, 'destroy'])->name('deldeductionEmp');
 
-    // PAYROLL EXPORT EXCEL
+    //PAYROLL EXPORT EXCEL
     Route::get('/payrolls/export', [PayrollController::class, 'exportExcel'])->name('payrollExport');
     Route::get('/payrolls/export-report', [PayrollController::class, 'exportReport'])->name('payrollReportExport');
 
@@ -177,6 +178,13 @@ Route::middleware('auth:web')->group(function () {
     Route::put('/position/{id}/update', [PositionController::class, 'update'])->name('updateposition');
     Route::delete('/position/{id}/delete', [PositionController::class, 'destroy'])->name('desposition');
 
+    // OUTLET
+    Route::get('/branch/{branchId}/outlets', [OutletController::class, 'index'])->name('outlet');
+    Route::post('/outlet', [OutletController::class, 'store'])->name('postoutlet');
+    Route::put('/outlet/{id}/update', [OutletController::class, 'update'])->name('updateoutlet');
+    Route::delete('/outlet/{id}/delete', [OutletController::class, 'destroy'])->name('deloutlet');
+    Route::get('/api/outlets/{branchId}', [OutletController::class, 'getByBranch']);
+
     // FINGERSPOT SYNC
     Route::post('/fingerspot/fetch', [FingerspotController::class, 'fetchFromApi'])->name('fingerspotFetch');
 });
@@ -190,9 +198,15 @@ Route::middleware('auth:employee')->group(function () {
 
     Route::get('/ess-leave', [EssController::class, 'leave'])->name('ess-leave');
     Route::post('/req-leave', [EssController::class, 'reqLeave'])->name('req-leave');
-
+    Route::get('/coordinator/leave', [EssController::class, 'coordinatorLeave'])->name('ess-coordinator-leave');
+    Route::post('/coordinator/leave', [EssController::class, 'storeCoordinatorLeave'])->name('ess-coordinator-leave-store');
+    Route::put('/coordinator/leave/{id}', [EssController::class, 'coordinatorUpdateLeave'])->name('ess-coordinator-leave-update');
+    
     Route::get('/ess-overtime', [EssController::class, 'overtime'])->name('ess-overtime');
     Route::post('/req-overtime', [EssController::class, 'reqOvertime'])->name('req-overtime');
+    Route::get('/coordinator/overtime', [EssController::class, 'coordinatorOvertime'])->name('ess-coordinator-overtime');
+    Route::post('/coordinator/overtime', [EssController::class, 'storeCoordinatorOvertime'])->name('ess-coordinator-overtime-store');
+    Route::put('/coordinator/overtime/{id}', [EssController::class, 'coordinatorUpdateOvertime'])->name('ess-coordinator-overtime-update');
 
     Route::get('/ess-note', [EssController::class, 'note'])->name('ess-note');
 
@@ -200,4 +214,9 @@ Route::middleware('auth:employee')->group(function () {
     Route::get('/ess-payroll/{id}/pdf', [EssController::class, 'downloadPdf'])->name('ess-pdf');
 
     Route::get('/ess-profil', [EssController::class, 'profil'])->name('ess-profil');
+
+    Route::get('/coordinator/schedule', [EssController::class, 'coordinatorSchedule'])->name('ess-coordinator-schedule');
+    Route::post('/coordinator/schedule/assign', [EssController::class, 'coordinatorStoreSchedule'])->name('ess-coordinator-schedule-store');
+    Route::put('/coordinator/schedule/{id}', [EssController::class, 'coordinatorUpdateSchedule'])->name('ess-coordinator-schedule-update');
+    Route::delete('/coordinator/schedule/{id}', [EssController::class, 'coordinatorDestroySchedule'])->name('ess-coordinator-schedule-destroy');
 });
