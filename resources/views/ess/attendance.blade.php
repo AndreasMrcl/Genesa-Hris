@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-    <title>ESS | Attendance History</title>
+    <title>ESS | Riwayat Absensi</title>
     @include('ess.layout.head')
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
 
@@ -27,7 +27,7 @@
                 class="w-9 h-9 flex items-center justify-center rounded-xl bg-gray-50 text-gray-600 hover:bg-gray-100 transition">
                 <i class="fas fa-arrow-left text-base"></i>
             </a>
-            <h1 class="font-bold text-base text-gray-800">Attendance History</h1>
+            <h1 class="font-bold text-base text-gray-800">Riwayat Absensi</h1>
             <div class="w-9"></div>
         </div>
 

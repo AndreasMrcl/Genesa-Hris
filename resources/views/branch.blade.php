@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-    <title>Branch Management</title>
+    <title>Manajemen Cabang</title>
     @include('layout.head')
     <link href="//cdn.datatables.net/2.0.2/css/dataTables.dataTables.min.css" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -36,13 +36,17 @@
                 class="md:flex justify-between items-center bg-white p-5 rounded-xl shadow-sm border border-gray-100 space-y-2 md:space-y-0">
                 <div>
                     <h1 class="font-bold text-2xl text-gray-800">
-                        <i class="fas fa-building text-cyan-600"></i> Branch Management
+                        <i class="fas fa-building text-cyan-600"></i> 
+                        Manajemen Cabang
                     </h1>
-                    <p class="text-sm text-gray-500">Manage company locations and categories</p>
+                    <p class="text-sm text-gray-500">
+                        Kelola lokasi dan kategori cabang perusahaan
+                    </p>
                 </div>
                 <button id="addBtn"
                     class="px-6 py-3 bg-cyan-600 text-white rounded-lg shadow-md hover:bg-cyan-700 transition font-semibold flex items-center gap-2">
-                    <i class="fas fa-plus"></i> Add Branch
+                    <i class="fas fa-plus"></i> 
+                    Tambah Cabang
                 </button>
             </div>
 
@@ -53,10 +57,10 @@
                         <thead class="bg-gray-100 text-gray-600 text-sm leading-normal">
                             <tr>
                                 <th class="p-4 font-bold rounded-tl-lg text-center" width="5%">No</th>
-                                <th class="p-4 font-bold">Name</th>
-                                <th class="p-4 font-bold">Category</th>
-                                <th class="p-4 font-bold">Contact</th>
-                                <th class="p-4 font-bold text-center rounded-tr-lg" width="15%">Actions</th>
+                                <th class="p-4 font-bold">Nama Cabang</th>
+                                <th class="p-4 font-bold">Kategori</th>
+                                <th class="p-4 font-bold">Kontak</th>
+                                <th class="p-4 font-bold text-center rounded-tr-lg" width="15%">Aksi</th>
                             </tr>
                         </thead>
                         <tbody class="text-gray-700 text-sm">
@@ -126,48 +130,48 @@
             <button id="closeAddModal" class="absolute top-5 right-5 text-gray-400 hover:text-gray-600 transition"><i
                     class="fas fa-times text-xl"></i></button>
             <h2 class="text-2xl font-bold mb-6 text-gray-800 flex items-center gap-2">
-                <i class="fas fa-building text-cyan-600"></i> Add Branch
+                <i class="fas fa-building text-cyan-600"></i>          
+                       Tambah Cabang
             </h2>
 
             <form id="addForm" method="post" action="{{ route('postbranch') }}" class="space-y-5">
                 @csrf
                 <div class="space-y-4">
                     <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1">Name</label>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Nama Cabang</label>
                         <input type="text" name="name"
                             class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-cyan-500"
                             required>
                     </div>
                     <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1">Category</label>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Kategori</label>
                         <select name="category"
                             class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-cyan-500"
                             required>
-                            <option value="general">General</option>
-                            <option value="food_beverage">Food & Beverage</option>
-                            <option value="retail">Retail</option>
-                            <option value="hospitality">Hospitality</option>
-                            <option value="education">Education</option>
-                            <option value="creative">Creative</option>
-                            <option value="health_beauty">Health & Beauty</option>
-                            <option value="logistics">Logistics</option>
+                            <option value="general">Umum</option>
+                            <option value="food_beverage">Makanan & Minuman</option>
+                            <option value="retail">Ritel</option>
+                            <option value="hospitality">Perhotelan</option>
+                            <option value="education">Pendidikan</option>
+                            <option value="creative">Kreatif</option>
+                            <option value="health_beauty">Kesehatan & Kecantikan</option>
+                            <option value="logistics">Logistik</option>
                         </select>
                     </div>
                     <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1">Phone</label>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Nomor Telepon</label>
                         <input type="text" name="phone"
                             class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-cyan-500"
                             required>
                     </div>
                     <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1">Address</label>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Alamat</label>
                         <textarea name="address" rows="3"
                             class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-cyan-500" required></textarea>
                     </div>
                 </div>
                 <button type="submit"
-                    class="w-full py-3 bg-cyan-600 text-white font-bold rounded-lg shadow-md hover:bg-cyan-700 transition">Save
-                    Branch</button>
+                    class="w-full py-3 bg-cyan-600 text-white font-bold rounded-lg shadow-md hover:bg-cyan-700 transition">Simpan Cabang</button>
             </form>
         </div>
     </div>
@@ -179,48 +183,47 @@
             <button id="closeModal" class="absolute top-5 right-5 text-gray-400 hover:text-gray-600 transition"><i
                     class="fas fa-times text-xl"></i></button>
             <h2 class="text-2xl font-bold mb-6 text-gray-800 flex items-center gap-2">
-                <i class="fas fa-edit text-blue-600"></i> Edit Branch
+                <i class="fas fa-edit text-blue-600"></i>Edit Cabang
             </h2>
 
             <form id="editForm" method="post" class="space-y-5">
                 @csrf @method('put')
                 <div class="space-y-4">
                     <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1">Name</label>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Nama Cabang</label>
                         <input type="text" id="editName" name="name"
                             class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-blue-500"
                             required>
                     </div>
                     <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1">Category</label>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Kategori</label>
                         <select id="editCategory" name="category"
                             class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-blue-500"
                             required>
-                            <option value="general">General</option>
-                            <option value="food_beverage">Food & Beverage</option>
-                            <option value="retail">Retail</option>
-                            <option value="hospitality">Hospitality</option>
-                            <option value="education">Education</option>
-                            <option value="creative">Creative</option>
-                            <option value="health_beauty">Health & Beauty</option>
-                            <option value="logistics">Logistics</option>
+                            <option value="general">Umum</option>
+                            <option value="food_beverage">Makanan & Minuman</option>
+                            <option value="retail">Ritel</option>
+                            <option value="hospitality">Perhotelan</option>
+                            <option value="education">Pendidikan</option>
+                            <option value="creative">Kreatif</option>
+                            <option value="health_beauty">Kesehatan & Kecantikan</option>
+                            <option value="logistics">Logistik</option>
                         </select>
                     </div>
                     <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1">Phone</label>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Nomor Telepon</label>
                         <input type="text" id="editPhone" name="phone"
                             class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-blue-500"
                             required>
                     </div>
                     <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1">Address</label>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Alamat</label>
                         <textarea id="editAddress" name="address" rows="3"
                             class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-blue-500" required></textarea>
                     </div>
                 </div>
                 <button type="submit"
-                    class="w-full py-3 bg-blue-600 text-white font-bold rounded-lg shadow-md hover:bg-blue-700 transition">Update
-                    Branch</button>
+                    class="w-full py-3 bg-blue-600 text-white font-bold rounded-lg shadow-md hover:bg-blue-700 transition">Perbarui Cabang</button>
             </form>
         </div>
     </div>
@@ -253,12 +256,13 @@
                 e.preventDefault();
                 const form = $(this).closest('form');
                 Swal.fire({
-                    title: 'Delete Branch?',
-                    text: "You won't be able to revert this!",
+                    title: 'Hapus Cabang?',
+                    text: 'Data cabang yang dihapus tidak dapat dikembalikan.',
                     icon: 'warning',
                     showCancelButton: true,
                     confirmButtonColor: '#d33',
-                    confirmButtonText: 'Yes, delete it!'
+                    confirmButtonText: 'Ya, hapus',
+                    cancelButtonText: 'Batal'
                 }).then((result) => {
                     if (result.isConfirmed) form.submit();
                 });

@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-    <title>ESS | Payroll History</title>
+    <title>ESS | Riwayat Gaji</title>
     @include('ess.layout.head')
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
     <style>
@@ -18,7 +18,7 @@
             <a href="{{ route('ess-home') }}" class="w-9 h-9 flex items-center justify-center rounded-xl bg-gray-50 text-gray-600 hover:bg-gray-100 transition">
                 <i class="fas fa-arrow-left text-base"></i>
             </a>
-            <h1 class="font-bold text-base text-gray-800">Payroll History</h1>
+            <h1 class="font-bold text-base text-gray-800">Riwayat Gaji</h1>
             <div class="w-9"></div> 
         </div>
 
@@ -30,15 +30,15 @@
                 <div class="absolute -right-4 -top-4 w-24 h-24 bg-white/10 rounded-full blur-2xl"></div>
                 <div class="absolute -left-4 -bottom-4 w-20 h-20 bg-white/10 rounded-full blur-xl"></div>
                 
-                <p class="text-[10px] uppercase font-bold text-indigo-200 tracking-wider mb-1">Latest Take Home Pay</p>
+                <p class="text-[10px] uppercase font-bold text-indigo-200 tracking-wider mb-1">Gaji Bersih Terakhir</p>
                 @if($lastSlip)
                     <h2 class="text-2xl font-extrabold">Rp {{ number_format($lastSlip->net_salary, 0, ',', '.') }}</h2>
                     <p class="text-xs text-indigo-100 mt-1 flex items-center gap-1">
-                        <i class="far fa-calendar-alt"></i> Period: {{ \Carbon\Carbon::parse($lastSlip->pay_period_end)->format('M Y') }}
+                        <i class="far fa-calendar-alt"></i> Periode: {{ \Carbon\Carbon::parse($lastSlip->pay_period_end)->format('M Y') }}
                     </p>
                 @else
                     <h2 class="text-xl font-bold">Rp 0</h2>
-                    <p class="text-xs text-indigo-200">No data available</p>
+                    <p class="text-xs text-indigo-200">Tidak ada data</p>
                 @endif
             </div>
         </div>
@@ -70,7 +70,7 @@
                     <div class="flex-grow">
                         <div class="flex justify-between items-start">
                             <div>
-                                <p class="text-[10px] text-gray-400 font-bold uppercase tracking-wide mb-0.5">Net Salary</p>
+                                <p class="text-[10px] text-gray-400 font-bold uppercase tracking-wide mb-0.5">Gaji Bersih</p>
                                 <h3 class="font-bold text-gray-800 text-lg">
                                     Rp {{ number_format($item->net_salary, 0, ',', '.') }}
                                 </h3>
@@ -96,8 +96,8 @@
                 <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-3 text-gray-300">
                     <i class="fas fa-file-invoice-dollar text-3xl"></i>
                 </div>
-                <h3 class="text-base font-bold text-gray-700">No Payslips Yet</h3>
-                <p class="text-xs text-gray-400 mt-1">Your payroll history will appear here once generated.</p>
+                <h3 class="text-base font-bold text-gray-700">Tidak Ada Slip Gaji</h3>
+                <p class="text-xs text-gray-400 mt-1">Riwayat gaji Anda akan muncul di sini setelah dihasilkan.</p>
             </div>
         @endforelse
 

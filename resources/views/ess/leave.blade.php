@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-    <title>ESS | Leave Requests</title>
+    <title>ESS | Permintaan Cuti</title>
     @include('ess.layout.head')
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
     
@@ -19,7 +19,7 @@
             <a href="{{ route('ess-home') }}" class="w-9 h-9 flex items-center justify-center rounded-xl bg-gray-50 text-gray-600 hover:bg-gray-100 transition">
                 <i class="fas fa-arrow-left text-base"></i>
             </a>
-            <h1 class="font-bold text-base text-gray-800">Leave Requests</h1>
+            <h1 class="font-bold text-base text-gray-800">Permintaan Cuti</h1>
             <div class="w-9"></div> 
         </div>
 
@@ -28,11 +28,11 @@
                 <div class="absolute -right-4 -top-4 w-24 h-24 bg-white/10 rounded-full blur-2xl"></div>
                 <div class="absolute -left-4 -bottom-4 w-20 h-20 bg-white/10 rounded-full blur-xl"></div>
                 
-                <p class="text-[10px] uppercase font-bold text-yellow-100 tracking-wider mb-1">Request Summary</p>
+                <p class="text-[10px] uppercase font-bold text-yellow-100 tracking-wider mb-1">Ringkasan Permintaan</p>
                 <div class="flex justify-between items-end">
                     <div>
                         <h2 class="text-3xl font-extrabold">{{ $leaves->where('status', 'approved')->count() }}</h2>
-                        <span class="text-xs text-yellow-50 font-medium">Approved</span>
+                        <span class="text-xs text-yellow-50 font-medium">Disetujui</span>
                     </div>
                     <div class="text-right">
                          <p class="text-xs font-bold text-white mb-1">Year {{ date('Y') }}</p>
@@ -107,7 +107,7 @@
                                     {{ $typeLabel }}
                                 </h3>
                                 <p class="text-[10px] text-gray-400 font-bold uppercase mt-0.5">
-                                    Requested: {{ $item->created_at->format('d M Y') }}
+                                    Permintaan: {{ $item->created_at->format('d M Y') }}
                                 </p>
                             </div>
                             <span class="px-2 py-0.5 rounded text-[9px] font-bold uppercase border {{ $statusColor }} flex items-center gap-1">
@@ -120,7 +120,7 @@
                                 {{ $startDate->format('d M') }} - {{ $endDate->format('d M Y') }}
                             </div>
                             <span class="bg-white px-2 py-0.5 rounded text-[10px] font-bold text-gray-700 border border-gray-200 shadow-sm">
-                                {{ $duration }} Days
+                                {{ $duration }} Hari
                             </span>
                         </div>
 
@@ -138,8 +138,8 @@
                 <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-3 text-gray-300">
                     <i class="fas fa-plane-slash text-3xl"></i>
                 </div>
-                <h3 class="text-base font-bold text-gray-700">No Requests</h3>
-                <p class="text-xs text-gray-400 mt-1">You haven't submitted any leave requests yet.</p>
+                <h3 class="text-base font-bold text-gray-700">Tidak Ada Permintaan</h3>
+                <p class="text-xs text-gray-400 mt-1">Anda belum mengajukan permohonan cuti apa pun.</p>
             </div>
         @endforelse
 
@@ -147,7 +147,7 @@
 
     <div class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-lg md:max-w-sm mx-auto p-4 z-30">
         <button id="addBtn" class="w-full py-3 bg-yellow-500 text-white font-bold rounded-xl shadow-md hover:bg-yellow-600 transition flex items-center justify-center gap-2 transform active:scale-95">
-            <i class="fas fa-plus-circle"></i> Request Leave
+            <i class="fas fa-plus-circle"></i> Permintaan Cuti
         </button>
     </div>
 
@@ -159,7 +159,7 @@
                     <div class="w-8 h-8 rounded-full bg-yellow-100 flex items-center justify-center text-yellow-600">
                         <i class="fas fa-plane-departure text-sm"></i>
                     </div>
-                    Request Leave
+                    Permintaan Cuti
                 </h2>
                 <button id="closeAddModal" class="w-8 h-8 flex items-center justify-center rounded-full bg-white text-gray-400 hover:text-gray-600 shadow-sm transition">
                     <i class="fas fa-times"></i>
@@ -174,19 +174,19 @@
 
                     <div class="grid grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-xs font-bold text-gray-500 uppercase mb-1.5">Start Date</label>
+                            <label class="block text-xs font-bold text-gray-500 uppercase mb-1.5">Tanggal Mulai</label>
                             <input type="date" name="start_date" class="w-full rounded-xl border-gray-300 shadow-sm p-3 border focus:ring-2 focus:ring-yellow-500 transition text-sm" required>
                         </div>
                         <div>
-                            <label class="block text-xs font-bold text-gray-500 uppercase mb-1.5">End Date</label>
+                            <label class="block text-xs font-bold text-gray-500 uppercase mb-1.5">Tanggal Selesai</label>
                             <input type="date" name="end_date" class="w-full rounded-xl border-gray-300 shadow-sm p-3 border focus:ring-2 focus:ring-yellow-500 transition text-sm" required>
                         </div>
                     </div>
 
                     <div>
-                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1.5">Request Type</label>
+                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1.5">Jenis Permintaan</label>
                         <select name="type" class="w-full rounded-xl border-gray-300 shadow-sm p-3 border focus:ring-2 focus:ring-yellow-500 bg-white text-sm" required>
-                            <option value="">-- Select Type --</option>
+                            <option value="">-- Pilih Jenis --</option>
                             <option value="izin">Izin</option>
                             <option value="sakit">Sakit</option>
                             <option value="cuti">Cuti</option>
@@ -199,15 +199,15 @@
                     <input type="hidden" name="status" value="pending">
 
                     <div>
-                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1.5">Note</label>
-                        <textarea name="note" rows="4" class="w-full rounded-xl border-gray-300 shadow-sm p-3 border focus:ring-2 focus:ring-yellow-500 text-sm" placeholder="Please describe your reason / note..." required></textarea>
+                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1.5">Catatan</label>
+                        <textarea name="note" rows="4" class="w-full rounded-xl border-gray-300 shadow-sm p-3 border focus:ring-2 focus:ring-yellow-500 text-sm" placeholder="Silakan deskripsikan alasan / catatan Anda..." required></textarea>
                     </div>
                 </form>
             </div>
 
             <div class="p-4 border-t border-gray-100 bg-white rounded-b-2xl">
                 <button type="submit" form="addForm" class="w-full py-3.5 bg-yellow-500 text-white font-bold rounded-xl shadow-lg hover:bg-yellow-600 transition flex items-center justify-center gap-2 transform active:scale-95">
-                    <i class="fas fa-paper-plane"></i> Submit Request
+                    <i class="fas fa-paper-plane"></i> Submit 
                 </button>
             </div>
         </div>

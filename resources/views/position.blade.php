@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-    <title>Position Management</title>
+    <title>Manajemen Jabatan</title>
     @include('layout.head')
     <link href="//cdn.datatables.net/2.0.2/css/dataTables.dataTables.min.css" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -26,12 +26,12 @@
             <div class="md:flex justify-between items-center bg-white p-5 rounded-xl shadow-sm border border-gray-100 space-y-2 md:space-y-0">
                 <div>
                     <h1 class="font-bold text-2xl text-gray-800 flex items-center gap-2">
-                        <i class="fas fa-id-badge text-slate-600"></i> Job Positions
+                        <i class="fas fa-id-badge text-slate-600"></i> Daftar Jabatan
                     </h1>
-                    <p class="text-sm text-gray-500 mt-1">Manage job titles and default salaries</p>
+                    <p class="text-sm text-gray-500 mt-1">Kelola jabatan dan gaji default</p>
                 </div>
                 <button id="addBtn" class="px-6 py-3 bg-slate-700 text-white rounded-lg shadow-md hover:bg-slate-800 transition font-semibold flex items-center gap-2">
-                    <i class="fas fa-plus"></i> Add Position
+                    <i class="fas fa-plus"></i> Tambah Jabatan
                 </button>
             </div>
 
@@ -42,10 +42,10 @@
                         <thead class="bg-gray-100 text-gray-600 text-sm leading-normal">
                             <tr>
                                 <th class="p-4 font-bold rounded-tl-lg text-center" width="5%">No</th>
-                                <th class="p-4 font-bold">Name</th>
-                                <th class="p-4 font-bold">Category</th>
-                                <th class="p-4 font-bold text-right">Salary</th>
-                                <th class="p-4 font-bold text-center rounded-tr-lg" width="15%">Actions</th>
+                                <th class="p-4 font-bold">Nama Jabatan</th>
+                                <th class="p-4 font-bold">Kategori</th>
+                                <th class="p-4 font-bold text-right">Gaji</th>
+                                <th class="p-4 font-bold text-center rounded-tr-lg" width="15%">Aksi</th>
                             </tr>
                         </thead>
                         <tbody class="text-gray-700 text-sm divide-y divide-gray-200">
@@ -103,32 +103,32 @@
         <div class="bg-white rounded-2xl p-8 w-full max-w-lg shadow-2xl relative transform transition-all scale-100">
             <button id="closeAddModal" class="absolute top-5 right-5 text-gray-400 hover:text-gray-600 transition"><i class="fas fa-times text-xl"></i></button>
             <h2 class="text-2xl font-bold mb-6 text-gray-800 flex items-center gap-2">
-                <i class="fas fa-id-badge text-slate-600"></i> Add Position
+                <i class="fas fa-id-badge text-slate-600"></i> Tambah Jabatan
             </h2>
 
             <form action="{{ route('postposition') }}" method="POST" class="space-y-5">
                 @csrf
                 <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-1">Position Name</label>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">Nama Jabatan</label>
                     <input type="text" name="name" class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-slate-500" required placeholder="e.g. Senior Barista">
                 </div>
 
                 <div class="grid grid-cols-2 gap-5">
                     <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1">Category</label>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Kategori</label>
                         <select name="category" class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-slate-500" required>
-                            <option value="general">General</option>
-                            <option value="food_beverage">Food & Beverage</option>
+                           <option value="general">Umum</option>
+                            <option value="food_beverage">Makanan & Minuman</option>
                             <option value="retail">Retail</option>
-                            <option value="hospitality">Hospitality</option>
-                            <option value="education">Education</option>
-                            <option value="creative">Creative</option>
-                            <option value="health_beauty">Health & Beauty</option>
-                            <option value="logistics">Logistics</option>
+                            <option value="hospitality">Perhotelan</option>
+                            <option value="education">Pendidikan</option>
+                            <option value="creative">Kreatif</option>
+                            <option value="health_beauty">Kesehatan & Kecantikan</option>
+                            <option value="logistics">Logistik</option>
                         </select>
                     </div>
                     <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1">Default Salary (Rp)</label>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Gaji Default (Rp)</label>
                         <input type="text" name="base_salary_default" value="0" class="currency w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-slate-500" placeholder="0">
                     </div>
                 </div>
@@ -137,14 +137,14 @@
                     <label class="flex items-center gap-3 cursor-pointer">
                         <input type="checkbox" name="is_head" value="1" class="w-5 h-5 text-indigo-600 rounded border-gray-300 focus:ring-indigo-500">
                         <div>
-                            <span class="block text-sm font-bold text-indigo-800">Is Coordinator / Head?</span>
-                            <span class="block text-xs text-indigo-500">Enable this to allow ESS Coordinator access.</span>
+                            <span class="block text-sm font-bold text-indigo-800">Apakah Koordinator / Kepala?</span>
+                            <span class="block text-xs text-indigo-500">Ijinkan akses ESS Koordinator.</span>
                         </div>
                     </label>
                 </div>
 
                 <button type="submit" class="w-full py-3 bg-slate-700 text-white font-bold rounded-lg shadow-md hover:bg-slate-800 transition flex justify-center items-center gap-2">
-                    <i class="fas fa-save"></i> Save Position
+                    <i class="fas fa-save"></i> Simpan Jabatan
                 </button>
             </form>
         </div>
@@ -155,33 +155,33 @@
         <div class="bg-white rounded-2xl p-8 w-full max-w-lg shadow-2xl relative transform transition-all scale-100">
             <button id="closeModal" class="absolute top-5 right-5 text-gray-400 hover:text-gray-600 transition"><i class="fas fa-times text-xl"></i></button>
             <h2 class="text-2xl font-bold mb-6 text-gray-800 flex items-center gap-2">
-                <i class="fas fa-edit text-blue-600"></i> Edit Position
+                <i class="fas fa-edit text-blue-600"></i> Edit Jabatan
             </h2>
 
             <form id="editForm" method="POST" class="space-y-5">
                 @csrf @method('PUT')
                 
                 <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-1">Position Name</label>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">Nama Jabatan</label>
                     <input type="text" id="editName" name="name" class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-blue-500" required>
                 </div>
 
                 <div class="grid grid-cols-2 gap-5">
                     <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1">Category</label>
-                        <select id="editCategory" name="category" class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-blue-500" required>
-                            <option value="general">General</option>
-                            <option value="food_beverage">Food & Beverage</option>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Kategori</label>
+                        <select id="editCategory" name="category" class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border" required>
+                            <option value="general">Umum</option>
+                            <option value="food_beverage">Makanan & Minuman</option>
                             <option value="retail">Retail</option>
-                            <option value="hospitality">Hospitality</option>
-                            <option value="education">Education</option>
-                            <option value="creative">Creative</option>
-                            <option value="health_beauty">Health & Beauty</option>
-                            <option value="logistics">Logistics</option>
+                            <option value="hospitality">Perhotelan</option>
+                            <option value="education">Pendidikan</option>
+                            <option value="creative">Kreatif</option>
+                            <option value="health_beauty">Kesehatan & Kecantikan</option>
+                            <option value="logistics">Logistik</option>
                         </select>
                     </div>
                     <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1">Default Salary (Rp)</label>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Gaji Default (Rp)</label>
                         <input type="text" id="editSalary" name="base_salary_default" value="0" class="currency w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-blue-500">
                     </div>
                 </div>
@@ -190,14 +190,14 @@
                     <label class="flex items-center gap-3 cursor-pointer">
                         <input type="checkbox" id="editIsHead" name="is_head" value="1" class="w-5 h-5 text-indigo-600 rounded border-gray-300 focus:ring-indigo-500">
                         <div>
-                            <span class="block text-sm font-bold text-indigo-800">Is Coordinator / Head?</span>
-                            <span class="block text-xs text-indigo-500">Enable this to allow ESS Coordinator access.</span>
+                            <span class="block text-sm font-bold text-indigo-800">Apakah Koordinator / Kepala?</span>
+                            <span class="block text-xs text-indigo-500">Ijinkan akses ESS Koordinator.</span>
                         </div>
                     </label>
                 </div>
 
                 <button type="submit" class="w-full py-3 bg-blue-600 text-white font-bold rounded-lg shadow-md hover:bg-blue-700 transition flex justify-center items-center gap-2">
-                    <i class="fas fa-save"></i> Update Position
+                    <i class="fas fa-save"></i> Perbarui Jabatan
                 </button>
             </form>
         </div>
@@ -263,12 +263,12 @@
                 e.preventDefault();
                 const form = $(this).closest('form');
                 Swal.fire({
-                    title: 'Delete Position?',
-                    text: "You won't be able to revert this!",
+                    title: 'Hapus Jabatan?',
+                    text: "Anda tidak akan dapat mengembalikan ini!",
                     icon: 'warning',
                     showCancelButton: true,
                     confirmButtonColor: '#d33',
-                    confirmButtonText: 'Yes, delete it!'
+                    confirmButtonText: 'Ya, hapus!'
                 }).then((result) => { if (result.isConfirmed) form.submit(); });
             });
         });
