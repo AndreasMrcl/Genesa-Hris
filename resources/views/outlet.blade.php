@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-    <title>Outlet Management - {{ $branch->name }}</title>
+    <title>Manajemen Outlet - {{ $branch->name }}</title>
     @include('layout.head')
     <link href="//cdn.datatables.net/2.0.2/css/dataTables.dataTables.min.css" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -28,14 +28,14 @@
                     <h1 class="font-bold text-2xl text-gray-800 flex items-center gap-2">
                         <i class="fas fa-store text-cyan-600"></i> {{ $branch->name }} Outlets
                     </h1>
-                    <p class="text-sm text-gray-500 mt-1">Manage outlets for {{ $branch->name }} branch</p>
+                    <p class="text-sm text-gray-500 mt-1">Kelola data outlet untuk cabang {{ $branch->name }}</p>
                 </div>
                 <div class="flex gap-2">
                     <a href="{{ route('branch') }}" class="px-5 py-3 bg-white border border-gray-300 text-gray-700 font-bold rounded-lg hover:bg-gray-50 transition flex items-center gap-2">
-                        <i class="fas fa-arrow-left"></i> Back to Branch
+                        <i class="fas fa-arrow-left"></i> Kembali ke Cabang
                     </a>
                     <button id="addBtn" class="px-6 py-3 bg-cyan-600 text-white rounded-lg shadow-md hover:bg-cyan-700 transition font-semibold flex items-center gap-2">
-                        <i class="fas fa-plus"></i> Add Outlet
+                        <i class="fas fa-plus"></i> Tambah Outlet
                     </button>
                 </div>
             </div>
@@ -53,10 +53,10 @@
                         <thead class="bg-gray-100 text-gray-600 uppercase text-sm leading-normal">
                             <tr>
                                 <th class="p-4 font-bold rounded-tl-lg text-center" width="5%">No</th>
-                                <th class="p-4 font-bold">Outlet Name</th>
-                                <th class="p-4 font-bold">Phone</th>
-                                <th class="p-4 font-bold">Address</th>
-                                <th class="p-4 font-bold text-center rounded-tr-lg" width="15%">Actions</th>
+                                <th class="p-4 font-bold">Nama Outlet</th>
+                                <th class="p-4 font-bold">Telepon</th>
+                                <th class="p-4 font-bold">Alamat</th>
+                                <th class="p-4 font-bold text-center rounded-tr-lg" width="15%">Aksi</th>
                             </tr>
                         </thead>
                         <tbody class="text-gray-700 text-sm divide-y divide-gray-200">
@@ -102,7 +102,7 @@
         <div class="bg-white rounded-2xl p-8 w-full max-w-lg shadow-2xl relative">
             <button id="closeAddModal" class="absolute top-5 right-5 text-gray-400 hover:text-gray-600 transition"><i class="fas fa-times text-xl"></i></button>
             <h2 class="text-2xl font-bold mb-6 text-gray-800 flex items-center gap-2">
-                <i class="fas fa-store text-cyan-600"></i> Add Outlet
+                <i class="fas fa-store text-cyan-600"></i> Tambah Outlet
             </h2>
 
             <form id="addForm" method="post" action="{{ route('postoutlet') }}" class="space-y-5">
@@ -111,18 +111,18 @@
                 <input type="hidden" name="branch_id" value="{{ $branch->id }}">
 
                 <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-1">Outlet Name</label>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">Nama Outlet</label>
                     <input type="text" name="name" class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-cyan-500" required>
                 </div>
                 <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-1">Phone</label>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">Telepon</label>
                     <input type="text" name="phone" class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-cyan-500">
                 </div>
                 <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-1">Address</label>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">Alamat</label>
                     <textarea name="address" rows="3" class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-cyan-500"></textarea>
                 </div>
-                <button type="submit" class="w-full py-3 bg-cyan-600 text-white font-bold rounded-lg shadow-md hover:bg-cyan-700 transition">Save Outlet</button>
+                <button type="submit" class="w-full py-3 bg-cyan-600 text-white font-bold rounded-lg shadow-md hover:bg-cyan-700 transition">Simpan Outlet</button>
             </form>
         </div>
     </div>
@@ -141,15 +141,15 @@
                 <!-- Tidak perlu edit branch_id, karena outlet terikat pada branch parent -->
 
                 <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-1">Outlet Name</label>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">Nama Outlet</label>
                     <input type="text" id="editName" name="name" class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-blue-500" required>
                 </div>
                 <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-1">Phone</label>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">Telepon</label>
                     <input type="text" id="editPhone" name="phone" class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-blue-500">
                 </div>
                 <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-1">Address</label>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">Alamat</label>
                     <textarea id="editAddress" name="address" rows="3" class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-blue-500"></textarea>
                 </div>
                 <button type="submit" class="w-full py-3 bg-blue-600 text-white font-bold rounded-lg shadow-md hover:bg-blue-700 transition">Update Outlet</button>

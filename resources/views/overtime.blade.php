@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-    <title>Overtime Management</title>
+    <title>Manajemen Lembur</title>
     @include('layout.head')
     <!-- DataTables CSS -->
     <link href="//cdn.datatables.net/2.0.2/css/dataTables.dataTables.min.css" rel="stylesheet" />
@@ -27,12 +27,12 @@
             <div class="md:flex justify-between items-center bg-white p-5 rounded-xl shadow-sm border border-gray-100 space-y-2 md:space-y-0">
                 <div>
                     <h1 class="font-bold text-2xl text-gray-800 flex items-center gap-2">
-                        <i class="fas fa-business-time text-purple-600"></i> Overtime Management
+                        <i class="fas fa-business-time text-purple-600"></i> Manajemen Lembur
                     </h1>
-                    <p class="text-sm text-gray-500">Manage employee overtime records</p>
+                    <p class="text-sm text-gray-500">Manajemen data lembur karyawan</p>
                 </div>
                 <button id="addBtn" class="px-6 py-3 bg-purple-600 text-white rounded-lg shadow-md hover:bg-purple-700 transition font-semibold flex items-center gap-2">
-                    <i class="fas fa-plus"></i> Add Overtime
+                    <i class="fas fa-plus"></i> Tambah Lembur
                 </button>
             </div>
 
@@ -43,13 +43,13 @@
                         <thead class="bg-gray-100 text-gray-600 text-sm leading-normal">
                             <tr>
                                 <th class="p-4 font-bold rounded-tl-lg text-center" width="5%">No</th>
-                                <th class="p-4 font-bold">Date</th>
-                                <th class="p-4 font-bold">Employee</th>
-                                <th class="p-4 font-bold text-center">Start</th>
-                                <th class="p-4 font-bold text-center">End</th>
+                                <th class="p-4 font-bold">Tanggal</th>
+                                <th class="p-4 font-bold">Karyawan</th>
+                                <th class="p-4 font-bold text-center">Mulai</th>
+                                <th class="p-4 font-bold text-center">Berakhir</th>
                                 <th class="p-4 font-bold text-center">Status</th>
-                                <th class="p-4 font-bold text-right">Pay</th>
-                                <th class="p-4 font-bold text-center rounded-tr-lg" width="15%">Action</th>
+                                <th class="p-4 font-bold text-right">Nominal</th>
+                                <th class="p-4 font-bold text-center rounded-tr-lg" width="15%">Aksi</th>
                             </tr>
                         </thead>
                         <tbody class="text-gray-700 text-sm">
@@ -131,7 +131,7 @@
                 <i class="fas fa-times text-xl"></i>
             </button>
             <h2 class="text-2xl font-bold mb-6 text-gray-800 flex items-center gap-2">
-                <i class="fas fa-business-time text-purple-600"></i> Add Overtime
+                <i class="fas fa-business-time text-purple-600"></i> Tambah Lembur
             </h2>
 
             <form id="addForm" method="post" action="{{ route('postovertime') }}" enctype="multipart/form-data" class="space-y-5">
@@ -139,7 +139,7 @@
                 @method('post')
 
                 <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-1">Employee</label>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">Karyawan</label>
                     <select name="employee_id" class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-purple-500" required>
                         <option value="">-- Select Employee --</option>
                         @foreach ($employee as $emp)
@@ -149,17 +149,17 @@
                 </div>
 
                 <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-1">Date</label>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">Tanggal</label>
                     <input type="date" name="overtime_date" class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-purple-500" required>
                 </div>
 
                 <div class="grid grid-cols-2 gap-5">
                     <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1">Start Time</label>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Mulai</label>
                         <input type="time" name="start_time" class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-purple-500" required>
                     </div>
                     <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1">End Time</label>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Berakhir</label>
                         <input type="time" name="end_time" class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-purple-500" required>
                     </div>
                 </div>
@@ -174,13 +174,13 @@
                         </select>
                     </div>
                     <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1">Overtime Pay (Rp)</label>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Nominal Lembur (Rp)</label>
                         <input type="text" name="overtime_pay" class="currency w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-purple-500" placeholder="0" required>
                     </div>
                 </div>
 
                 <button type="submit" class="w-full py-3 bg-purple-600 text-white font-bold rounded-lg shadow-md hover:bg-purple-700 transition flex justify-center items-center gap-2">
-                    <i class="fas fa-check"></i> Submit
+                    <i class="fas fa-check"></i> Simpan
                 </button>
             </form>
         </div>
@@ -193,7 +193,7 @@
                 <i class="fas fa-times text-xl"></i>
             </button>
             <h2 class="text-2xl font-bold mb-6 text-gray-800 flex items-center gap-2">
-                <i class="fas fa-edit text-blue-600"></i> Edit Overtime
+                <i class="fas fa-edit text-blue-600"></i> Edit Lembur
             </h2>
 
             <form id="editForm" method="post" enctype="multipart/form-data" class="space-y-5">
@@ -201,7 +201,7 @@
                 @method('put')
 
                 <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-1">Employee</label>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">Karyawan</label>
                     <select id="editEmployee" name="employee_id" class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-blue-500" required>
                         <option value="">-- Select Employee --</option>
                         @foreach ($employee as $emp)
@@ -211,17 +211,17 @@
                 </div>
 
                 <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-1">Date</label>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">Tanggal</label>
                     <input type="date" id="editOvertime" name="overtime_date" class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-blue-500" required>
                 </div>
 
                 <div class="grid grid-cols-2 gap-5">
                     <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1">Start Time</label>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Mulai</label>
                         <input type="time" id="editStart" name="start_time" class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-blue-500" required>
                     </div>
                     <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1">End Time</label>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Berakhir</label>
                         <input type="time" id="editEnd" name="end_time" class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-blue-500" required>
                     </div>
                 </div>
@@ -236,13 +236,14 @@
                         </select>
                     </div>
                     <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1">Overtime Pay (Rp)</label>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Nominal Lembur (Rp)</label>
+                        <!-- FIX: type="text" class="currency" -->
                         <input type="text" id="editPay" name="overtime_pay" class="currency w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-blue-500" required>
                     </div>
                 </div>
 
                 <button type="submit" class="w-full py-3 bg-blue-600 text-white font-bold rounded-lg shadow-md hover:bg-blue-700 transition flex justify-center items-center gap-2">
-                    <i class="fas fa-save"></i> Update
+                    <i class="fas fa-save"></i> Perbarui
                 </button>
             </form>
         </div>

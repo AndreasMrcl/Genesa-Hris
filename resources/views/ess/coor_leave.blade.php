@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-    <title>ESS | Team Leaves</title>
+    <title>ESS | Pengajuan Cuti Tim</title>
     @include('ess.layout.head')
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
     <style>
@@ -19,7 +19,7 @@
             <a href="{{ route('ess-home') }}" class="w-9 h-9 flex items-center justify-center rounded-xl bg-gray-50 text-gray-600 hover:bg-gray-100 transition">
                 <i class="fas fa-arrow-left text-base"></i>
             </a>
-            <h1 class="font-bold text-base text-gray-800">Team Leave Requests</h1>
+            <h1 class="font-bold text-base text-gray-800">Pengajuan Cuti Tim</h1>
             <div class="w-9"></div> 
         </div>
         
@@ -31,7 +31,7 @@
                     <p class="text-xl font-extrabold text-amber-600">{{ $leaves->where('status', 'pending')->count() }}</p>
                 </div>
                 <div class="bg-emerald-50 rounded-xl p-3 border border-emerald-100 text-center">
-                    <p class="text-[10px] uppercase font-bold text-emerald-400 tracking-wider">Approved (This Year)</p>
+                    <p class="text-[10px] uppercase font-bold text-emerald-400 tracking-wider">Disetujui (Tahun Ini)</p>
                     <p class="text-xl font-extrabold text-emerald-600">{{ $leaves->where('status', 'approved')->count() }}</p>
                 </div>
             </div>
@@ -76,11 +76,11 @@
 
                     <div class="bg-gray-50 rounded-lg p-3 border border-gray-100 mt-3">
                         <div class="flex justify-between items-center text-xs mb-2">
-                            <div class="text-gray-500 font-medium">Type</div>
+                            <div class="text-gray-500 font-medium">Jenis</div>
                             <div class="font-bold text-gray-700 uppercase">{{ str_replace('_', ' ', $item->type) }}</div>
                         </div>
                         <div class="flex justify-between items-center text-xs">
-                            <div class="text-gray-500 font-medium">Date</div>
+                            <div class="text-gray-500 font-medium">Tanggal</div>
                             <div class="font-bold text-gray-700">
                                 {{ $startDate->format('d M') }} - {{ \Carbon\Carbon::parse($item->end_date)->format('d M Y') }}
                                 <span class="ml-1 text-gray-400 font-normal">({{ $duration }} Days)</span>
@@ -99,7 +99,7 @@
                                 data-id="{{ $item->id }}"
                                 data-name="{{ $item->employee->name }}"
                                 data-status="{{ $item->status }}">
-                                <i class="fas fa-edit"></i> Update Status
+                                <i class="fas fa-edit"></i> Perbarui Status
                             </button>
                         @endif
                     </div>
@@ -110,8 +110,8 @@
                 <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-3 text-gray-300">
                     <i class="fas fa-check-double text-3xl"></i>
                 </div>
-                <h3 class="text-base font-bold text-gray-700">All Clear!</h3>
-                <p class="text-xs text-gray-400 mt-1">No pending leave requests from your team.</p>
+                <h3 class="text-base font-bold text-gray-700">Tidak Ada Pengajuan!</h3>
+                <p class="text-xs text-gray-400 mt-1">    Tidak ada pengajuan cuti dari tim Anda.</p>
             </div>
         @endforelse
     </div>
@@ -120,7 +120,7 @@
     <div class="fixed bottom-0 left-0 w-full md:left-1/2 md:w-full md:max-w-sm md:-translate-x-1/2 bg-white border-t border-gray-200 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] p-4 z-30">
         <button id="addBtn" 
             class="w-full py-3.5 bg-indigo-600 text-white font-bold rounded-xl shadow-lg shadow-indigo-300 hover:bg-indigo-700 transition flex items-center justify-center gap-2 transform active:scale-95">
-            <i class="fas fa-user-edit text-lg"></i> Input Leave
+            <i class="fas fa-user-edit text-lg"></i> Input Cuti
         </button>
     </div>
 
@@ -128,7 +128,7 @@
         <div class="bg-white rounded-t-2xl sm:rounded-2xl w-full max-w-lg shadow-2xl relative transform transition-all scale-100 sm:h-auto flex flex-col">
             <div class="p-5 border-b border-gray-100 flex justify-between items-center bg-gray-50 rounded-t-2xl">
                 <h2 class="text-lg font-bold text-gray-800 flex items-center gap-2">
-                    <i class="fas fa-user-edit text-indigo-600"></i> Input Leave
+                    <i class="fas fa-user-edit text-indigo-600"></i> Input Cuti
                 </h2>
                 <button id="closeAddModal" class="text-gray-400 hover:text-gray-600"><i class="fas fa-times"></i></button>
             </div>
@@ -139,9 +139,9 @@
                     
                     <!-- SELECT EMPLOYEE -->
                     <div>
-                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1.5">Select Employee</label>
+                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1.5">Pilih Karyawan</label>
                         <select name="employee_id" class="w-full rounded-xl border-gray-300 shadow-sm p-3 border focus:ring-2 focus:ring-indigo-500 text-sm" required>
-                            <option value="">-- Choose Employee --</option>
+                            <option value="">-- Pilih Karyawan --</option>
                             @foreach($employees as $emp)
                                 <option value="{{ $emp->id }}">{{ $emp->name }}</option>
                             @endforeach
@@ -150,17 +150,17 @@
 
                     <div class="grid grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-xs font-bold text-gray-500 uppercase mb-1.5">Start Date</label>
+                            <label class="block text-xs font-bold text-gray-500 uppercase mb-1.5">Tanggal Mulai</label>
                             <input type="date" name="start_date" class="w-full rounded-xl border-gray-300 shadow-sm p-3 border focus:ring-2 focus:ring-indigo-500 text-sm" required>
                         </div>
                         <div>
-                            <label class="block text-xs font-bold text-gray-500 uppercase mb-1.5">End Date</label>
+                            <label class="block text-xs font-bold text-gray-500 uppercase mb-1.5">Tanggal Selesai</label>
                             <input type="date" name="end_date" class="w-full rounded-xl border-gray-300 shadow-sm p-3 border focus:ring-2 focus:ring-indigo-500 text-sm" required>
                         </div>
                     </div>
 
                     <div>
-                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1.5">Type</label>
+                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1.5">Jenis</label>
                         <select name="type" class="w-full rounded-xl border-gray-300 shadow-sm p-3 border focus:ring-2 focus:ring-indigo-500 bg-white text-sm" required>
                             <option value="izin">Izin</option>
                             <option value="sakit">Sakit</option>
@@ -172,12 +172,12 @@
                     </div>
 
                     <div>
-                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1.5">Note</label>
+                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1.5">Catatan</label>
                         <textarea name="note" rows="3" class="w-full rounded-xl border-gray-300 shadow-sm p-3 border focus:ring-2 focus:ring-indigo-500 text-sm" placeholder="Reason..." required></textarea>
                     </div>
 
                     <button type="submit" class="w-full py-3 bg-indigo-600 text-white font-bold rounded-xl shadow-lg hover:bg-indigo-700 transition">
-                        Submit & Auto-Approve
+                        Simpan & Setujui Otomatis
                     </button>
                 </form>
             </div>
@@ -188,7 +188,7 @@
     <div id="editModal" class="hidden fixed inset-0 bg-gray-900/60 backdrop-blur-sm flex items-end sm:items-center justify-center z-50 p-0 sm:p-4">
         <div class="bg-white rounded-t-2xl sm:rounded-2xl w-full max-w-sm shadow-2xl relative transform transition-all scale-100">
             <div class="p-5 border-b border-gray-100 flex justify-between items-center">
-                <h2 class="text-lg font-bold text-gray-800">Update Request</h2>
+                <h2 class="text-lg font-bold text-gray-800">Perbarui Pengajuan</h2>
                 <button id="closeModal" class="text-gray-400 hover:text-gray-600"><i class="fas fa-times"></i></button>
             </div>
             
@@ -197,12 +197,12 @@
                     @csrf @method('put')
                     
                     <div class="mb-4">
-                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Employee</label>
+                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Karyawan</label>
                         <input type="text" id="empName" class="w-full rounded-xl bg-gray-50 border-gray-200 text-gray-500 text-sm font-bold" disabled>
                     </div>
 
                     <div class="mb-6">
-                        <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Set Status</label>
+                        <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Atur Status</label>
                         <div class="grid grid-cols-2 gap-3">
                             <label class="cursor-pointer">
                                 <input type="radio" name="status" value="approved" class="peer sr-only">
@@ -222,7 +222,7 @@
                     </div>
 
                     <button type="submit" class="w-full py-3.5 bg-indigo-600 text-white font-bold rounded-xl shadow-lg hover:bg-indigo-700 transition">
-                        Update Status
+                        Perbarui Status
                     </button>
                 </form>
             </div>

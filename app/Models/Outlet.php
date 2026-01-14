@@ -8,11 +8,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class Outlet extends Model
 {
     use HasFactory;
-    protected $fillable = 
+    protected $fillable =
     [
-        'branch_id', 
-        'name', 
-        'phone', 
+        'branch_id',
+        'name',
+        'phone',
         'address'
     ];
 

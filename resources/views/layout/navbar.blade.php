@@ -8,7 +8,7 @@
                         <span class="">
                             <i class="material-icons">search</i>
                         </span>
-                        <input type="search" name="search" class="p-1 bg-white" placeholder="Search..." />
+                        <input type="search" name="search" class="p-1 bg-white" placeholder="Cari..." />
                         <button type="submit" class=""></button>
                     </div>
                 </form>

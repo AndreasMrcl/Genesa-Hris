@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-    <title>ESS | My Schedule</title>
+    <title>ESS | Jadwal Saya</title>
     @include('ess.layout.head')
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
     
@@ -19,7 +19,7 @@
             <a href="{{ route('ess-home') }}" class="w-9 h-9 flex items-center justify-center rounded-xl bg-gray-50 text-gray-600 hover:bg-gray-100 transition">
                 <i class="fas fa-arrow-left text-base"></i>
             </a>
-            <h1 class="font-bold text-base text-gray-800">My Schedule</h1>
+            <h1 class="font-bold text-base text-gray-800">Jadwal Saya</h1>
             <div class="w-9"></div> 
         </div>
 
@@ -27,19 +27,20 @@
             <div class="grid grid-cols-3 gap-3">
 
                 <div class="bg-gray-50 rounded-xl p-2.5 border border-gray-100 text-center">
-                    <p class="text-[9px] uppercase font-bold text-gray-400 tracking-wider">Shifts</p>
+                    <p class="text-[9px] uppercase font-bold text-gray-400 tracking-wider">Shift</p>
                     <p class="text-lg font-extrabold text-gray-700">{{ $schedules->count() }}</p>
                 </div>
 
                 <div class="bg-gray-50 rounded-xl p-2.5 border border-gray-100 text-center">
-                    <p class="text-[9px] uppercase font-bold text-gray-400 tracking-wider">Est. Hours</p>
+                    <p class="text-[9px] uppercase font-bold text-gray-400 tracking-wider">Est. Jam</p>
                     <p class="text-lg font-extrabold text-indigo-600">{{ $totalHours }}</p>
                 </div>
 
                 <div class="bg-indigo-600 rounded-xl p-2.5 shadow-md shadow-indigo-200 text-center flex flex-col justify-center">
-                    <p class="text-[9px] uppercase font-bold text-indigo-200 tracking-wider">Next In</p>
+                    <p class="text-[9px] uppercase font-bold text-indigo-200 tracking-wider">Jadwal Berikutnya</p>
                     <p class="text-xs font-bold text-white leading-tight mt-0.5">{{ $nextShiftText }}</p>
                 </div>
+                
             </div>
         </div>
     </div>
@@ -79,7 +80,7 @@
                                 
                                 @if($schedule->shift)
                                     <div class="text-right">
-                                        <p class="text-[10px] font-bold text-gray-400 uppercase">Duration</p>
+                                        <p class="text-[10px] font-bold text-gray-400 uppercase">Durasi</p>
                                         <p class="text-xs font-bold text-gray-600">{{ $schedule->shift->duration ?? '-' }}</p>
                                     </div>
                                 @endif
@@ -121,8 +122,8 @@
                 <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-3 text-gray-300">
                     <i class="fas fa-check-circle text-3xl"></i>
                 </div>
-                <h3 class="text-base font-bold text-gray-700">All Clear!</h3>
-                <p class="text-xs text-gray-400 mt-1">No upcoming shifts scheduled for now.</p>
+                <h3 class="text-base font-bold text-gray-700">Tidak Ada Jadwal</h3>
+                <p class="text-xs text-gray-400 mt-1">Tidak ada jadwal yang tersedia saat ini.</p>
             </div>
         @endforelse
 

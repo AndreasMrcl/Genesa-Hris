@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-    <title>Login</title>
+    <title>Masuk</title>
     @include('layout.head')
 
     <style>
@@ -34,8 +34,8 @@
 
         <!-- Heading -->
         <div>
-            <h2 class="text-3xl font-extrabold text-gray-900">Login</h2>
-            <p class="text-gray-500 text-lg">Sign in to your account</p>
+            <h2 class="text-3xl font-extrabold text-gray-900">Masuk</h2>
+            <p class="text-gray-500 text-lg">Masuk ke akun Anda</p>
         </div>
 
         <!-- Form -->
@@ -63,7 +63,7 @@
             <!-- Submit Button -->
             <button type="submit"
                 class="w-full py-3 text-white text-lg font-semibold bg-sky-700 rounded-xl shadow hover:bg-sky-800 hover:scale-[1.02] transition-all">
-                Login
+                Masuk
             </button>
         </form>
 

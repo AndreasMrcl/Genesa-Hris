@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-    <title>ESS | Home</title>
+    <title>ESS | Beranda</title>
     @include('ess.layout.head')
 
     <style>
@@ -49,7 +49,7 @@
 
                     <div>
                         <p class="text-white text-base font-semibold leading-tight">
-                            Hi, {{ auth()->user()->name }}
+                            Halo, {{ auth()->user()->name }}
                         </p>
                         <p class="text-sm text-white/80 leading-tight">
                             {{ auth()->user()->position->name }}
@@ -85,7 +85,7 @@
     <!-- QUICK MENU -->
     <div class="p-2">
         <div class="bg-white p-4 rounded-xl shadow-md border border-gray-100">
-            <h2 class="text-lg font-bold text-gray-800 mb-3">Quick Menu</h2>
+            <h2 class="text-lg font-bold text-gray-800 mb-3">Menu Cepat</h2>
 
             <div class="grid grid-cols-3 gap-4 text-center">
 
@@ -95,7 +95,7 @@
                         class="w-14 h-14 flex items-center justify-center bg-cyan-100 text-cyan-600 rounded-xl shadow-sm">
                         <i class="fas fa-calendar-alt text-xl"></i>
                     </div>
-                    <p class="text-xs font-semibold text-gray-600">Schedule</p>
+                    <p class="text-xs font-semibold text-gray-600">Jadwal</p>
                 </a>
 
                 <!-- Attendance -->
@@ -104,7 +104,7 @@
                         class="w-14 h-14 flex items-center justify-center bg-cyan-100 text-cyan-600 rounded-xl shadow-sm">
                         <i class="fas fa-fingerprint text-xl"></i>
                     </div>
-                    <p class="text-xs font-semibold text-gray-600">Attendance</p>
+                    <p class="text-xs font-semibold text-gray-600">Absensi</p>
                 </a>
 
                 <!-- Leave -->
@@ -113,7 +113,7 @@
                         class="w-14 h-14 flex items-center justify-center bg-sky-100 text-sky-600 rounded-xl shadow-sm">
                         <i class="fas fa-calendar-check text-xl"></i>
                     </div>
-                    <p class="text-xs font-semibold text-gray-600">Leave</p>
+                    <p class="text-xs font-semibold text-gray-600">Cuti</p>
                 </a>
 
                 <!-- Overtime -->
@@ -122,7 +122,7 @@
                         class="w-14 h-14 flex items-center justify-center bg-emerald-100 text-emerald-600 rounded-xl shadow-sm">
                         <i class="fas fa-business-time text-xl"></i>
                     </div>
-                    <p class="text-xs font-semibold text-gray-600">Overtime</p>
+                    <p class="text-xs font-semibold text-gray-600">Lembur</p>
                 </a>
 
                 <!-- Note -->
@@ -131,7 +131,7 @@
                         class="w-14 h-14 flex items-center justify-center bg-yellow-100 text-yellow-600 rounded-xl shadow-sm">
                         <i class="fas fa-note-sticky text-xl"></i>
                     </div>
-                    <p class="text-xs font-semibold text-gray-600">Note</p>
+                    <p class="text-xs font-semibold text-gray-600">Catatan</p>
                 </a>
 
                 <!-- Payroll -->
@@ -140,13 +140,13 @@
                         class="w-14 h-14 flex items-center justify-center bg-indigo-100 text-indigo-600 rounded-xl shadow-sm">
                         <i class="fas fa-wallet text-xl"></i>
                     </div>
-                    <p class="text-xs font-semibold text-gray-600">Payroll</p>
+                    <p class="text-xs font-semibold text-gray-600">Gaji</p>
                 </a>
             </div>
 
             @if(Auth::guard('employee')->user()->position->is_head)
                 <div class="pt-6">
-                    <p class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-4">Team Management</p>
+                    <p class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-4">Manajemen Tim</p>
                     
                     <div class="grid grid-cols-3 gap-y-6 gap-x-4 text-center">
                         
@@ -155,7 +155,7 @@
                             <div class="w-14 h-14 flex items-center justify-center bg-gray-800 text-white rounded-xl shadow-md group-hover:scale-105 transition duration-300">
                                 <i class="fas fa-users-cog text-xl"></i>
                             </div>
-                            <p class="text-xs font-semibold text-gray-700">Team Roster</p>
+                            <p class="text-xs font-semibold text-gray-700">Jadwal Tim</p>
                         </a>
 
                         <!-- Manage Leave -->
@@ -163,7 +163,7 @@
                             <div class="w-14 h-14 flex items-center justify-center bg-gray-800 text-white rounded-xl shadow-md group-hover:scale-105 transition duration-300">
                                 <i class="fas fa-calendar-check text-xl"></i>
                             </div>
-                            <p class="text-xs font-semibold text-gray-700">Manage Leave</p>
+                            <p class="text-xs font-semibold text-gray-700">Kelola Cuti</p>
                         </a>
 
                         <!-- Manage Overtime -->
@@ -171,7 +171,7 @@
                             <div class="w-14 h-14 flex items-center justify-center bg-gray-800 text-white rounded-xl shadow-md group-hover:scale-105 transition duration-300">
                                 <i class="fas fa-clock text-xl"></i>
                             </div>
-                            <p class="text-xs font-semibold text-gray-700">Manage Overtime</p>
+                            <p class="text-xs font-semibold text-gray-700">Kelola Lembur</p>
                         </a>
 
                     </div>
@@ -179,48 +179,6 @@
             @endif
         </div>
     </div>
-
-    <!-- TODAY STATUS -->
-    {{-- <div class="p-2 pb-20">
-        <div class="bg-white p-5 rounded-xl shadow-md border border-gray-100">
-            <h2 class="text-lg font-bold text-gray-800 mb-3">Today's Status</h2>
-
-            <div class="space-y-3">
-                <div class="flex justify-between">
-                    <span class="text-sm text-gray-500">Clock In</span>
-                    <span class="font-semibold">
-                        {{ $attendance?->clock_in ? $attendance->clock_in : '-' }}
-                    </span>
-                </div>
-
-                <div class="flex justify-between">
-                    <span class="text-sm text-gray-500">Clock Out</span>
-                    <span class="font-semibold">
-                        {{ $attendance?->clock_out ? $attendance->clock_out : '-' }}
-                    </span>
-                </div>
-
-                <div class="flex justify-between">
-                    <span class="text-sm text-gray-500">Status</span>
-                    @php
-                        $statusColor = match ($attendance->status) {
-                            'present' => 'bg-green-100 text-green-700 border-green-200',
-                            'absent' => 'bg-red-100 text-red-700 border-red-200',
-                            'leave' => 'bg-blue-100 text-blue-700 border-blue-200',
-                            'sick' => 'bg-yellow-100 text-yellow-700 border-yellow-200',
-                            'off' => 'bg-gray-100 text-gray-600 border-gray-200',
-                            default => 'bg-gray-100 text-gray-600',
-                        };
-                    @endphp
-
-                    <span
-                        class="{{ $statusColor }} px-3 py-1 rounded-full text-xs font-bold border uppercase shadow-sm">
-                        {{ $attendance->status }}
-                    </span>
-                </div>
-            </div>
-        </div>
-    </div> --}}
 
     <!-- BOTTOM BAR -->
     <div class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-lg md:max-w-sm mx-auto">
@@ -230,14 +188,14 @@
             <a href="{{ route('ess-home') }}"
                 class="flex flex-col items-center {{ request()->routeIs('ess-home') ? 'text-sky-600' : 'text-gray-600 hover:text-sky-600' }}">
                 <i class="fas fa-home text-xl"></i>
-                <span class="text-xs font-semibold mt-1">Home</span>
+                <span class="text-xs font-semibold mt-1">Beranda</span>
             </a>
 
             <!-- Profile -->
             <a href="{{ route('ess-profil') }}"
                 class="flex flex-col items-center {{ request()->routeIs('ess-profil') ? 'text-sky-600' : 'text-gray-600 hover:text-sky-600' }}">
                 <i class="fas fa-user text-xl"></i>
-                <span class="text-xs font-semibold mt-1">Profile</span>
+                <span class="text-xs font-semibold mt-1">Profil</span>
             </a>
         </div>
     </div>

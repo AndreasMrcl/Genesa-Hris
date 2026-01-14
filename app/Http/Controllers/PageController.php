@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\Auth;
 
 class PageController extends Controller
 {
-    public function profile()
+    public function dashboard()
     {
         if (! Auth::check()) {
             return redirect('/');
@@ -28,47 +28,38 @@ class PageController extends Controller
             return redirect()->route('addcompany');
         }
 
-        return view('profil', compact('userCompany'));
-    }
+        $status = $userCompany->status;
 
-    public function dashboard()
-    {
-        if (! Auth::check()) {
-            return redirect('/');
-        }
-
-        $company = Auth::user()->compani;
-
-        if (! $company || $company->status !== 'Settlement') {
+        if ($status !== 'Settlement') {
             return redirect()->route('login');
         }
 
         //CARD
-        $totalEmployees = Employee::where('compani_id', $company->id)->count();
+        $totalEmployees = Employee::where('compani_id', $userCompany->id)->count();
 
-        $newEmployeesThisMonth = Employee::where('compani_id', $company->id)
+        $newEmployeesThisMonth = Employee::where('compani_id', $userCompany->id)
             ->whereMonth('created_at', Carbon::now()->month)
             ->whereYear('created_at', Carbon::now()->year)
             ->count();
 
-        $totalLeaves = Leave::where('compani_id', $company->id)->where('status', 'pending')->count();
+        $totalLeaves = Leave::where('compani_id', $userCompany->id)->where('status', 'pending')->count();
 
-        $newLeavesThisMonth = Leave::where('compani_id', $company->id)
+        $newLeavesThisMonth = Leave::where('compani_id', $userCompany->id)
             ->whereMonth('created_at', Carbon::now()->month)
             ->whereYear('created_at', Carbon::now()->year)
             ->count();
 
-        $totalOvertime = Overtime::where('compani_id', $company->id)->where('status', 'pending')->count();
+        $totalOvertime = Overtime::where('compani_id', $userCompany->id)->where('status', 'pending')->count();
 
-        $newOvertimesThisMonth = Overtime::where('compani_id', $company->id)
+        $newOvertimesThisMonth = Overtime::where('compani_id', $userCompany->id)
             ->whereMonth('created_at', Carbon::now()->month)
             ->whereYear('created_at', Carbon::now()->year)
             ->count();
 
-        $overtimePay = Overtime::where('compani_id', $company->id)->sum('overtime_pay');
+        $overtimePay = Overtime::where('compani_id', $userCompany->id)->sum('overtime_pay');
 
         //CHART
-        $attendance = Attendance::orderBy('period_start', 'asc')->where('compani_id', $company->id)
+        $attendance = Attendance::orderBy('period_start', 'asc')->where('compani_id', $userCompany->id)
             ->take(6) // ambil 6 periode terakhir
             ->get();
 
@@ -81,7 +72,7 @@ class PageController extends Controller
         $alpha   = $attendance->pluck('total_alpha');
         $leave   = $attendance->pluck('total_leave');
 
-        $batches = $company->payrolls()
+        $batches = $userCompany->payrolls()
             ->join('employees', 'payrolls.employee_id', '=', 'employees.id')
             ->select(
                 'payrolls.pay_period_start',
@@ -121,6 +112,27 @@ class PageController extends Controller
             'payrollLabels',
             'payrollExpense'
         ));
+    }
+
+    public function profile()
+    {
+        if (! Auth::check()) {
+            return redirect('/');
+        }
+
+        $userCompany = Auth::user()->compani;
+
+        if (! $userCompany) {
+            return redirect()->route('addcompany');
+        }
+
+        $status = $userCompany->status;
+
+        if ($status !== 'Settlement') {
+            return redirect()->route('login');
+        }
+
+        return view('profil', compact('userCompany'));
     }
 
     public function search(Request $request)

@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-    <title>Master Allowances</title>
+    <title>Master Tunjangan</title>
     @include('layout.head')
     <link href="//cdn.datatables.net/2.0.2/css/dataTables.dataTables.min.css" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -25,11 +25,11 @@
             <div class="md:flex justify-between items-center bg-white p-5 rounded-xl shadow-sm border border-gray-100 space-y-2 md:space-y-0">
                 <div>
                     <h1 class="font-bold text-2xl text-gray-800">
-                        <i class="fas fa-hand-holding-dollar text-emerald-600"></i> Master Allowances</h1>
-                    <p class="text-sm text-gray-500">Define earning types for employees</p>
+                        <i class="fas fa-hand-holding-dollar text-emerald-600"></i> Master Tunjangan</h1>
+                    <p class="text-sm text-gray-500">Tentukan Jenis Penghasilan Karyawan</p>
                 </div>
                 <button id="addBtn" class="px-6 py-3 bg-emerald-500 text-white rounded-lg shadow-md hover:bg-emerald-600 transition font-semibold flex items-center gap-2">
-                    <i class="fas fa-plus"></i> Add Allowance
+                    <i class="fas fa-plus"></i> Tambah Tunjangan
                 </button>
             </div>
 
@@ -40,10 +40,10 @@
                         <thead class="bg-gray-100 text-gray-600 uppercase text-sm leading-normal">
                             <tr>
                                 <th class="p-4 font-bold rounded-tl-lg text-center" width="5%">No</th>
-                                <th class="p-4 font-bold">Allowance Name</th>
-                                <th class="p-4 font-bold">Calculation Type</th>
-                                <th class="p-4 font-bold text-center">Taxable</th>
-                                <th class="p-4 font-bold text-center rounded-tr-lg" width="15%">Actions</th>
+                                <th class="p-4 font-bold">Nama Tunjangan</th>
+                                <th class="p-4 font-bold">Jenis Perhitungan</th>
+                                <th class="p-4 font-bold text-center">Dapat Dikenakan Pajak</th>
+                                <th class="p-4 font-bold text-center rounded-tr-lg" width="15%">Aksi</th>
                             </tr>
                         </thead>
                         <tbody class="text-gray-700 text-sm divide-y divide-gray-200">
@@ -101,17 +101,17 @@
         <div class="bg-white rounded-2xl p-8 w-full max-w-md shadow-2xl relative">
             <button id="closeAddModal" class="absolute top-5 right-5 text-gray-400 hover:text-gray-600 transition"><i class="fas fa-times text-xl"></i></button>
             <h2 class="text-2xl font-bold mb-6 text-gray-800 flex items-center gap-2">
-                <i class="fas fa-plus-circle text-emerald-500"></i> Add Allowance
+                <i class="fas fa-plus-circle text-emerald-500"></i> Tambah Tunjangan
             </h2>
 
             <form action="{{ route('postallowance') }}" method="POST" class="space-y-5">
                 @csrf
                 <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-1">Name</label>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">Nama</label>
                     <input type="text" name="name" class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-emerald-500" placeholder="e.g. Tunjangan Makan" required>
                 </div>
                 <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-1">Type</label>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">Tipe</label>
                     <select name="type" class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-emerald-500" required>
                         <option value="fixed">FIXED (Tetap per Bulan)</option>
                         <option value="daily">DAILY (Dikalikan Kehadiran)</option>
@@ -120,9 +120,9 @@
                 </div>
                 <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-lg border border-gray-200">
                     <input type="checkbox" name="is_taxable" value="1" class="w-5 h-5 rounded border-gray-300 text-emerald-600 focus:ring-emerald-500">
-                    <span class="text-sm font-semibold text-gray-700">Taxable Component (PPh 21)</span>
+                    <span class="text-sm font-semibold text-gray-700">Komponen Dapat Dikenakan Pajak (PPh 21)</span>
                 </div>
-                <button type="submit" class="w-full py-3 bg-emerald-500 text-white font-bold rounded-lg shadow-md hover:bg-emerald-600 transition">Save Allowance</button>
+                <button type="submit" class="w-full py-3 bg-emerald-500 text-white font-bold rounded-lg shadow-md hover:bg-emerald-600 transition">Simpan Tunjangan</button>
             </form>
         </div>
     </div>
@@ -132,17 +132,17 @@
         <div class="bg-white rounded-2xl p-8 w-full max-w-md shadow-2xl relative">
             <button id="closeEditModal" class="absolute top-5 right-5 text-gray-400 hover:text-gray-600 transition"><i class="fas fa-times text-xl"></i></button>
             <h2 class="text-2xl font-bold mb-6 text-gray-800 flex items-center gap-2">
-                <i class="fas fa-edit text-blue-600"></i> Edit Allowance
+                <i class="fas fa-edit text-blue-600"></i> Edit Tunjangan
             </h2>
 
             <form id="editForm" method="POST" class="space-y-5">
                 @csrf @method('PUT')
                 <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-1">Name</label>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">Nama</label>
                     <input type="text" id="editName" name="name" class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-blue-500" required>
                 </div>
                 <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-1">Type</label>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">Tipe</label>
                     <select id="editType" name="type" class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-blue-500" required>
                         <option value="fixed">FIXED</option>
                         <option value="daily">DAILY</option>
@@ -151,7 +151,7 @@
                 </div>
                 <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-lg border border-gray-200">
                     <input type="checkbox" id="editTaxable" name="is_taxable" value="1" class="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500">
-                    <span class="text-sm font-semibold text-gray-700">Taxable Component</span>
+                    <span class="text-sm font-semibold text-gray-700">Komponen Dapat Dikenakan Pajak (PPh 21)</span>
                 </div>
                 <button type="submit" class="w-full py-3 bg-blue-600 text-white font-bold rounded-lg shadow-md hover:bg-blue-700 transition">Update Allowance</button>
             </form>

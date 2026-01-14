@@ -22,9 +22,9 @@
             <div class="md:flex justify-between items-center bg-white p-5 rounded-xl shadow-sm border border-gray-100 space-y-2 md:space-y-0">
                 <div>
                     <h1 class="font-bold text-2xl text-gray-800 flex items-center gap-2">
-                        <i class="fa-solid fa-user-gear text-slate-600"></i> Profile Settings
+                        <i class="fa-solid fa-user-gear text-slate-600"></i> Pengaturan Profile
                     </h1>
-                    <p class="text-sm text-gray-500 mt-1">Manage your personal profile and company information</p>
+                    <p class="text-sm text-gray-500 mt-1">Kelola profil pribadi dan informasi perusahaan</p>
                 </div>
             </div>
 
@@ -41,7 +41,7 @@
                 <!-- PERSONAL INFO -->
                 <section>
                     <h2 class="font-bold text-sm text-indigo-600 uppercase tracking-wider mb-4 border-b pb-2">
-                        <i class="fa-solid fa-user mr-1"></i> Personal Information
+                        <i class="fa-solid fa-user mr-1"></i> Informasi Pribadi
                     </h2>
 
                     <div class="space-y-6">
@@ -49,7 +49,7 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 
                             <div>
-                                <label class="block text-sm font-semibold text-gray-700 mb-1">Name</label>
+                                <label class="block text-sm font-semibold text-gray-700 mb-1">Nama</label>
                                 <input type="text" name="name" value="{{ auth()->user()->name }}"
                                     class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-indigo-500"
                                     readonly>
@@ -69,7 +69,7 @@
                 <!-- COMPANY INFO -->
                 <section>
                     <h2 class="font-bold text-sm text-emerald-600 uppercase tracking-wider mb-4 border-b pb-2">
-                        <i class="fa-solid fa-building mr-1"></i> Company Information
+                        <i class="fa-solid fa-building mr-1"></i> Informasi Perusahaan
                     </h2>
 
                     <form action="{{ route('updatecompany', $userCompany->id) }}" method="POST" class="space-y-6"
@@ -80,7 +80,7 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 
                             <div>
-                                <label class="block text-sm font-semibold text-gray-700 mb-1">Company Name</label>
+                                <label class="block text-sm font-semibold text-gray-700 mb-1">Nama Perusahaan</label>
                                 <input type="text" name="company" value="{{ $userCompany->company }}"
                                     class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-emerald-500"
                                     required>
@@ -99,7 +99,7 @@
                             </div>
 
                             <div>
-                                <label class="block text-sm font-semibold text-gray-700 mb-1">Address</label>
+                                <label class="block text-sm font-semibold text-gray-700 mb-1">Alamat</label>
                                 <textarea name="location"
                                     class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-emerald-500" rows="3"
                                     readonly>{{ $userCompany->location }}</textarea>
@@ -115,7 +115,7 @@
                         <div class="pt-4 flex justify-end border-t border-gray-100">
                             <button type="submit"
                                 class="px-8 py-3 bg-slate-800 text-white font-bold rounded-lg shadow-lg hover:bg-slate-900 transition transform hover:-translate-y-0.5 flex items-center gap-2">
-                                <i class="fas fa-save"></i> Save Company Info
+                                <i class="fas fa-save"></i> Simpan Informasi Perusahaan
                             </button>
                         </div>
                     </form>

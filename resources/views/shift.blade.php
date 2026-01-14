@@ -25,14 +25,15 @@
                     <h1 class="font-bold text-2xl text-gray-800 flex items-center gap-2">
                         <i class="fas fa-clock text-blue-600"></i> Master Shifts
                     </h1>
-                    <p class="text-sm text-gray-500 mt-1">Define shift templates (e.g. Morning, Night)</p>
+                    <p class="text-sm text-gray-500 mt-1">Kelola template shift (contoh: Pagi, Malam)</p>
                 </div>
                 <div class="flex gap-2">
                     <a href="{{ route('schedule') }}" class="px-5 py-2.5 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition font-bold flex items-center gap-2">
-                        <i class="far fa-calendar-alt"></i> Go to Calendar
+                        <i class="far fa-calendar-alt"></i> Ke Kalender
                     </a>
                     <button onclick="openAddModal()" class="px-5 py-2.5 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 transition font-bold flex items-center gap-2">
-                        <i class="fas fa-plus"></i> Add New Shift
+                        <i class="fas fa-plus"></i> Tambah Shift Baru
+
                     </button>
                 </div>
             </div>
@@ -49,12 +50,12 @@
                     <table id="myTable" class="w-full text-left border-collapse stripe hover">
                         <thead class="bg-gray-100 text-gray-600 uppercase text-sm leading-normal">
                             <tr>
-                                <th class="p-4 rounded-tl-lg text-center" width="5%">Color</th>
-                                <th class="p-4">Name</th>
-                                <th class="p-4 text-center">Time</th>
-                                <th class="p-4 text-center">Duration</th>
-                                <th class="p-4 text-center">Branch</th>
-                                <th class="p-4 text-center rounded-tr-lg" width="15%">Action</th>
+                                <th class="p-4 rounded-tl-lg text-center" width="5%">Warna</th>
+                                <th class="p-4">Nama</th>
+                                <th class="p-4 text-center">Waktu</th>
+                                <th class="p-4 text-center">Durasi</th>
+                                <th class="p-4 text-center">Cabang</th>
+                                <th class="p-4 text-center rounded-tr-lg" width="15%">Aksi</th>
                             </tr>
                         </thead>
                         <tbody class="text-gray-700 text-sm divide-y divide-gray-200">
@@ -73,7 +74,7 @@
                                     </div>
                                     @if($shift->is_cross_day)
                                         <span class="text-[10px] text-purple-600 bg-purple-100 px-2 py-0.5 rounded-full font-bold border border-purple-200">
-                                            +1 Day (Cross Day)
+                                            +1 Hari (Lintas Hari)
                                         </span>
                                     @endif
                                 </td>
@@ -111,7 +112,7 @@
             <button onclick="document.getElementById('shiftModal').classList.add('hidden')" class="absolute top-4 right-4 text-gray-400 hover:text-red-500 transition"><i class="fas fa-times"></i></button>
             
             <h2 class="text-xl font-bold mb-6 text-gray-800 flex items-center gap-2" id="modalTitle">
-                <i class="fas fa-clock text-blue-600"></i> Add Master Shift
+                <i class="fas fa-clock text-blue-600"></i> Tambah Master Shift
             </h2>
             
             <form id="shiftForm" method="POST" class="space-y-4">
@@ -119,37 +120,37 @@
                 <div id="methodField"></div>
                 
                 <div>
-                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Shift Name</label>
+                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Nama Shift</label>
                     <input type="text" name="name" id="name" class="w-full rounded-lg border-gray-300 p-2.5 border focus:ring-2 focus:ring-blue-500" placeholder="e.g. Morning Shift" required>
                 </div>
                 
                 <div class="grid grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Start Time</label>
+                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Mulai</label>
                         <input type="time" name="start_time" id="start_time" class="w-full rounded-lg border-gray-300 p-2.5 border focus:ring-2 focus:ring-blue-500" required>
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">End Time</label>
+                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Akhir</label>
                         <input type="time" name="end_time" id="end_time" class="w-full rounded-lg border-gray-300 p-2.5 border focus:ring-2 focus:ring-blue-500" required>
                     </div>
                 </div>
 
                 <div class="bg-gray-50 p-3 rounded-lg border border-gray-200 space-y-3">
-                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Visual Color</label>
+                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Warna Visual</label>
                     <div class="flex gap-2">
                         <input type="color" name="color" id="color" class="h-10 w-12 rounded cursor-pointer border border-gray-300 p-0" value="#3B82F6">
-                        <span class="text-xs text-gray-500 self-center">Pick a color for calendar</span>
+                        <span class="text-xs text-gray-500 self-center">Ambil warna untuk kalendar</span>
                     </div>
 
                     <label class="flex items-center gap-2 cursor-pointer mt-2 border-t border-gray-200 pt-2">
                         <input type="checkbox" name="is_cross_day" id="is_cross_day" value="1" class="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500">
-                        <span class="text-sm text-gray-700 font-medium">Cross Day (Ends Tomorrow)</span>
+                        <span class="text-sm text-gray-700 font-medium">Lintas hari (Berakhir besok)</span>
                     </label>
 
                     <div>
-                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1 mt-2">Applicable Branch (Optional)</label>
+                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1 mt-2">Cabang yang Berlaku (Opsional)</label>
                         <select name="branch_id" id="branch_id" class="w-full rounded-lg border-gray-300 p-2 border focus:ring-2 focus:ring-blue-500 text-sm">
-                            <option value="">-- Select Branch --</option>
+                            <option value="">-- Pilih Cabang --</option>
                             @foreach($branches as $branch)
                                 <option value="{{ $branch->id }}">{{ $branch->name }}</option>
                             @endforeach

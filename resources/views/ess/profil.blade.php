@@ -87,7 +87,7 @@
 
             <!-- PERSONAL INFO -->
             <div>
-                <h3 class="text-lg font-bold text-gray-800 mb-2">Personal Info</h3>
+                <h3 class="text-lg font-bold text-gray-800 mb-2">Informasi Pribadi</h3>
                 <div class="space-y-2 text-sm">
                     <div class="flex justify-between">
                         <span class="text-gray-500">Nama</span>
@@ -100,7 +100,7 @@
                     </div>
 
                     <div class="flex justify-between">
-                        <span class="text-gray-500">Phone</span>
+                        <span class="text-gray-500">No. Telepon</span>
                         <span class="font-semibold">{{ $employee->phone }}</span>
                     </div>
 
@@ -115,7 +115,7 @@
 
             <!-- EMPLOYMENT INFO -->
             <div>
-                <h3 class="text-lg font-bold text-gray-800 mb-2">Employment</h3>
+                <h3 class="text-lg font-bold text-gray-800 mb-2">Informasi Pekerjaan</h3>
                 <div class="space-y-2 text-sm">
                     <div class="flex justify-between">
                         <span class="text-gray-500">Posisi</span>
@@ -128,7 +128,7 @@
                     </div>
 
                     <div class="flex justify-between">
-                        <span class="text-gray-500">Tanggal Join</span>
+                        <span class="text-gray-500">Tanggal Bergabung</span>
                         <span class="font-semibold">{{ $employee->join_date }}</span>
                     </div>
 
@@ -207,13 +207,13 @@
             <a href="{{ route('ess-home') }}"
                 class="flex flex-col items-center {{ request()->routeIs('ess-home') ? 'text-sky-600' : 'text-gray-600 hover:text-sky-600' }}">
                 <i class="fas fa-home text-xl"></i>
-                <span class="text-xs font-semibold mt-1">Home</span>
+                <span class="text-xs font-semibold mt-1">Beranda</span>
             </a>
 
             <a href="{{ route('ess-profil') }}"
                 class="flex flex-col items-center {{ request()->routeIs('ess-profil') ? 'text-sky-600' : 'text-gray-600 hover:text-sky-600' }}">
                 <i class="fas fa-user text-xl"></i>
-                <span class="text-xs font-semibold mt-1">Profile</span>
+                <span class="text-xs font-semibold mt-1">Profil</span>
             </a>
         </div>
     </div>

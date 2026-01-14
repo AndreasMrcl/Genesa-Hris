@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Payslip - {{ $payroll->employee->name }}</title>
+    <title>Slip Gaj - {{ $payroll->employee->name }}</title>
     <style>
         /* Reset & Font */
         @page { margin: 20px; }
@@ -104,15 +104,15 @@
     <table class="info-table">
         <tr>
             <td width="25%">
-                <div class="info-label">Employee Name</div>
+                <div class="info-label">Nama Karyawan</div>
                 <div class="info-value">{{ $payroll->employee->name }}</div>
             </td>
             <td width="25%">
-                <div class="info-label">Position</div>
+                <div class="info-label">Jabatan</div>
                 <div class="info-value">{{ $payroll->employee->position->name ?? '-' }}</div>
             </td>
             <td width="25%">
-                <div class="info-label">Period</div>
+                <div class="info-label">Periode</div>
                 <div class="info-value">
                     {{ \Carbon\Carbon::parse($payroll->pay_period_end)->format('M Y') }}
                 </div>
@@ -120,7 +120,7 @@
         </tr>
         <tr>
             <td>
-                <div class="info-label">Branch</div>
+                <div class="info-label">Cabang</div>
                 <div class="info-value">{{ $payroll->employee->branch->name ?? '-' }}</div>
             </td>
         </tr>
@@ -144,7 +144,7 @@
             <div class="total-box">
                 <table class="total-table">
                     <tr>
-                        <td class="total-label">Total Gross Pay</td>
+                        <td class="total-label">Total Gaji</td>
                         <td class="total-value">Rp {{ number_format($payroll->base_salary + $payroll->total_allowances, 0, ',', '.') }}</td>
                     </tr>
                 </table>
@@ -162,14 +162,14 @@
                         <td class="item-amount text-red">- Rp {{ number_format($item->amount, 0, ',', '.') }}</td>
                     </tr>
                 @empty
-                    <tr><td colspan="2" class="text-gray italic">No deductions</td></tr>
+                    <tr><td colspan="2" class="text-gray italic">Tidak Ada Potongan</td></tr>
                 @endforelse
             </table>
 
             <div class="total-box">
                 <table class="total-table">
                     <tr>
-                        <td class="total-label">Total Deductions</td>
+                        <td class="total-label">Total Potongan</td>
                         <td class="total-value text-red">- Rp {{ number_format($payroll->total_deductions, 0, ',', '.') }}</td>
                     </tr>
                 </table>
@@ -183,7 +183,7 @@
     @if($benefits->count() > 0)
         <div class="benefit-section">
             <div class="section-title" style="border: none; margin-bottom: 5px;">
-                Company Paid Benefits (Non-Cash)
+                Tunjangan Perusahaan (Non-Tunai)
             </div>
             <table class="benefit-grid">
                 @foreach($benefits->chunk(2) as $chunk)
@@ -214,8 +214,8 @@
         <table class="net-table">
             <tr>
                 <td style="vertical-align: middle;">
-                    <div class="net-title">Take Home Pay</div>
-                    <div class="net-subtitle">Transfer to Bank Account</div>
+                    <div class="net-title">Gaji Yang Dibawa Pulang</div>
+                    <div class="net-subtitle">Transfer ke Rek.Bank</div>
                 </td>
                 <td class="net-amount">
                     Rp {{ number_format($payroll->net_salary, 0, ',', '.') }}
@@ -228,15 +228,15 @@
     <table class="signature-table">
         <tr>
             <td class="sig-cell">
-                <div class="sig-title">Employee Signature</div>
+                <div class="sig-title">Tandatangan Karyawan</div>
                 <br><br><br>
                 <div class="sig-line">{{ $payroll->employee->name }}</div>
             </td>
             <td width="20%"></td>
             <td class="sig-cell">
-                <div class="sig-title">Authorized Signature</div>
+                <div class="sig-title">Tandatangan HR Manager</div>
                 <br><br><br>
-                <div class="sig-line">HR Manager</div>
+                <div class="sig-line">Manager HR</div>
             </td>
         </tr>
     </table>

@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-    <title>Assign Deduction</title>
+<title>Tetapkan Potongan</title>
     @include('layout.head')
     <link href="//cdn.datatables.net/2.0.2/css/dataTables.dataTables.min.css" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -18,14 +18,14 @@
             <!-- Header & Back Button (Theme Red for Deduction) -->
             <div class="md:flex justify-between items-center bg-white p-5 rounded-xl shadow-sm border border-gray-100 space-y-2 md:space-y-0">
                 <div>
-                    <h1 class="font-semibold text-2xl text-black">Assign Deduction</h1>
-                    <p class="text-gray-600 text-sm">Employee: <span
+                    <h1 class="font-semibold text-2xl text-black">Tetapkan Potongan</h1>
+                    <p class="text-gray-600 text-sm">Karyawan: <span
                             class="font-bold text-red-700">{{ $employee->name }}</span> ({{ $employee->position->name }})
                     </p>
                 </div>
                 <a href="{{ route('employee') }}"
                     class="p-2 px-6 bg-gray-500 text-white rounded-lg shadow hover:bg-gray-600 transition flex items-center gap-2">
-                    <span>&larr;</span> Back
+                    <span>&larr;</span> Kembali
                 </a>
             </div>
 
@@ -33,18 +33,18 @@
                 <!-- Left Column: Add Form -->
                 <div class="lg:col-span-1">
                     <div class="bg-white rounded-lg shadow-md p-6">
-                        <h2 class="text-xl font-semibold mb-4 border-b pb-2 text-gray-800">Add New Deduction</h2>
+                        <h2 class="text-xl font-semibold mb-4 border-b pb-2 text-gray-800">Tambahkan Potongan Baru</h2>
 
                         <!-- Route: deductEmp.store -->
                         <form action="{{ route('postdeductionEmp', $employee->id) }}" method="POST" class="space-y-4">
                             @csrf
 
                             <div class="space-y-2">
-                                <label class="font-semibold text-black">Deduction Type:</label>
+                                <label class="font-semibold text-black">Jenis Potongan:</label>
                                 <select name="deduct_id"
                                     class="bg-gray-50 border border-gray-300 text-gray-900 p-2.5 rounded-lg w-full focus:ring-red-500 focus:border-red-500"
                                     required>
-                                    <option value="">-- Choose Deduction --</option>
+                                    <option value="">-- Pilih Potongan --</option>
                                     @foreach ($deducts as $deduct)
                                         <option value="{{ $deduct->id }}">{{ $deduct->name }} ({{ $deduct->type }})
                                         </option>
@@ -53,7 +53,7 @@
                             </div>
 
                             <div class="space-y-2">
-                                <label class="font-semibold text-black">Amount (Rp):</label>
+                                <label class="font-semibold text-black">Jumlah (Rp):</label>
                                 <input type="text" name="amount"
                                     class="currency bg-gray-50 border border-gray-300 text-gray-900 p-2.5 rounded-lg w-full focus:ring-red-500 focus:border-red-500"
                                     placeholder="0" min="0" required>
@@ -61,7 +61,7 @@
 
                             <button type="submit"
                                 class="w-full bg-red-500 text-white p-3 rounded-lg hover:bg-red-600 shadow transition font-semibold mt-4">
-                                Assign Deduction
+                                Tetapkan Potongan
                             </button>
                         </form>
                     </div>
@@ -70,16 +70,16 @@
                 <!-- Right Column: List Table -->
                 <div class="lg:col-span-2">
                     <div class="bg-white rounded-lg shadow-md p-6">
-                        <h2 class="text-xl font-semibold mb-4 border-b pb-2 text-gray-800">Current Deductions</h2>
+                        <h2 class="text-xl font-semibold mb-4 border-b pb-2 text-gray-800">Potongan Saat Ini</h2>
                         <div class="overflow-x-auto">
                             <table id="deductTable"
                                 class="w-full text-left border-collapse bg-gray-50 rounded-lg overflow-hidden">
                                 <thead class="bg-gray-200 text-gray-700 uppercase text-xs leading-normal">
                                     <tr>
-                                        <th class="py-3 px-4">Deduction Name</th>
-                                        <th class="py-3 px-4">Type</th>
-                                        <th class="py-3 px-4">Amount</th>
-                                        <th class="py-3 px-4 text-center">Action</th>
+                                        <th class="py-3 px-4">Nama Potongan</th>
+                                        <th class="py-3 px-4">Jenis</th>
+                                        <th class="py-3 px-4">Jumlah</th>
+                                        <th class="py-3 px-4 text-center">Aksi</th>
                                     </tr>
                                 </thead>
                                 <tbody class="text-gray-600 text-sm font-light bg-white">
@@ -90,11 +90,10 @@
                                             <td class="py-3 px-4">
                                                 @if ($item->deduct->type == 'fixed')
                                                     <span
-                                                        class="bg-blue-100 text-blue-800 py-1 px-3 rounded-full text-xs font-semibold">FIXED</span>
+                                                        class="bg-blue-100 text-blue-800 py-1 px-3 rounded-full text-xs font-semibold">Tetap</span>
                                                 @else
                                                     <span
-                                                        class="bg-gray-100 text-gray-800 py-1 px-3 rounded-full text-xs font-semibold">ONE
-                                                        TIME</span>
+                                                        class="bg-gray-100 text-gray-800 py-1 px-3 rounded-full text-xs font-semibold">Satu Kali</span>
                                                 @endif
                                             </td>
                                             <td class="py-3 px-4 font-bold text-gray-800">Rp
@@ -151,20 +150,20 @@
             <button id="closeEditModal"
                 class="absolute top-4 right-4 text-white hover:text-gray-300 bg-red-500 p-1 px-4 rounded-full">✕</button>
 
-            <h1 class="text-xl font-semibold mb-6 text-gray-800">Edit Deduction Amount</h1>
+            <h1 class="text-xl font-semibold mb-6 text-gray-800">Edit Jumlah Potongan</h1>
 
             <form id="editForm" method="POST" class="space-y-4">
                 @csrf
                 @method('PUT')
 
                 <div class="space-y-2">
-                    <label class="font-semibold text-black">Deduction:</label>
+                    <label class="font-semibold text-black">Potongan:</label>
                     <input type="text" id="editNameDisplay"
                         class="bg-gray-100 border border-gray-300 text-gray-500 p-2.5 rounded-lg w-full" disabled>
                 </div>
 
                 <div class="space-y-2">
-                    <label class="font-semibold text-black">New Amount (Rp):</label>
+                    <label class="font-semibold text-black">Jumlah Baru (Rp):</label>
                     <input type="text" name="amount" id="editAmount"
                         class="currency bg-gray-50 border border-gray-300 text-gray-900 p-2.5 rounded-lg w-full focus:ring-red-500 focus:border-red-500"
                         required>
@@ -172,7 +171,7 @@
 
                 <button type="submit"
                     class="w-full bg-blue-500 text-white p-3 rounded-lg hover:bg-blue-600 shadow transition font-semibold">
-                    Save Changes
+                    Simpan Perubahan
                 </button>
             </form>
         </div>

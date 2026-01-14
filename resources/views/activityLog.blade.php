@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-    <title>Activity Log</title>
+    <title>Log Aktivitas</title>
     @include('layout.head')
     <!-- DataTables CSS -->
     <link href="//cdn.datatables.net/2.0.2/css/dataTables.dataTables.min.css" rel="stylesheet" />
@@ -38,9 +38,9 @@
             <div class="md:flex justify-between items-center bg-white p-5 rounded-xl shadow-sm border border-gray-100 space-y-2 md:space-y-0">
                 <div>
                     <h1 class="font-bold text-2xl text-gray-800 flex items-center gap-2">
-                        <i class="fas fa-history text-indigo-600"></i> Activity Log
+                        <i class="fas fa-history text-indigo-600"></i> Log Aktivitas
                     </h1>
-                    <p class="text-sm text-gray-500 mt-1">Monitor user activities and system events.</p>
+                    <p class="text-sm text-gray-500 mt-1">Pantau Aktivitas Pengguna & Sistem</p>
                 </div>
 
                 <!-- Statistik Ringkas -->
@@ -56,9 +56,9 @@
                     <table id="logTable" class="w-full text-left border-collapse stripe hover">
                         <thead class="bg-gray-100 text-gray-600 uppercase text-sm leading-normal font-bold">
                             <tr>
-                                <th class="p-4 rounded-tl-lg w-1/4">Time / Actor</th>
-                                <th class="p-4 w-1/5">Action Type</th>
-                                <th class="p-4 rounded-tr-lg">Activity Description</th>
+                                <th class="p-4 rounded-tl-lg w-1/4">Waktu / Akun</th>
+                                <th class="p-4 w-1/5">Tipe Aksi</th>
+                                <th class="p-4 rounded-tr-lg">Deskripsi</th>
                             </tr>
                         </thead>
                         <tbody class="text-gray-700 text-sm divide-y divide-gray-200">
@@ -152,9 +152,9 @@
                                                 class="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mb-4">
                                                 <i class="fas fa-history text-4xl text-gray-300"></i>
                                             </div>
-                                            <h3 class="text-lg font-medium text-gray-900">No Activity Logs Found</h3>
-                                            <p class="text-sm text-gray-500 mt-1">System activities will be recorded
-                                                here automatically.</p>
+                                            <h3 class="text-lg font-medium text-gray-900">Tidak Ada Log Aktivitas</h3>
+                                            <p class="text-sm text-gray-500 mt-1">Aktivitas sistem akan direkam
+                                                di sini secara otomatis.</p>
                                         </div>
                                     </td>
                                 </tr>

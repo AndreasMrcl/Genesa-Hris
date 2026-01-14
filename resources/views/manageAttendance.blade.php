@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-    <title>Manage Attendance</title>
+<title>Kelola Absensi</title>
     @include('layout.head')
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
 </head>
@@ -16,13 +16,13 @@
             <div class="flex justify-between items-center bg-white p-5 rounded-xl shadow-sm border border-gray-100">
                 <div>
                     <h1 class="font-bold text-2xl text-gray-800 flex items-center gap-2">
-                        <i class="fas fa-user-check text-blue-600"></i> Input Attendance
+                        <i class="fas fa-user-check text-blue-600"></i> Input Absensi
                     </h1>
-                    <p class="text-sm text-gray-500 mt-1">Manage employee attendance summary data</p>
+                    <p class="text-sm text-gray-500 mt-1">Kelola rekap data absensi karyawan</p>
                 </div>
                 <a href="{{ route('attendance') }}"
                     class="p-2 px-6 bg-gray-500 text-white rounded-lg shadow hover:bg-gray-600 transition flex items-center gap-2">
-                    <span>&larr;</span> Back
+                    <span>&larr;</span> Kembali
                 </a>
             </div>
 
@@ -30,25 +30,25 @@
             <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-100">
                 <h2 class="font-bold text-lg text-gray-800 mb-4 flex items-center gap-2">
                     <i class="fas fa-calendar-alt text-blue-600"></i>
-                    Select Period
+                    Pilih Periode
                 </h2>
 
                 <form action="{{ route('manageattendance') }}" method="GET" class="flex flex-wrap items-end gap-4">
                     <div>
-                        <label class="block text-sm font-semibold text-gray-600 mb-1">Start Date</label>
+                        <label class="block text-sm font-semibold text-gray-600 mb-1">Mulai</label>
                         <input type="date" name="start" value="{{ $start ?? '' }}"
                             class="rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-blue-500"
                             required>
                     </div>
                     <div>
-                        <label class="block text-sm font-semibold text-gray-600 mb-1">End Date</label>
+                        <label class="block text-sm font-semibold text-gray-600 mb-1">Berakhir</label>
                         <input type="date" name="end" value="{{ $end ?? '' }}"
                             class="rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-blue-500"
                             required>
                     </div>
                     <button type="submit"
                         class="px-6 py-2.5 bg-gray-800 text-white rounded-lg hover:bg-gray-900 transition font-bold shadow-md">
-                        Load Data
+                        Muat Data
                     </button>
 
                     @if ($start && $end)
@@ -76,13 +76,13 @@
                         <div
                             class="p-4 bg-blue-50 border-b border-blue-100 flex justify-between items-center sticky top-0 z-10">
                             <div>
-                                <h3 class="font-bold text-blue-800 text-lg">Input Attendance Data</h3>
-                                <p class="text-xs text-blue-600">Data will be saved for period:
+                                <h3 class="font-bold text-blue-800 text-lg">Input Data Absensi</h3>
+                                <p class="text-xs text-blue-600">Data akan disimpan untuk periode:
                                     <strong>{{ $start }}</strong> to <strong>{{ $end }}</strong></p>
                             </div>
                             <button type="submit"
                                 class="px-8 py-2.5 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 transition font-bold flex items-center gap-2">
-                                <i class="fas fa-save"></i> Save All Changes
+                                <i class="fas fa-save"></i> Simpan Semua Perubahan
                             </button>
                         </div>
 
@@ -91,18 +91,18 @@
                                 <thead class="bg-gray-100 text-gray-600 uppercase text-xs sticky top-0 z-10 shadow-sm">
                                     <tr>
                                         <th class="p-4 w-12 bg-gray-100 border-b">No</th>
-                                        <th class="p-4 w-64 bg-gray-100 border-b">Employee Name</th>
-                                        <th class="p-4 text-center w-20 bg-orange-100 border-b text-orange-800">Late
+                                        <th class="p-4 w-64 bg-gray-100 border-b">Nama</th>
+                                        <th class="p-4 text-center w-20 bg-orange-100 border-b text-orange-800">Terlambat
                                         </th>
                                         <th class="p-4 text-center w-24 bg-red-50 border-b text-red-800">Alpha</th>
-                                        <th class="p-4 text-center w-24 bg-indigo-50 border-b text-indigo-800">Permit
-                                            (Letter)</th>
-                                        <th class="p-4 text-center w-24 bg-gray-50 border-b text-gray-800">Permit</th>
-                                        <th class="p-4 text-center w-24 bg-yellow-50 border-b text-yellow-800">Sick</th>
-                                        <th class="p-4 text-center w-20 bg-blue-100 border-b text-blue-800">Leave</th>
-                                        <th class="p-4 text-center w-24 bg-green-50 border-b text-green-800">Present
+                                        <th class="p-4 text-center w-24 bg-indigo-50 border-b text-indigo-800">Izin
+                                            (Surat)</th>
+                                        <th class="p-4 text-center w-24 bg-gray-50 border-b text-gray-800">Izin</th>
+                                        <th class="p-4 text-center w-24 bg-yellow-50 border-b text-yellow-800">Sakit</th>
+                                        <th class="p-4 text-center w-20 bg-blue-100 border-b text-blue-800">Cuti</th>
+                                        <th class="p-4 text-center w-24 bg-green-50 border-b text-green-800">Hadir
                                         </th>
-                                        <th class="p-4 text-center bg-gray-100 border-b">Note</th>
+                                        <th class="p-4 text-center bg-gray-100 border-b">Catatan</th>
                                     </tr>
                                 </thead>
                                 <tbody class="text-sm divide-y divide-gray-200">
@@ -186,7 +186,7 @@
                         </div>
 
                         <div class="p-4 bg-gray-50 border-t border-gray-200 text-right text-xs text-gray-500">
-                            Total Employees: {{ count($employees) }}
+                            Total Karyawan: {{ count($employees) }}
                         </div>
                     </div>
                 </form>

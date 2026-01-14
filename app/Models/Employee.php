@@ -31,6 +31,7 @@ class Employee extends Authenticatable
             'base_salary',
             'working_days',
             'payroll_method',
+            'ptkp_status',
             'bank_name',
             'bank_account_no',
             'participates_bpjs_kes',

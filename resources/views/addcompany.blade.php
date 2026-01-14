@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-    <title>Add Company</title>
+    <title>Tambah Perusahaan</title>
     @include('layout.head')
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
         integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
@@ -26,9 +26,9 @@
             <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-100">
                 <h1 class="font-bold text-2xl text-gray-800 flex items-center gap-2">
                     <i class="fas fa-building text-gray-800"></i>
-                    Add Company
+                    Tambah Perusahaan
                 </h1>
-                <p class="text-sm text-gray-500">Register your company information accurately</p>
+                <p class="text-sm text-gray-500">Daftarkan informasi perusahaan secara lengkap</p>
             </div>
 
             <!-- MAIN CONTENT CARD -->
@@ -56,7 +56,7 @@
                             class="grid grid-cols-1 md:grid-cols-3 gap-4 p-5 bg-gray-50 border border-gray-200 rounded-xl">
 
                             <div class="space-y-2">
-                                <label class="font-semibold text-gray-700">Name</label>
+                                <label class="font-semibold text-gray-700">Atas Nama</label>
                                 <input type="text"
                                     class="bg-white border border-gray-300 text-gray-900 p-3 rounded-xl w-full"
                                     id="name" name="name" value="{{ old('name') }}" required />
@@ -121,36 +121,36 @@
 
                     <!-- COMPANY -->
                     <section>
-                        <h2 class="font-bold text-xl mb-4 text-gray-800">Company</h2>
+                        <h2 class="font-bold text-xl mb-4 text-gray-800">Perusahaan</h2>
 
                         <div class="space-y-4 p-5 bg-gray-50 border border-gray-200 rounded-xl">
 
                             <div class="space-y-2">
-                                <label class="font-semibold text-gray-700">Company Name</label>
+                                <label class="font-semibold text-gray-700">Nama Perusahaan</label>
                                 <input type="text"
                                     class="bg-white border border-gray-300 text-gray-900 p-3 rounded-xl w-full"
                                     id="company" name="company" value="{{ old('company') }}" required />
                             </div>
 
                             <div class="space-y-2">
-                                <label class="font-semibold text-gray-700">Location</label>
+                                <label class="font-semibold text-gray-700">Lokasi</label>
                                 <input type="text"
                                     class="bg-white border border-gray-300 text-gray-900 p-3 rounded-xl w-full"
                                     id="location" name="location" value="{{ old('location') }}" required readonly />
 
                                 <input type="text" id="searchLocation"
                                     class="bg-white border border-gray-300 text-gray-900 p-3 rounded-xl w-full"
-                                    placeholder="Search location..." />
+                                    placeholder="Cari lokasi..." />
 
                                 <div class="flex gap-3">
                                     <button type="button" id="searchBtn"
                                         class="bg-blue-600 hover:bg-blue-700 text-white p-3 rounded-xl w-full font-semibold shadow-sm">
-                                        Search
+                                        Cari
                                     </button>
 
                                     <button type="button" id="locateBtn"
                                         class="bg-green-600 hover:bg-green-700 text-white p-3 rounded-xl w-full font-semibold shadow-sm">
-                                        Use My Location
+                                        Gunakan Lokasi Saya
                                     </button>
                                 </div>
 
@@ -165,7 +165,7 @@
                     <div class="pt-4 flex justify-end border-t border-gray-100">
                         <button type="submit"
                             class="px-8 py-3 bg-slate-800 text-white font-bold rounded-lg shadow-lg hover:bg-slate-900 transition transform hover:-translate-y-0.5 flex items-center gap-2">
-                            <i class="fas fa-save"></i> Save Company Info
+                            <i class="fas fa-save"></i> Simpan Perusahaan
                         </button>
                     </div>
                 </form>

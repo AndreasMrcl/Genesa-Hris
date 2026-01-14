@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 
 <head>
-    <title>Company Announcements</title>
+    <title>Pengumuman Perusahaan</title>
     @include('layout.head')
     <link href="//cdn.datatables.net/2.0.2/css/dataTables.dataTables.min.css" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -37,13 +37,13 @@
                 class="md:flex justify-between items-center bg-white p-5 rounded-xl shadow-sm border border-gray-100 space-y-2 md:space-y-0">
                 <div>
                     <h1 class="font-bold text-2xl text-gray-800 flex items-center gap-2">
-                        <i class="fa-solid fa-bullhorn text-red-700"></i> Company Announcements
+                        <i class="fa-solid fa-bullhorn text-red-700"></i> Pengumuman Perusahaan
                     </h1>
-                    <p class="text-sm text-gray-500">Your central hub for company-wide updates.</p>
+                    <p class="text-sm text-gray-500">Pusat informasi untuk pengumuman internal perusahaan.</p>
                 </div>
                 <button id="addBtn"
                     class="px-6 py-3 bg-red-600 text-white rounded-lg shadow-md hover:bg-red-700 transition font-semibold flex items-center gap-2">
-                    <i class="fas fa-plus"></i> Add Announcement
+                    <i class="fas fa-plus"></i> Tambah Pengumuman
                 </button>
             </div>
 
@@ -54,19 +54,17 @@
                         <thead class="bg-gray-100 text-gray-600 text-sm leading-normal">
                             <tr>
                                 <th class="p-4 font-bold rounded-tl-lg text-center" width="5%">No</th>
-                                <th class="p-4 font-bold">Date</th>
-                                <th class="p-4 font-bold">Content</th>
-                                <th class="p-4 font-bold text-center rounded-tr-lg" width="15%">Action</th>
+                                <th class="p-4 font-bold">Tanggal</th>
+                                <th class="p-4 font-bold">Isi Pengumuman</th>
+                                <th class="p-4 font-bold text-center rounded-tr-lg" width="15%">Aksi</th>
                             </tr>
                         </thead>
                         <tbody class="text-gray-700 text-sm">
                             @php $no = 1; @endphp
                             @foreach ($announcements as $item)
                                 <tr class="hover:bg-gray-50 transition duration-150">
-                                    <td class="p-4 font-medium">
-                                        <div class="flex items-center justify-center">
-                                            {{ $no++ }}
-                                        </div>
+                                    <td class="p-4 font-medium text-center">
+                                        {{ $no++ }}
                                     </td>
                                     <td class="p-4 font-medium">
                                         {{ \Carbon\Carbon::parse($item->created_at)->format('d M Y') }}
@@ -76,7 +74,7 @@
                                     </td>
                                     <td class="p-4">
                                         <div class="flex justify-center items-center gap-2">
-                                            {{-- Edit Button --}}
+                                            <!-- Edit Button -->
                                             <button
                                                 class="editBtn w-9 h-9 flex items-center justify-center bg-blue-500 text-white rounded-lg shadow hover:bg-blue-600 hover:scale-105 transition"
                                                 data-id="{{ $item->id }}" data-content="{{ $item->content }}"
@@ -84,7 +82,7 @@
                                                 <i class="fas fa-edit"></i>
                                             </button>
 
-                                            {{-- Delete Button --}}
+                                            <!-- Delete Button -->
                                             <form method="post"
                                                 action="{{ route('delannouncement', ['id' => $item->id]) }}"
                                                 class="inline deleteForm">
@@ -92,7 +90,7 @@
                                                 @method('delete')
                                                 <button type="button"
                                                     class="delete-confirm w-9 h-9 flex items-center justify-center bg-red-500 text-white rounded-lg shadow hover:bg-red-600 hover:scale-105 transition"
-                                                    title="Delete">
+                                                    title="Hapus">
                                                     <i class="fas fa-trash"></i>
                                                 </button>
                                             </form>
@@ -108,109 +106,97 @@
         </div>
     </main>
 
-    <!-- ADD MODAL -->
+    <!-- MODAL TAMBAH -->
     <div id="addModal"
         class="hidden fixed inset-0 bg-gray-900/60 backdrop-blur-sm flex items-center justify-center z-50 overflow-y-auto px-4 py-6">
-        <div class="bg-white rounded-2xl p-8 w-full max-w-lg shadow-2xl relative transform transition-all scale-100">
+        <div class="bg-white rounded-2xl p-8 w-full max-w-lg shadow-2xl relative">
             <button id="closeAddModal" class="absolute top-5 right-5 text-gray-400 hover:text-gray-600 transition">
                 <i class="fas fa-times text-xl"></i>
             </button>
             <h2 class="text-2xl font-bold mb-6 text-gray-800 flex items-center gap-2">
-                <i class="fa-solid fa-bullhorn text-red-700"></i> Add Announcement
+                <i class="fa-solid fa-bullhorn text-red-700"></i> Tambah Pengumuman
             </h2>
 
-            <form id="addForm" method="post" action="{{ route('postannouncement') }}" enctype="multipart/form-data"
-                class="space-y-5">
-                @csrf @method('post')
+            <form id="addForm" method="post" action="{{ route('postannouncement') }}" class="space-y-5">
+                @csrf
 
                 <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-1">Content / Description</label>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">Isi / Deskripsi</label>
                     <textarea name="content" rows="4"
                         class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-red-500"
-                        placeholder="Write note details here..." required></textarea>
+                        placeholder="Tulis isi pengumuman di sini..." required></textarea>
                 </div>
 
                 <button type="submit"
                     class="w-full py-3 bg-red-600 text-white font-bold rounded-lg shadow-md hover:bg-red-700 transition flex justify-center items-center gap-2">
-                    <i class="fas fa-check"></i> Save Announcement
+                    <i class="fas fa-check"></i> Simpan Pengumuman
                 </button>
             </form>
         </div>
     </div>
 
-    <!-- EDIT MODAL -->
+    <!-- MODAL EDIT -->
     <div id="editModal"
         class="hidden fixed inset-0 bg-gray-900/60 backdrop-blur-sm flex items-center justify-center z-50 overflow-y-auto px-4 py-6">
-        <div class="bg-white rounded-2xl p-8 w-full max-w-lg shadow-2xl relative transform transition-all scale-100">
+        <div class="bg-white rounded-2xl p-8 w-full max-w-lg shadow-2xl relative">
             <button id="closeModal" class="absolute top-5 right-5 text-gray-400 hover:text-gray-600 transition">
                 <i class="fas fa-times text-xl"></i>
             </button>
             <h2 class="text-2xl font-bold mb-6 text-gray-800 flex items-center gap-2">
-                <i class="fas fa-edit text-red-600"></i> Edit Announcement
+                <i class="fas fa-edit text-red-600"></i> Edit Pengumuman
             </h2>
 
-            <form id="editForm" method="post" enctype="multipart/form-data" class="space-y-5">
-                @csrf @method('put')
+            <form id="editForm" method="post" class="space-y-5">
+                @csrf
+                @method('put')
 
                 <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-1">Content / Description</label>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">Isi / Deskripsi</label>
                     <textarea id="editContent" name="content" rows="4"
-                        class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-red-500" required></textarea>
+                        class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-red-500"
+                        required></textarea>
                 </div>
 
                 <button type="submit"
                     class="w-full py-3 bg-red-600 text-white font-bold rounded-lg shadow-md hover:bg-red-700 transition flex justify-center items-center gap-2">
-                    <i class="fas fa-save"></i> Update Announcement
+                    <i class="fas fa-save"></i> Perbarui Pengumuman
                 </button>
             </form>
         </div>
     </div>
 
     <!-- SCRIPTS -->
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"
-        integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="//cdn.datatables.net/2.0.2/js/dataTables.min.js"></script>
     <script>
         $(document).ready(function() {
-            // Init DataTable
-            new DataTable('#myTable', {});
+            new DataTable('#myTable');
 
-            // Modal Logic
             const addModal = $('#addModal');
             const editModal = $('#editModal');
 
             $('#addBtn').click(() => addModal.removeClass('hidden'));
             $('#closeAddModal').click(() => addModal.addClass('hidden'));
 
-            // Edit Logic
             $(document).on('click', '.editBtn', function() {
-                const btn = $(this);
-                $('#editContent').val(btn.data('content'));
-
-                $('#editForm').attr('action', `/announcement/${btn.data('id')}/update`);
-
+                $('#editContent').val($(this).data('content'));
+                $('#editForm').attr('action', `/announcement/${$(this).data('id')}/update`);
                 editModal.removeClass('hidden');
             });
 
             $('#closeModal').click(() => editModal.addClass('hidden'));
 
-            $(window).click((e) => {
-                if (e.target === addModal[0]) addModal.addClass('hidden');
-                if (e.target === editModal[0]) editModal.addClass('hidden');
-            });
-
-            // Delete confirmation
             $(document).on('click', '.delete-confirm', function(e) {
                 e.preventDefault();
                 const form = $(this).closest('form');
                 Swal.fire({
-                    title: 'Delete Announcement?',
-                    text: "This action cannot be undone!",
+                    title: 'Hapus Pengumuman?',
+                    text: 'Tindakan ini tidak dapat dibatalkan!',
                     icon: 'warning',
                     showCancelButton: true,
                     confirmButtonColor: '#d33',
                     cancelButtonColor: '#3085d6',
-                    confirmButtonText: 'Yes, delete it!'
+                    confirmButtonText: 'Ya, hapus'
                 }).then((result) => {
                     if (result.isConfirmed) form.submit();
                 });
@@ -222,5 +208,4 @@
     @include('layout.loading')
 
 </body>
-
 </html>

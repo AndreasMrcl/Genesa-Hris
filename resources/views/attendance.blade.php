@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-    <title>Attendance Management</title>
+    <title>Manajemen Absensi</title>
     @include('layout.head')
     <!-- DataTables -->
     <link href="//cdn.datatables.net/2.0.2/css/dataTables.dataTables.min.css" rel="stylesheet" />
@@ -35,20 +35,21 @@
         <div class="p-6 space-y-6">
 
             <!-- Header Section -->
-            <div class="md:flex justify-between items-center bg-white p-5 rounded-xl shadow-sm border border-gray-100 space-y-2 md:space-y-0">
+            <div
+                class="md:flex justify-between items-center bg-white p-5 rounded-xl shadow-sm border border-gray-100 space-y-2 md:space-y-0">
                 <div>
                     <h1 class="font-bold text-2xl text-gray-800 flex items-center gap-2">
-                        <i class="fas fa-clock text-indigo-600"></i> Attendance Recap
+                        <i class="fas fa-clock text-indigo-600"></i> Rekap Absensi
                     </h1>
-                    <p class="text-sm text-gray-500 mt-1">List of recorded attendance periods</p>
+                    <p class="text-sm text-gray-500 mt-1">Daftar periode absensi yang tercatat</p>
                 </div>
                 <button onclick="document.getElementById('syncModal').classList.remove('hidden')"
                     class="p-2 px-4 bg-white text-blue-600 border border-blue-200 rounded-lg shadow hover:bg-blue-50 transition font-semibold flex items-center gap-2">
-                    <i class="fas fa-sync-alt"></i> Sync Device
+                    <i class="fas fa-sync-alt"></i> Sinkronisasi Perangkat
                 </button>
                 <a href="{{ route('manageattendance') }}"
                     class="p-2 px-6 bg-green-500 text-white rounded-lg shadow hover:bg-green-600 transition font-semibold flex items-center w-fit gap-2">
-                    <i class="fas fa-plus"></i> New Recap
+                    <i class="fas fa-plus"></i> Rekap Baru
                 </a>
             </div>
 
@@ -58,10 +59,10 @@
                     <table id="myTable" class="w-full text-left">
                         <thead class="bg-gray-100 text-gray-600 text-sm leading-normal">
                             <tr>
-                                <th class="p-4 font-bold">Period Range</th>
-                                <th class="p-4 font-bold text-center">Total Employees</th>
-                                <th class="p-4 font-bold text-right">Last Updated</th>
-                                <th class="p-4 font-bold text-center">Action</th>
+                                <th class="p-4 font-bold">Rentang Periode</th>
+                                <th class="p-4 font-bold text-center">Total Karyawan</th>
+                                <th class="p-4 font-bold text-right">Terakhir Diperbarui</th>
+                                <th class="p-4 font-bold text-center">Aksi</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-200 text-gray-700 text-sm">
@@ -79,7 +80,7 @@
                                     <td class="p-4">
                                         <span
                                             class="bg-blue-100 text-blue-800 text-xs font-medium px-3 py-1 rounded-full">
-                                            {{ $batch->total_records }} Records
+                                            {{ $batch->total_records }} Data
                                         </span>
                                     </td>
                                     <td class="p-4 text-gray-500">
@@ -121,30 +122,29 @@
             </button>
 
             <h2 class="text-xl font-bold mb-4 text-gray-800 flex items-center gap-2">
-                <i class="fas fa-cloud-download-alt text-blue-600"></i> Sync from Cloud
+                <i class="fas fa-cloud-download-alt text-blue-600"></i> Sinkronisasi dari Cloud
             </h2>
 
             <p class="text-sm text-gray-500 mb-6">
-                Pull data manually from Fingerspot Cloud if realtime webhook missed some logs.
+                Ambil data absensi secara manual dari Fingerspot Cloud jika webhook realtime terlewat.
             </p>
 
             <form action="{{ route('fingerspotFetch') }}" method="POST" class="space-y-4">
                 @csrf
                 <div>
-                    <label class="block text-xs font-bold text-gray-600 uppercase mb-1">From
-                        Date</label>
+                    <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Dari Tanggal</label>
                     <input type="date" name="start_date" class="w-full rounded-lg border-gray-300 p-2.5 border"
                         required>
                 </div>
                 <div>
-                    <label class="block text-xs font-bold text-gray-600 uppercase mb-1">To Date</label>
+                    <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Sampai Tanggal</label>
                     <input type="date" name="end_date" class="w-full rounded-lg border-gray-300 p-2.5 border"
                         required>
                 </div>
 
                 <button type="submit"
                     class="w-full py-3 bg-blue-600 text-white font-bold rounded-lg shadow-md hover:bg-blue-700 transition flex justify-center items-center gap-2">
-                    <i class="fas fa-sync"></i> Fetch Data
+                    <i class="fas fa-sync"></i> Ambil Data
                 </button>
             </form>
         </div>
@@ -160,8 +160,8 @@
                 e.preventDefault();
                 const form = this.closest('form');
                 Swal.fire({
-                    title: 'Delete this period?',
-                    text: "This will delete ALL attendance data for this date range. Cannot be undone!",
+                    title: 'Hapus periode ini?',
+                    text: 'Semua data absensi pada periode ini akan dihapus dan tidak dapat dikembalikan!',
                     icon: 'warning',
                     showCancelButton: true,
                     confirmButtonColor: '#d33',

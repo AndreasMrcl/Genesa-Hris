@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-    <title>Branch Management</title>
+    <title>Hasil Pencarian</title>
     @include('layout.head')
     <link href="//cdn.datatables.net/2.0.2/css/dataTables.dataTables.min.css" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -37,10 +37,10 @@
                 <div>
                     <h1 class="font-bold text-2xl text-gray-800 flex items-center gap-2">
                         <i class="fas fa-magnifying-glass text-cyan-600"></i>
-                        Search Results
+                        Hasil Pencarian
                     </h1>
                     <p class="text-sm text-gray-500">
-                        Results based on your search keywords across the system
+                        Hasil berdasarkan kata kunci pencarian Anda di seluruh sistem
                     </p>
                 </div>
             </div>

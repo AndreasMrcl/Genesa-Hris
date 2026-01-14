@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-    <title>Payroll History</title>
+<title>Riwayat Penggajian</title>
     @include('layout.head')
     <link href="//cdn.datatables.net/2.0.2/css/dataTables.dataTables.min.css" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -36,13 +36,13 @@
             <div class="flex justify-between items-center bg-white p-5 rounded-xl shadow-sm border border-gray-100">
                 <div>
                     <h1 class="font-bold text-2xl text-gray-800 flex items-center gap-2">
-                        <i class="fas fa-money-check-alt text-indigo-600"></i> Payroll History
+                        <i class="fas fa-money-check-alt text-indigo-600"></i> Riwayat Penggajian
                     </h1>
-                    <p class="text-sm text-gray-500">List of generated payroll periods</p>
+                    <p class="text-sm text-gray-500">Daftar periode penggajian yang telah dibuat</p>
                 </div>
                 <a href="{{ route('createpayroll') }}"
                     class="px-6 py-3 bg-indigo-600 text-white rounded-lg shadow-md hover:bg-indigo-700 transition font-semibold flex items-center gap-2">
-                    <i class="fas fa-plus"></i> Run Payroll
+                    <i class="fas fa-plus"></i> Jalankan Penggajian
                 </a>
             </div>
 
@@ -70,22 +70,10 @@
                     <table id="myTable" class="w-full text-left">
                         <thead class="bg-gray-100 text-gray-600 text-sm leading-normal">
                             <tr>
-                                <th class="p-4 font-bold">Period Range</th>
-                                <th class="p-4 font-bold ">
-                                    <div class="flex justify-center">
-                                        Total Branches
-                                    </div>  
-                                </th>
-                                <th class="p-4 font-bold">
-                                    <div class="flex justify-center">
-                                        Total Expense
-                                    </div> 
-                                </th>
-                                <th class="p-4 font-bold">
-                                    <div class="flex justify-center">
-                                        Action
-                                    </div> 
-                                </th>
+                                <th class="p-4 font-bold">Periode</th>
+                                <th class="p-4 font-bold text-center">Total Cabang</th>
+                                <th class="p-4 font-bold text-center">Total Pengeluaran</th>
+                                <th class="p-4 font-bold text-center">Aksi</th>
                             </tr>
                         </thead>
                         <tbody class="text-gray-700 text-sm">
@@ -179,8 +167,8 @@
                 e.preventDefault();
                 const form = $(this).closest('form');
                 Swal.fire({
-                    title: 'Delete Payroll Batch?',
-                    text: "This will delete ALL data for this period!",
+                    title: 'Hapus periode ini?',
+                    text: "Ini akan menghapus SEMUA slip gaji untuk periode ini. Tindakan ini tidak dapat dibatalkan!",
                     icon: 'warning',
                     showCancelButton: true,
                     confirmButtonColor: '#d33',

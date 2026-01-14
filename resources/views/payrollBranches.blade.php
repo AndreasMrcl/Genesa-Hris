@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Payroll Branches</title>
+    <title>Payroll Cabang</title>
     @include('layout.head')
     <link href="//cdn.datatables.net/2.0.2/css/dataTables.dataTables.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
@@ -33,10 +33,10 @@
             <div class="flex justify-between items-center bg-white p-5 rounded-xl shadow-sm border border-gray-100">
                 <div>
                     <h1 class="font-bold text-2xl text-gray-800 flex items-center gap-2">
-                        <i class="fas fa-building text-cyan-600"></i> Branch List
+                        <i class="fas fa-building text-cyan-600"></i> Daftar Cabang
                     </h1>
                     <p class="text-sm text-gray-500 mt-1">
-                        Period: 
+                        Periode: 
                         <span class="font-bold text-gray-700">
                             {{ \Carbon\Carbon::parse($start)->format('d M Y') }} - {{ \Carbon\Carbon::parse($end)->format('d M Y') }}
                         </span>
@@ -44,7 +44,7 @@
                 </div>
                 <a href="{{ route('payroll') }}" 
                    class="px-5 py-2.5 bg-gray-100 text-gray-700 font-semibold rounded-lg hover:bg-gray-200 transition flex items-center gap-2 text-sm">
-                   <i class="fas fa-arrow-left"></i> Back to Periods
+                   <i class="fas fa-arrow-left"></i> Kembali ke Periode Penggajian
                 </a>
             </div>
 
@@ -53,10 +53,10 @@
                     <table id="myTable" class="w-full text-left">
                         <thead class="bg-gray-100 text-gray-600 text-sm leading-normal">
                             <tr>
-                                <th class="p-4 font-bold rounded-tl-lg">Branch Name</th>
-                                <th class="p-4 font-bold text-center">Category</th>
-                                <th class="p-4 font-bold text-center">Employees</th>
-                                <th class="p-4 font-bold text-center">Total Expense</th>
+                                <th class="p-4 font-bold rounded-tl-lg">Nama Cabang</th>
+                                <th class="p-4 font-bold text-center">Kategori</th>
+                                <th class="p-4 font-bold text-center">Karyawan</th>
+                                <th class="p-4 font-bold text-center">Total Pengeluaran</th>
                             </tr>
                         </thead>
                         <tbody class="text-gray-700 text-sm">
@@ -98,8 +98,8 @@
                     </table>
                 </div>
             </div>
-            
-            <p class="text-xs text-gray-400 italic">* Click on a row to view employee details for that branch.</p>
+
+            <p class="text-xs text-gray-400 italic">* Klik pada baris untuk melihat detail karyawan dari cabang tersebut.</p>
         </div>
     </main>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>

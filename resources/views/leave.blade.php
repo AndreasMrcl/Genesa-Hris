@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-    <title>Leave Management</title>
+    <title>Manajemen Cuti</title>
     @include('layout.head')
     <!-- DataTables CSS -->
     <link href="//cdn.datatables.net/2.0.2/css/dataTables.dataTables.min.css" rel="stylesheet" />
@@ -38,13 +38,13 @@
             <div class="md:flex justify-between items-center bg-white p-5 rounded-xl shadow-sm border border-gray-100 space-y-2 md:space-y-0">
                 <div>
                     <h1 class="font-bold text-2xl text-gray-800 flex items-center gap-2">
-                        <i class="fas fa-plane-departure text-yellow-500"></i> Leave Requests
+                        <i class="fas fa-plane-departure text-yellow-500"></i> Permintaan Cuti
                     </h1>
-                    <p class="text-sm text-gray-500 ">Manage employee leave applications</p>
+                    <p class="text-sm text-gray-500 ">Kelola Pengajuan Cuti Karyawan</p>
                 </div>
                 <button id="addBtn"
                     class="px-6 py-3 bg-yellow-500 text-white rounded-lg shadow-md hover:bg-yellow-600 transition font-semibold flex items-center gap-2">
-                    <i class="fas fa-plus"></i> Add Leave
+                    <i class="fas fa-plus"></i> Tambah Cuti
                 </button>
             </div>
 
@@ -55,11 +55,11 @@
                         <thead class="bg-gray-100 text-gray-600 text-sm leading-normal">
                             <tr>
                                 <th class="p-4 font-bold rounded-tl-lg text-center" width="5%">No</th>
-                                <th class="p-4 font-bold">Date</th>
-                                <th class="p-4 font-bold">Employee</th>
-                                <th class="p-4 font-bold text-center">Duration</th>
-                                <th class="p-4 font-bold">Type</th>
-                                <th class="p-4 font-bold">Note</th>
+                                <th class="p-4 font-bold">Tanggal</th>
+                                <th class="p-4 font-bold">Karyawan</th>
+                                <th class="p-4 font-bold text-center">Durasi</th>
+                                <th class="p-4 font-bold">Jenis</th>
+                                <th class="p-4 font-bold">Catatan</th>
                                 <th class="p-4 font-bold text-center">Status</th>
                                 <th class="p-4 font-bold text-center rounded-tr-lg" width="15%">Action</th>
                             </tr>
@@ -151,7 +151,7 @@
                 <i class="fas fa-times text-xl"></i>
             </button>
             <h2 class="text-2xl font-bold mb-6 text-gray-800 flex items-center gap-2">
-                <i class="fas fa-plane-departure text-yellow-500"></i> Add Leave Request
+                <i class="fas fa-plane-departure text-yellow-500"></i> Tambah Permintaan Cuti
             </h2>
 
             <form id="addForm" method="post" action="{{ route('postleave') }}" enctype="multipart/form-data"
@@ -159,7 +159,7 @@
                 @csrf @method('post')
 
                 <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-1">Employee</label>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">Karyawan</label>
                     <select id="employee" name="employee_id"
                         class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-yellow-500"
                         required>
@@ -172,13 +172,13 @@
 
                 <div class="grid grid-cols-2 gap-5">
                     <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1">Start Date</label>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Mulai</label>
                         <input type="date" name="start_date"
                             class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-yellow-500"
                             required>
                     </div>
                     <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1">End Date</label>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Berakhir</label>
                         <input type="date" name="end_date"
                             class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-yellow-500"
                             required>
@@ -187,7 +187,7 @@
 
                 <div class="grid grid-cols-2 gap-5">
                     <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1">Type</label>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Jenis</label>
                         <select name="type"
                             class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-yellow-500"
                             required>
@@ -213,14 +213,14 @@
                 </div>
 
                 <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-1">Note</label>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">Catatan</label>
                     <textarea name="note" rows="3"
                         class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-yellow-500" required></textarea>
                 </div>
 
                 <button type="submit"
                     class="w-full py-3 bg-yellow-500 text-white font-bold rounded-lg shadow-md hover:bg-yellow-600 transition flex justify-center items-center gap-2">
-                    <i class="fas fa-check"></i> Submit
+                    <i class="fas fa-check"></i> Simpan
                 </button>
             </form>
         </div>
@@ -234,14 +234,14 @@
                 <i class="fas fa-times text-xl"></i>
             </button>
             <h2 class="text-2xl font-bold mb-6 text-gray-800 flex items-center gap-2">
-                <i class="fas fa-edit text-blue-600"></i> Edit Leave
+                <i class="fas fa-edit text-blue-600"></i> Edit Permintaan Cuti
             </h2>
 
             <form id="editForm" method="post" enctype="multipart/form-data" class="space-y-5">
                 @csrf @method('put')
 
                 <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-1">Employee</label>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">Karyawan</label>
                     <select id="editEmployee" name="employee_id"
                         class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-blue-500"
                         required>
@@ -253,13 +253,13 @@
 
                 <div class="grid grid-cols-2 gap-5">
                     <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1">Start Date</label>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Mulai</label>
                         <input type="date" id="editStartDate" name="start_date"
                             class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-blue-500"
                             required>
                     </div>
                     <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1">End Date</label>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Berakhir</label>
                         <input type="date" id="editEndDate" name="end_date"
                             class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-blue-500"
                             required>
@@ -268,7 +268,7 @@
 
                 <div class="grid grid-cols-2 gap-5">
                     <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1">Type</label>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Jenis</label>
                         <select id="editType" name="type"
                             class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-blue-500"
                             required>
@@ -294,14 +294,14 @@
                 </div>
 
                 <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-1">Note</label>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">Catatan</label>
                     <textarea id="editNote" name="note" rows="3"
                         class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-blue-500" required></textarea>
                 </div>
 
                 <button type="submit"
                     class="w-full py-3 bg-blue-600 text-white font-bold rounded-lg shadow-md hover:bg-blue-700 transition flex justify-center items-center gap-2">
-                    <i class="fas fa-save"></i> Update
+                    <i class="fas fa-save"></i> Perbarui Permintaan Cuti
                 </button>
             </form>
         </div>
