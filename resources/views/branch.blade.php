@@ -239,6 +239,11 @@
             $('#addBtn').click(() => $('#addModal').removeClass('hidden'));
             $('#closeAddModal').click(() => $('#addModal').addClass('hidden'));
 
+            $(window).click((e) => {
+                if (e.target === $('#addModal')[0]) $('#addModal').addClass('hidden');
+                if (e.target === $('#editModal')[0]) $('#editModal').addClass('hidden');
+            });
+
             // Edit Logic
             $(document).on('click', '.editBtn', function() {
                 const btn = $(this);

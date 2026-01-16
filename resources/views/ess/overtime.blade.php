@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-    <title>ESS | Overtime</title>
+    <title>ESS | Lembur</title>
     @include('ess.layout.head')
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
     
@@ -19,7 +19,7 @@
             <a href="{{ route('ess-home') }}" class="w-9 h-9 flex items-center justify-center rounded-xl bg-gray-50 text-gray-600 hover:bg-gray-100 transition">
                 <i class="fas fa-arrow-left text-base"></i>
             </a>
-            <h1 class="font-bold text-base text-gray-800">Overtime History</h1>
+            <h1 class="font-bold text-base text-gray-800">Riwayat Lembur</h1>
             <div class="w-9"></div> 
         </div>
 
@@ -133,8 +133,8 @@
                 <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-3 text-gray-300">
                     <i class="fas fa-couch text-3xl"></i>
                 </div>
-                <h3 class="text-base font-bold text-gray-700">No Overtime</h3>
-                <p class="text-xs text-gray-400 mt-1">You haven't submitted any overtime requests.</p>
+                <h3 class="text-base font-bold text-gray-700">Tidak Ada Permintaan</h3>
+                <p class="text-xs text-gray-400 mt-1">Anda belum mengajukan permohonan lembur apa pun.</p>
             </div>
         @endforelse
 
@@ -142,7 +142,7 @@
 
     <div class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-lg md:max-w-sm mx-auto p-4 z-30">
         <button id="addBtn" class="w-full py-3 bg-purple-600 text-white font-bold rounded-xl shadow-md hover:bg-purple-700 transition flex items-center justify-center gap-2 transform active:scale-95">
-            <i class="fas fa-plus-circle"></i> Request Overtime
+            <i class="fas fa-plus-circle"></i> Permintaan Lembur
         </button>
     </div>
 
@@ -154,7 +154,7 @@
                     <div class="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center text-purple-600">
                         <i class="fas fa-business-time text-sm"></i>
                     </div>
-                    Request Overtime
+                    Permintaan Lembur
                 </h2>
                 <button id="closeAddModal" class="w-8 h-8 flex items-center justify-center rounded-full bg-white text-gray-400 hover:text-gray-600 shadow-sm transition">
                     <i class="fas fa-times"></i>
@@ -168,17 +168,17 @@
                     <input type="hidden" name="employee_id" value="{{ Auth::guard('employee')->id() }}">
 
                     <div>
-                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1.5">Overtime Date</label>
+                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1.5">Tanggal Lembur</label>
                         <input type="date" name="overtime_date" class="w-full rounded-xl border-gray-300 shadow-sm p-3 border focus:ring-2 focus:ring-purple-500 transition text-sm" required>
                     </div>
 
                     <div class="grid grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-xs font-bold text-gray-500 uppercase mb-1.5">Start Time</label>
+                            <label class="block text-xs font-bold text-gray-500 uppercase mb-1.5">Waktu Mulai</label>
                             <input type="time" name="start_time" class="w-full rounded-xl border-gray-300 shadow-sm p-3 border focus:ring-2 focus:ring-purple-500 transition text-sm" required>
                         </div>
                         <div>
-                            <label class="block text-xs font-bold text-gray-500 uppercase mb-1.5">End Time</label>
+                            <label class="block text-xs font-bold text-gray-500 uppercase mb-1.5">Waktu Selesai</label>
                             <input type="time" name="end_time" class="w-full rounded-xl border-gray-300 shadow-sm p-3 border focus:ring-2 focus:ring-purple-500 transition text-sm" required>
                         </div>
                     </div>
@@ -187,7 +187,7 @@
 
             <div class="p-4 border-t border-gray-100 bg-white rounded-b-2xl">
                 <button type="submit" form="addForm" class="w-full py-3.5 bg-purple-600 text-white font-bold rounded-xl shadow-lg hover:bg-purple-700 transition flex items-center justify-center gap-2 transform active:scale-95">
-                    <i class="fas fa-paper-plane"></i> Submit Request
+                    <i class="fas fa-paper-plane"></i> Submit
                 </button>
             </div>
         </div>

@@ -509,13 +509,17 @@ class EssController extends Controller
     {
         $coordinator = $this->checkCoordinator();
         
-        $overtimes = Overtime::with(['employee', 'employee.position'])
+        $rawOvertimes = Overtime::with(['employee', 'employee.position'])
             ->whereHas('employee', function($q) use ($coordinator) {
                 $q->where('branch_id', $coordinator->branch_id);
             })
-            ->orderByRaw("FIELD(status, 'pending') DESC")
-            ->latest('created_at')
+            ->orderBy('overtime_date', 'desc') 
+            ->orderBy('start_time', 'asc')   
             ->get();
+
+        $overtimes = $rawOvertimes->groupBy(function($item) {
+            return $item->overtime_date . '|' . $item->start_time . '|' . $item->end_time;
+        });
 
         $employees = Employee::where('branch_id', $coordinator->branch_id)
             ->where('compani_id', $coordinator->compani_id)
@@ -600,6 +604,48 @@ class EssController extends Controller
         );
 
         return redirect()->back()->with('success', 'Overtime status updated successfully.');
+    }
+
+    public function printOvertimeReport(Request $request, $date)
+    {
+        $coordinator = $this->checkCoordinator();
+        
+        $startTime = $request->query('start_time');
+        $endTime = $request->query('end_time');
+
+        // Query Data: Filter Tanggal + Jam + Status Approved + Cabang
+        $query = Overtime::with(['employee.position', 'employee.branch'])
+            ->whereDate('overtime_date', $date)
+            ->where('status', 'approved')
+            ->whereHas('employee', function($q) use ($coordinator) {
+                $q->where('branch_id', $coordinator->branch_id);
+            });
+            
+        // Tambahkan filter jam jika ada (agar spesifik per sesi)
+        if ($startTime && $endTime) {
+            $query->where('start_time', $startTime)
+                  ->where('end_time', $endTime);
+        }
+
+        $overtimes = $query->orderBy('employee_id')->get();
+            
+        if ($overtimes->isEmpty()) {
+            return back()->withErrors(['msg' => 'No approved overtime records found for this session.']);
+        }
+
+        // Load View PDF
+        $pdf = Pdf::loadView('ess.overtime_report', [
+            'date' => $date,
+            'start_time' => $startTime, // Kirim data jam ke view
+            'end_time' => $endTime,     // Kirim data jam ke view
+            'overtimes' => $overtimes,
+            'coordinator' => $coordinator,
+            'company' => $coordinator->compani
+        ]);
+        
+        $pdf->setPaper('A4', 'portrait');
+        
+        return $pdf->stream('Lembur_' . $date . '_' . str_replace(':', '', $startTime) . '.pdf');
     }
 
     private function logActivity($type, $description, $companyId)

@@ -98,8 +98,7 @@
     </style>
 </head>
 
-<body
-    class="{{ isset($isEss) && $isEss ? 'bg-gray-50 font-sans w-full md:max-w-sm mx-auto min-h-screen flex flex-col shadow-lg border-x border-gray-100' : 'bg-gray-50 font-sans' }}">
+<body class="{{ isset($isEss) && $isEss ? 'bg-gray-50 font-sans w-full md:max-w-sm mx-auto min-h-screen flex flex-col shadow-lg border-x border-gray-100' : 'bg-gray-50 font-sans' }}">
 
     @if (!isset($isEss) || !$isEss)
         {{-- ADMIN LAYOUT --}}
@@ -122,9 +121,7 @@
                 <div class="p-3 space-y-4 flex-grow pb-20">
     @endif
 
-    <div
-        class="{{ isset($isEss) && $isEss ? 'flex flex-col gap-3' : 'bg-white p-5 rounded-xl shadow-sm border border-gray-100 flex flex-col md:flex-row justify-between items-center gap-4' }}">
-
+    <div class="{{ isset($isEss) && $isEss ? 'flex flex-col gap-3' : 'bg-white p-5 rounded-xl shadow-sm border border-gray-100 flex flex-col md:flex-row justify-between items-center gap-4' }}">
         <!-- Kiri: Judul -->
         @if (!isset($isEss) || !$isEss)
             <div class="w-full md:w-auto">
@@ -220,10 +217,8 @@
 
     @if ($selectedBranchId)
         <div class="{{ isset($isEss) && $isEss ? 'flex flex-col gap-4' : 'grid grid-cols-1 xl:grid-cols-3 gap-6' }}">
-
             <!-- RIGHT: CALENDAR -->
-            <div
-                class="{{ isset($isEss) && $isEss ? 'order-1' : 'xl:col-span-2 order-2' }} bg-white rounded-xl shadow-md overflow-hidden border border-gray-100">
+            <div class="{{ isset($isEss) && $isEss ? 'order-1' : 'xl:col-span-2 order-2' }} bg-white rounded-xl shadow-md overflow-hidden border border-gray-100">
                 <div class="p-3 border-b border-gray-100 bg-gray-50 flex flex-wrap justify-between items-center gap-2">
                     <h2 class="font-bold text-gray-700 text-sm">Kalender</h2>
                     <div class="flex flex-wrap gap-1 justify-end">
@@ -238,12 +233,10 @@
                 <div class="p-2 overflow-hidden">
                     <div id="calendar" class="rounded-lg w-full"></div>
                 </div>
-                @endif
             </div>
 
             <!-- LEFT: SCHEDULE LIST TABLE -->
-            <div
-                class="{{ isset($isEss) && $isEss ? 'order-2' : 'xl:col-span-1 order-1' }} bg-white rounded-xl shadow-md overflow-hidden border border-gray-100 flex flex-col h-full">
+            <div class="{{ isset($isEss) && $isEss ? 'order-2' : 'xl:col-span-1 order-1' }} bg-white rounded-xl shadow-md overflow-hidden border border-gray-100 flex flex-col h-full">
                 <div class="p-4 border-b border-gray-100 bg-gray-50">
                     <h2 class="font-bold text-gray-700 text-sm">Susunan Jadwal</h2>
                 </div>
@@ -310,7 +303,6 @@
                     </table>
                 </div>
             </div>
-
         </div>
     @else
         <!-- EMPTY STATE -->

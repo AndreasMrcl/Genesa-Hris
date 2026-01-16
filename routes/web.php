@@ -207,6 +207,7 @@ Route::middleware('auth:employee')->group(function () {
     Route::get('/coordinator/overtime', [EssController::class, 'coordinatorOvertime'])->name('ess-coordinator-overtime');
     Route::post('/coordinator/overtime', [EssController::class, 'storeCoordinatorOvertime'])->name('ess-coordinator-overtime-store');
     Route::put('/coordinator/overtime/{id}', [EssController::class, 'coordinatorUpdateOvertime'])->name('ess-coordinator-overtime-update');
+    Route::get('/coordinator/overtime/print/{date}', [EssController::class, 'printOvertimeReport'])->name('ess-coordinator-overtime-print');
 
     Route::get('/ess-note', [EssController::class, 'note'])->name('ess-note');
 
