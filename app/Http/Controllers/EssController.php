@@ -613,15 +613,13 @@ class EssController extends Controller
         $startTime = $request->query('start_time');
         $endTime = $request->query('end_time');
 
-        // Query Data: Filter Tanggal + Jam + Status Approved + Cabang
         $query = Overtime::with(['employee.position', 'employee.branch'])
             ->whereDate('overtime_date', $date)
             ->where('status', 'approved')
             ->whereHas('employee', function($q) use ($coordinator) {
                 $q->where('branch_id', $coordinator->branch_id);
             });
-            
-        // Tambahkan filter jam jika ada (agar spesifik per sesi)
+
         if ($startTime && $endTime) {
             $query->where('start_time', $startTime)
                   ->where('end_time', $endTime);
@@ -636,8 +634,8 @@ class EssController extends Controller
         // Load View PDF
         $pdf = Pdf::loadView('ess.overtime_report', [
             'date' => $date,
-            'start_time' => $startTime, // Kirim data jam ke view
-            'end_time' => $endTime,     // Kirim data jam ke view
+            'start_time' => $startTime, 
+            'end_time' => $endTime,  
             'overtimes' => $overtimes,
             'coordinator' => $coordinator,
             'company' => $coordinator->compani

@@ -18,6 +18,7 @@ use App\Models\CompanyPayrollConfig;
 use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Str;
 
 class PayrollController extends Controller
 {
@@ -60,26 +61,51 @@ class PayrollController extends Controller
     {
         $userCompany = Auth::user()->compani;
 
-        $branchStats = Payroll::query()
-            ->join('employees', 'payrolls.employee_id', '=', 'employees.id')
-            ->join('branches', 'employees.branch_id', '=', 'branches.id')
-            ->where('payrolls.compani_id', $userCompany->id)
-            ->where('payrolls.pay_period_start', $start)
-            ->where('payrolls.pay_period_end', $end)
-            ->select(
-                'branches.id',
-                'branches.name',
-                'branches.category',
-                DB::raw('count(payrolls.id) as employee_count'),
-                DB::raw('sum(payrolls.net_salary) as total_expense')
-            )
-            ->groupBy('branches.id', 'branches.name', 'branches.category')
-            ->orderBy('branches.name')
+        // 1. Ambil Data Payroll + Detail + Branch
+        // Kita butuh 'payrollDetails' untuk memilah komponen BPJS & Infaq
+        $payrolls = Payroll::with(['employee.branch', 'payrollDetails'])
+            ->where('compani_id', $userCompany->id)
+            ->where('pay_period_start', $start)
+            ->where('pay_period_end', $end)
             ->get();
 
-        if ($branchStats->isEmpty()) {
-            return redirect()->route('payroll')->withErrors(['msg' => 'Payroll data not found.']);
+        if ($payrolls->isEmpty()) {
+            return redirect()->route('payroll')->withErrors(['msg' => 'Data penggajian tidak ditemukan.']);
         }
+
+        // 2. Grouping per Cabang (Menggunakan Collection Logic)
+        $branchStats = $payrolls->groupBy(function($item) {
+            return $item->employee->branch_id;
+        })->map(function ($items) {
+            // Ambil info cabang dari item pertama
+            $branch = $items->first()->employee->branch;
+            
+            // Kumpulkan SEMUA detail dari seluruh karyawan di cabang ini menjadi satu list panjang
+            $allDetails = $items->flatMap->payrollDetails;
+
+            // A. Hitung Total Infaq
+            $totalInfaq = $allDetails->filter(function ($d) {
+                return Str::contains($d->name, 'Infaq');
+            })->sum('amount');
+
+            // B. Hitung Total BPJS
+            // Filter semua detail yang namanya mengandung keyword BPJS/JKK/JKM/JHT/JP
+            $totalBpjs = $allDetails->filter(function ($d) {
+                $name = strtoupper($d->name);
+                return Str::contains($name, 'BPJS') || 
+                       in_array($name, ['JKK', 'JKM', 'JHT', 'JP']);
+            })->sum('amount');
+
+            return (object) [
+                'id' => $branch->id,
+                'name' => $branch->name,
+                'category' => $branch->category,
+                'employee_count' => $items->count(),
+                'total_expense' => $items->sum('net_salary'), // Total Gaji Bersih (Transfer)
+                'total_bpjs' => $totalBpjs,
+                'total_infaq' => $totalInfaq,
+            ];
+        })->sortBy('name')->values(); 
 
         return view('payrollBranches', compact('branchStats', 'start', 'end'));
     }

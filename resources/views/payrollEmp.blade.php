@@ -41,12 +41,24 @@
                     <table id="employeeTable" class="w-full text-left">
                         <thead class="bg-gray-50">
                             <tr>
-                                <th class="p-3 font-semibold text-gray-600 text-sm uppercase">Karyawan</th>
+                                <th class="p-3 font-semibold text-gray-600 text-sm uppercase">
+                                    <div class="flex items-center justify-center">
+                                        Karyawan
+                                    </div>
+                                </th>
                                 <th class="p-3 font-semibold text-gray-600 text-sm uppercase">Cabang</th>
                                 <th class="p-3 font-semibold text-gray-600 text-sm uppercase">Gaji Pokok</th>
                                 <th class="p-3 font-semibold text-gray-600 text-sm uppercase">Gaji Bersih</th>
-                                <th class="p-3 font-semibold text-gray-600 text-sm uppercase text-center">Metode</th>
-                                <th class="p-3 font-semibold text-gray-600 text-sm uppercase text-center">Aksi</th>
+                                <th class="p-3 font-semibold text-gray-600 text-sm uppercase text-center">
+                                    <div class="flex items-center justify-center">
+                                        Metode
+                                    </div>
+                                </th>
+                                <th class="p-3 font-semibold text-gray-600 text-sm uppercase text-center">
+                                    <div class="flex items-center justify-center">
+                                        Aksi
+                                    </div>
+                                </th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-200">
@@ -77,9 +89,11 @@
                                         </span>
                                     </td>
                                     <td class="p-3 text-sm text-gray-600">
-                                        <span class="inline-flex items-center gap-1 px-2 py-1 text-xs uppercase font-medium text-blue-700 bg-blue-50 rounded-full border border-blue-200">
-                                            {{ $item->employee->payroll_method }}
-                                        </span>
+                                        <div class="flex items-center justify-center">
+                                            <span class="inline-flex items-center gap-1 px-2 py-1 text-xs uppercase font-medium text-blue-700 bg-blue-50 rounded-full border border-blue-200">
+                                                {{ $item->employee->payroll_method }}
+                                            </span>
+                                        </div>
                                     </td>
                                     <td class="p-3 text-center">
                                         <div class="flex justify-center gap-2">

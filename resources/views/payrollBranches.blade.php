@@ -44,7 +44,7 @@
                 </div>
                 <a href="{{ route('payroll') }}" 
                    class="px-5 py-2.5 bg-gray-100 text-gray-700 font-semibold rounded-lg hover:bg-gray-200 transition flex items-center gap-2 text-sm">
-                   <i class="fas fa-arrow-left"></i> Kembali ke Periode Penggajian
+                   <i class="fas fa-arrow-left"></i> Kembali
                 </a>
             </div>
 
@@ -53,10 +53,36 @@
                     <table id="myTable" class="w-full text-left">
                         <thead class="bg-gray-100 text-gray-600 text-sm leading-normal">
                             <tr>
-                                <th class="p-4 font-bold rounded-tl-lg">Nama Cabang</th>
-                                <th class="p-4 font-bold text-center">Kategori</th>
-                                <th class="p-4 font-bold text-center">Karyawan</th>
-                                <th class="p-4 font-bold text-center">Total Pengeluaran</th>
+                                <th class="p-4 font-bold rounded-tl-lg">
+                                    <div class="flex items-center justify-center">
+                                        Nama Cabang
+                                    </div>
+                                </th>
+                                <th class="p-4 font-bold text-center">
+                                    <div class="flex items-center justify-center">
+                                        Kategori
+                                    </div>
+                                </th>
+                                <th class="p-4 font-bold text-center">
+                                    <div class="flex items-center justify-center">
+                                        Karyawan
+                                    </div>
+                                </th>
+                                <th class="p-4 font-bold text-center">
+                                    <div class="flex items-center justify-center">
+                                        Total BPJS
+                                    </div>
+                                </th>
+                                <th class="p-4 font-bold text-center">
+                                    <div class="flex items-center justify-center">
+                                        Total Infaq
+                                    </div>
+                                </th>
+                                <th class="p-4 font-bold text-center">
+                                    <div class="flex items-center justify-center">
+                                        Total Pengeluaran
+                                    </div>
+                                </th>
                             </tr>
                         </thead>
                         <tbody class="text-gray-700 text-sm">
@@ -65,23 +91,40 @@
                                     onclick="window.location='{{ route('payrollBranchEmployees', ['start' => $start, 'end' => $end, 'branch' => $stat->id]) }}'">
                                     
                                     <td class="p-4">
-                                        <div class="font-bold text-lg text-cyan-700">
+                                        <div class="font-bold text-lg text-cyan-700 flex items-center justify-center">
                                             {{ $stat->name }}
                                         </div>
                                     </td>
                                     <td class="p-4">
-                                        <span class="text-xs uppercase font-bold text-gray-500 bg-gray-100 px-2 py-1 rounded border">
-                                            {{ str_replace('_', ' ', $stat->category) }}
-                                        </span>
+                                        <div class="flex items-center justify-center">
+                                            <span class="text-xs uppercase font-bold text-gray-500 bg-gray-100 px-2 py-1 rounded border">
+                                                {{ str_replace('_', ' ', $stat->category) }}
+                                            </span>
+                                        </div>
                                     </td>
                                     <td class="p-4">
-                                        <span class="font-bold text-gray-800 text-normal">
-                                            {{ $stat->employee_count }}
-                                        </span>
-                                        <span class="text-xs text-gray-400">Staff</span>
+                                        <div class="flex items-center justify-center">
+                                            <span class="font-bold text-gray-800 text-normal">
+                                                {{ $stat->employee_count }}
+                                            </span>
+                                        </div>
                                     </td>
                                     <td class="p-4">
-                                        <div class="font-bold text-gray-800 ">
+                                        <div class="flex items-center justify-center">
+                                            <span class="text-emerald-600 font-medium">
+                                                 Rp {{ number_format($stat->total_bpjs, 0, ',', '.') }}
+                                            </span>
+                                        </div>
+                                    </td>
+                                    <td class="p-4">
+                                        <div class="flex items-center justify-center">
+                                            <span class="text-orange-600 font-medium">
+                                                Rp {{ number_format($stat->total_infaq, 0, ',', '.') }}
+                                            </span>
+                                        </div>
+                                    </td>
+                                    <td class="p-4">
+                                        <div class="font-bold text-gray-800 flex items-center justify-center">
                                             Rp {{ number_format($stat->total_expense, 0, ',', '.') }}
                                         </div>
                                     </td>
@@ -90,9 +133,31 @@
                         </tbody>
                         <tfoot>
                             <tr class="bg-gray-50 font-bold border-t-2 border-gray-200">
-                                <td class="p-4 text-center" colspan="2">TOTAL</td>
-                                <td class="p-4 text-center text-base">{{ $branchStats->sum('employee_count') }}</td>
-                                <td class="p-4 text-center text-base">Rp {{ number_format($branchStats->sum('total_expense'), 0, ',', '.') }}</td>
+                                <td class="p-4 text-center" colspan="2">
+                                    <div class="flex items-center justify-center">
+                                        TOTAL
+                                    </div>
+                                </td>
+                                <td class="p-4 text-center text-base">
+                                    <div class="flex items-center justify-center">
+                                        {{ $branchStats->sum('employee_count') }}
+                                    </div>
+                                </td>
+                                <td class="p-4 text-center text-base text-emerald-700">
+                                    <div class="flex items-center justify-center">
+                                        Rp {{ number_format($branchStats->sum('total_bpjs'), 0, ',', '.') }}
+                                    </div>
+                                </td>
+                                <td class="p-4 text-center text-base text-orange-700">
+                                    <div class="flex items-center justify-center ">
+                                        Rp {{ number_format($branchStats->sum('total_infaq'), 0, ',', '.') }}
+                                    </div>
+                                </td>
+                                <td class="p-4 text-center text-base">
+                                    <div class="flex items-center justify-center">
+                                        Rp {{ number_format($branchStats->sum('total_expense'), 0, ',', '.') }}
+                                    </div>
+                                </td>
                             </tr>
                         </tfoot>
                     </table>

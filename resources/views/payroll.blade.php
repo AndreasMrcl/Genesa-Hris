@@ -70,10 +70,26 @@
                     <table id="myTable" class="w-full text-left">
                         <thead class="bg-gray-100 text-gray-600 text-sm leading-normal">
                             <tr>
-                                <th class="p-4 font-bold">Periode</th>
-                                <th class="p-4 font-bold text-center">Total Cabang</th>
-                                <th class="p-4 font-bold text-center">Total Pengeluaran</th>
-                                <th class="p-4 font-bold text-center">Aksi</th>
+                                <th class="p-4 font-bold">
+                                    <div class="flex items-center justify-center">
+                                        Periode
+                                    </div>
+                                </th>
+                                <th class="p-4 font-bold text-center">
+                                    <div class="flex items-center justify-center">
+                                        Total Cabang
+                                    </div>
+                                </th>
+                                <th class="p-4 font-bold text-center">
+                                    <div class="flex items-center justify-center">
+                                        Total Pengeluaran
+                                    </div>
+                                </th>
+                                <th class="p-4 font-bold text-center">
+                                    <div class="flex items-center justify-center">
+                                        Aksi
+                                    </div>
+                                </th>
                             </tr>
                         </thead>
                         <tbody class="text-gray-700 text-sm">

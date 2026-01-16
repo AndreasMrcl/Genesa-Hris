@@ -52,12 +52,28 @@
                     <table id="myTable" class="w-full text-left">
                         <thead class="bg-gray-100 text-gray-600 text-sm leading-normal">
                             <tr>
-                                <th class="p-4 font-bold rounded-tl-lg text-center" width="5%">No</th>
+                                <th class="p-4 font-bold" width="5%">No</th>
                                 <th class="p-4 font-bold">Nama / Cabang</th>
-                                <th class="p-4 font-bold">Posisi / Status</th>
-                                <th class="p-4 font-bold">Kontak</th>
-                                <th class="p-4 font-bold">Masa Kerja</th>
-                                <th class="p-4 font-bold text-center rounded-tr-lg" width="15%">Aksi</th>
+                                <th class="p-4 font-bold">
+                                    <div class="flex items-center justify-center">
+                                        Posisi / Status
+                                    </div>
+                                </th>
+                                <th class="p-4 font-bold">
+                                    <div class="flex items-center justify-center">
+                                        Kontak
+                                    </div>
+                                </th>
+                                <th class="p-4 font-bold">
+                                    <div class="flex items-center justify-center">
+                                        Masa Kerja
+                                    </div>
+                                </th>
+                                <th class="p-4 font-bold" width="15%">
+                                    <div class="flex items-center justify-center">
+                                        Aksi
+                                    </div>
+                                </th>
                             </tr>
                         </thead>
                         <tbody class="text-gray-700 text-sm">
@@ -76,12 +92,13 @@
                                         <div class="text-xs text-gray-400">NIK: {{ $item->nik }}</div>
                                     </td>
                                     <td class="p-4 space-y-1">
-                                        <div class="font-medium text-gray-700">{{ $item->position->name ?? '-' }}</div>
-                                        <div class="">
+                                        <div class="flex items-center justify-center flex-col">
+                                            <div class="font-medium text-gray-700">{{ $item->position->name ?? '-' }}</div>
                                             <span
                                                 class="bg-yellow-100 text-yellow-700 text-xs px-2 py-0.5 rounded-full font-bold border border-yellow-200">
                                                 {{ ucfirst(str_replace('_', ' ', $item->status)) }}
                                             </span>
+
                                         </div>
                                     </td>
                                     <td class="p-4 text-xs">
@@ -91,7 +108,7 @@
                                                 class="fas fa-phone text-gray-400 w-4"></i> {{ $item->phone }}</div>
                                     </td>
                                     <td class="p-4">
-                                        <div class="flex flex-col gap-1">
+                                        <div class="flex items-center justify-center">
                                             @php
                                                 $joinDate = \Carbon\Carbon::parse($item->join_date);
                                                 $diff = $joinDate->diff(\Carbon\Carbon::now());
@@ -99,7 +116,7 @@
 
                                             <span class="inline-flex items-center w-fit bg-indigo-50 text-indigo-700 text-xs font-bold px-2 py-0.5 rounded border border-indigo-100">
                                                 <i class="far fa-clock mr-1"></i>
-                                                {{ $diff->days }} Hari
+                                                {{ $diff->y }} Tahun {{ $diff->m }} Bulan {{ $diff->days }} Hari
                                             </span>
                                         </div>
                                     </td>

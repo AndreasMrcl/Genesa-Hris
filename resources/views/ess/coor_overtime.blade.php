@@ -15,7 +15,6 @@
 <body class="bg-gray-50 font-sans w-full md:max-w-sm mx-auto min-h-screen flex flex-col shadow-lg border-x border-gray-100">
 
     @php
-        // Ratakan dulu collectionnya untuk menghitung statistik global
         $allOvertimes = $overtimes->flatten();
         $pendingCount = $allOvertimes->where('status', 'pending')->count();
         $totalCount   = $allOvertimes->count();
@@ -56,12 +55,9 @@
                 $duration   = $startTime->diff($endTime)->format('%H:%I');
                 
                 $isToday = $carbonDate->isToday();
-                
-                // Cek Status Group
                 $allApproved = $groupItems->every(fn($i) => $i->status === 'approved');
                 $hasPending  = $groupItems->contains(fn($i) => $i->status === 'pending');
-                
-                // Visualisasi Border Kartu
+
                 $cardBorder = $allApproved ? 'border-emerald-200 ring-1 ring-emerald-50' : ($hasPending ? 'border-purple-200' : 'border-gray-200');
                 $headerBg   = $allApproved ? 'bg-emerald-50' : 'bg-gray-50';
             @endphp
@@ -74,14 +70,14 @@
                     <div class="flex items-center gap-3">
                         <!-- Date Box -->
                         <div class="flex flex-col items-center justify-center w-12 h-12 bg-white rounded-lg border border-gray-200 shadow-sm">
-                            <span class="text-[8px] font-bold uppercase text-gray-400">{{ $carbonDate->format('M') }}</span>
+                            <span class="text-[8px] font-bold uppercase text-gray-400">{{ $carbonDate->translatedFormat('M') }}</span>
                             <span class="text-lg font-extrabold text-gray-800 leading-none">{{ $carbonDate->format('d') }}</span>
                         </div>
                         
                         <!-- Time Info -->
                         <div>
                             <h3 class="font-bold text-gray-800 text-sm flex items-center gap-2">
-                                {{ $isToday ? 'Hari Ini' : $carbonDate->format('l') }}
+                                {{ $isToday ? 'Hari Ini' : $carbonDate->translatedFormat('l') }}
                                 <span class="bg-white border border-gray-200 px-1.5 py-0.5 rounded text-[10px] font-mono font-normal text-gray-500">
                                     {{ $startTime->format('H:i') }} - {{ $endTime->format('H:i') }}
                                 </span>
@@ -95,7 +91,7 @@
                         </div>
                     </div>
 
-                    <!-- Print Button (Jika Approved Semua) -->
+                    <!-- Print Button -->
                     @if($allApproved)
                         <a href="{{ route('ess-coordinator-overtime-print', [
                                 'date' => $firstItem->overtime_date, 
