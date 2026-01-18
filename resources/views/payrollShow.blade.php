@@ -176,7 +176,7 @@
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-2 text-xs">
                                 @foreach ($benefits as $item)
                                     <div class="flex justify-between items-center p-2 hover:bg-gray-50 rounded">
-                                        <p class="text-gray-500 font-medium">{{ $item->name }}</p>
+                                        <p class="text-gray-500 font-medium">Tunj. {{ $item->name }}</p>
                                         <p class="text-gray-600 font-bold">Rp
                                             {{ number_format($item->amount, 0, ',', '.') }}</p>
                                     </div>

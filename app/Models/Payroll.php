@@ -45,7 +45,7 @@ class Payroll extends Model
     {
         $allBenefits = $this->payrollDetails->where('category', 'benefit');
 
-        $tkComponents = ['JKK', 'JKM', 'JHT', 'JP'];
+        $tkComponents = ['BPJS JKK', 'BPJS JKM', 'BPJS JHT', 'BPJS JP'];
 
         $bpjsTkItems = $allBenefits->whereIn('name', $tkComponents);
         $otherItems = $allBenefits->whereNotIn('name', $tkComponents);
@@ -56,7 +56,7 @@ class Payroll extends Model
 
         if ($totalTk > 0) {
             $dummy = new stdClass;
-            $dummy->name = 'Tunj. BPJS TK';
+            $dummy->name = 'BPJS TK';
             $dummy->amount = $totalTk;
             $dummy->category = 'benefit';
 

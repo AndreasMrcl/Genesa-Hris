@@ -61,8 +61,6 @@ class PayrollController extends Controller
     {
         $userCompany = Auth::user()->compani;
 
-        // 1. Ambil Data Payroll + Detail + Branch
-        // Kita butuh 'payrollDetails' untuk memilah komponen BPJS & Infaq
         $payrolls = Payroll::with(['employee.branch', 'payrollDetails'])
             ->where('compani_id', $userCompany->id)
             ->where('pay_period_start', $start)
@@ -73,27 +71,21 @@ class PayrollController extends Controller
             return redirect()->route('payroll')->withErrors(['msg' => 'Data penggajian tidak ditemukan.']);
         }
 
-        // 2. Grouping per Cabang (Menggunakan Collection Logic)
         $branchStats = $payrolls->groupBy(function($item) {
             return $item->employee->branch_id;
         })->map(function ($items) {
-            // Ambil info cabang dari item pertama
+
             $branch = $items->first()->employee->branch;
             
-            // Kumpulkan SEMUA detail dari seluruh karyawan di cabang ini menjadi satu list panjang
             $allDetails = $items->flatMap->payrollDetails;
 
-            // A. Hitung Total Infaq
             $totalInfaq = $allDetails->filter(function ($d) {
                 return Str::contains($d->name, 'Infaq');
             })->sum('amount');
 
-            // B. Hitung Total BPJS
-            // Filter semua detail yang namanya mengandung keyword BPJS/JKK/JKM/JHT/JP
             $totalBpjs = $allDetails->filter(function ($d) {
                 $name = strtoupper($d->name);
-                return Str::contains($name, 'BPJS') || 
-                       in_array($name, ['JKK', 'JKM', 'JHT', 'JP']);
+                return Str::contains($name, 'BPJS');
             })->sum('amount');
 
             return (object) [
@@ -101,7 +93,7 @@ class PayrollController extends Controller
                 'name' => $branch->name,
                 'category' => $branch->category,
                 'employee_count' => $items->count(),
-                'total_expense' => $items->sum('net_salary'), // Total Gaji Bersih (Transfer)
+                'total_expense' => $items->sum('net_salary'), 
                 'total_bpjs' => $totalBpjs,
                 'total_infaq' => $totalInfaq,
             ];
@@ -260,25 +252,25 @@ class PayrollController extends Controller
                     $bpjsEmpDeduction += $bpjsKesEmp;
                     $companyBenefit   += $bpjsKesComp;
 
-                    $detailsToSave[] = ['name' => 'BPJS Kes', 'category' => 'deduction', 'amount' => $bpjsKesEmp];
-                    $detailsToSave[] = ['name' => 'Tunj. BPJS Kes', 'category' => 'benefit', 'amount' => $bpjsKesComp];
+                    $detailsToSave[] = ['name' => 'BPJS Kesehatan', 'category' => 'deduction', 'amount' => $bpjsKesEmp];
+                    $detailsToSave[] = ['name' => 'BPJS Kesehatan', 'category' => 'benefit', 'amount' => $bpjsKesComp];
                 }
 
                 if ($companyConfig->bpjs_tk_active && $partTk) {
                     $companyBenefit += ($bpjsJkk + $bpjsJkm);
                     $bpjsEmpDeduction += $bpjsJhtEmp;
 
-                    $detailsToSave[] = ['name' => 'JKK', 'category' => 'benefit', 'amount' => $bpjsJkk];
-                    $detailsToSave[] = ['name' => 'JKM', 'category' => 'benefit', 'amount' => $bpjsJkm];
+                    $detailsToSave[] = ['name' => 'BPJS JKK', 'category' => 'benefit', 'amount' => $bpjsJkk];
+                    $detailsToSave[] = ['name' => 'BPJS JKM', 'category' => 'benefit', 'amount' => $bpjsJkm];
                     $detailsToSave[] = ['name' => 'BPJS JHT', 'category' => 'deduction', 'amount' => $bpjsJhtEmp];
-                    $detailsToSave[] = ['name' => 'JHT', 'category' => 'benefit', 'amount' => $bpjsJhtComp];
+                    $detailsToSave[] = ['name' => 'BPJS JHT', 'category' => 'benefit', 'amount' => $bpjsJhtComp];
                 }
 
                 if ($companyConfig->bpjs_tk_active && $partJp) {
                     $bpjsEmpDeduction += $bpjsJpEmp;
 
                     $detailsToSave[] = ['name' => 'BPJS JP', 'category' => 'deduction', 'amount' => $bpjsJpEmp];
-                    $detailsToSave[] = ['name' => 'JP', 'category' => 'benefit', 'amount' => $bpjsJpComp];
+                    $detailsToSave[] = ['name' => 'BPJS JP', 'category' => 'benefit', 'amount' => $bpjsJpComp];
                 }
 
                 $totalDeduction += $bpjsEmpDeduction;
@@ -321,8 +313,8 @@ class PayrollController extends Controller
                             $totalAllowance += $tunjanganPajak;
                             $totalDeduction += $tunjanganPajak;
 
-                            $detailsToSave[] = ['name' => 'Tunjangan PPh 21', 'category' => 'benefit', 'amount' => $tunjanganPajak];
-                            $detailsToSave[] = ['name' => 'Potongan PPh 21', 'category' => 'deduction', 'amount' => $tunjanganPajak];
+                            $detailsToSave[] = ['name' => 'PPh 21', 'category' => 'benefit', 'amount' => $tunjanganPajak];
+                            $detailsToSave[] = ['name' => 'PPh 21', 'category' => 'deduction', 'amount' => $tunjanganPajak];
                         }
                     } elseif ($taxMethod == 'GROSS_UP') {
                         $tunjanganPajak = 0;
@@ -339,8 +331,8 @@ class PayrollController extends Controller
                         if ($tunjanganPajak > 0) {
                             $totalAllowance += $tunjanganPajak;
                             $totalDeduction += $tunjanganPajak;
-                            $detailsToSave[] = ['name' => 'Tunjangan PPh 21', 'category' => 'benefit', 'amount' => $tunjanganPajak];
-                            $detailsToSave[] = ['name' => 'Potongan PPh 21', 'category' => 'deduction', 'amount' => $tunjanganPajak];
+                            $detailsToSave[] = ['name' => 'PPh 21', 'category' => 'benefit', 'amount' => $tunjanganPajak];
+                            $detailsToSave[] = ['name' => 'PPh 21', 'category' => 'deduction', 'amount' => $tunjanganPajak];
                         }
                     }
                 }

@@ -116,7 +116,7 @@
 
                                             <span class="inline-flex items-center w-fit bg-indigo-50 text-indigo-700 text-xs font-bold px-2 py-0.5 rounded border border-indigo-100">
                                                 <i class="far fa-clock mr-1"></i>
-                                                {{ $diff->y }} Tahun {{ $diff->m }} Bulan {{ $diff->days }} Hari
+                                                {{ $diff->y }} Tahun {{ $diff->m }} Bulan {{ $diff->d }} Hari
                                             </span>
                                         </div>
                                     </td>

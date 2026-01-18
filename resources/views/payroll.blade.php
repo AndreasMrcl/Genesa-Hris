@@ -143,7 +143,7 @@
 
                                             <!-- TOMBOL DELETE BATCH -->
                                             <form action="{{ route('delpayrollBatch') }}" method="POST"
-                                                class="inline-block delete-batch-form">
+                                                class="inline-block delete-batch-form delete-confirm">
                                                 @csrf
                                                 @method('DELETE')
                                                 <input type="hidden" name="start"
