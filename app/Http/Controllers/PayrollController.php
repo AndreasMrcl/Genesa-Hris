@@ -193,7 +193,6 @@ class PayrollController extends Controller
 
                 $attendance = $emp->attendances->first();
                 $daysPresent = $attendance ? $attendance->total_present : 0;
-                $totalLate = $attendance ? $attendance->total_late : 0;
                 $totalAlpha = $attendance ? $attendance->total_alpha : 0;
                 $totalPermission = $attendance ? $attendance->total_permission : 0;
                 $workDays = $emp->working_days;
@@ -276,7 +275,7 @@ class PayrollController extends Controller
                 $totalDeduction += $bpjsEmpDeduction;
 
                 // === PPH 21 (TER) ===
-                $ptkpStatus = $emp->ptkp_status ?? 'TK/0';
+                $ptkpStatus = $emp->ptkp_status;
                 $ptkpRule = GlobalPtkp::where('code', $ptkpStatus)->first();
 
                 if ($ptkpRule) {
@@ -370,15 +369,6 @@ class PayrollController extends Controller
                     }
                 }
 
-                if ($totalLate > 0) {
-                    $latePenalty = $totalLate * 27300;
-                    $totalDeduction += $latePenalty;
-                    $detailsToSave[] = [
-                        'name' => 'Terlambat (' . $totalLate . ')',
-                        'category' => 'deduction',
-                        'amount' => $latePenalty,
-                    ];
-                }
                 // === INFAQ ===
                 $currentNet = $calculatedBaseSalary + $totalAllowance - $totalDeduction;
 

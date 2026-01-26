@@ -54,19 +54,19 @@
                                     @endforeach
                                 </select>
                                 <p class="text-xs text-gray-500 mt-2">
-                                    *Hanya periode yang telah diinput melalui <strong>Menu Kehadiran</strong> yang akan
+                                    *Hanya periode yang telah diinput melalui <strong>Menu Absensi</strong> yang akan
                                     muncul di sini.
                                 </p>
                             @else
                                 <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 text-center">
                                     <p class="text-yellow-800 font-semibold">
-                                        Data kehadiran belum tersedia!
+                                        Data absensi belum tersedia!
                                     </p>
                                     <p class="text-sm text-yellow-600 mt-1">
-                                        Silakan input rekap kehadiran terlebih dahulu sebelum menjalankan payroll.
+                                        Silakan input rekap absensi terlebih dahulu sebelum menjalankan payroll.
                                     </p>
                                     <a href="{{ route('attendance') }}" class="inline-block mt-3 text-indigo-600 font-bold hover:underline">
-                                        Ke Menu Kehadiran &rarr;
+                                        Ke Menu Absensi &rarr;
                                     </a>
                                 </div>
                             @endif

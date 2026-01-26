@@ -84,7 +84,6 @@ class AttendanceController extends Controller
 
                 $machineData[$empId] = [
                     'present' => $uniqueDays,
-                    'late' => 0, // bisa hitung berdasarkan jam masuk nanti
                 ];
             }
         }
@@ -116,10 +115,8 @@ class AttendanceController extends Controller
                     ],
                     [
                         'total_present' => $row['present'] ?? 0,
-                        'total_late' => $row['late'] ?? 0,
                         'total_sick' => $row['sick'] ?? 0,
                         'total_permission' => $row['permission'] ?? 0,
-                        'total_permission_letter' => $row['permission_letter'] ?? 0,
                         'total_alpha' => $row['alpha'] ?? 0,
                         'total_leave' => $row['leave'] ?? 0,
                         'note' => $row['note'] ?? null,

@@ -224,7 +224,7 @@ class EssController extends Controller
 
         $payroll = Payroll::with(['employee', 'payrollDetails'])->findOrFail($id);
 
-        if($payroll->employee_id != Auth::guard('employee')->id()) abort(403);
+        if ($payroll->employee_id != Auth::guard('employee')->id()) abort(403);
 
         $pdf = Pdf::loadView('ess.pdf', compact('payroll'));
 
@@ -248,12 +248,12 @@ class EssController extends Controller
         return view('ess.profil', compact('employee', 'compani', 'announcements'));
     }
 
-    private function checkCoordinator() 
+    private function checkCoordinator()
     {
         $user = Auth::guard('employee')->user();
 
-        if (!$user || !$user->position->is_head) { 
-             abort(403, 'Access Denied. Coordinator only.');
+        if (!$user || !$user->position->is_head) {
+            abort(403, 'Access Denied. Coordinator only.');
         }
         return $user;
     }
@@ -270,14 +270,14 @@ class EssController extends Controller
         $employeesQuery = Employee::where('compani_id', $userCompany->id)
             ->where('branch_id', $branchId)
             ->orderBy('name');
-            
+
         if ($selectedOutletId) {
             $employeesQuery->where('outlet_id', $selectedOutletId);
         }
         $employees = $employeesQuery->get();
 
         $shifts = Shift::where('compani_id', $userCompany->id)
-            ->where(function($q) use ($branchId) {
+            ->where(function ($q) use ($branchId) {
                 $q->whereNull('branch_id')->orWhere('branch_id', $branchId);
             })->get();
 
@@ -285,38 +285,44 @@ class EssController extends Controller
 
         $schedulesQuery = Schedule::with(['employee', 'shift'])
             ->where('compani_id', $userCompany->id)
-            ->whereHas('employee', function($q) use ($branchId) {
+            ->whereHas('employee', function ($q) use ($branchId) {
                 $q->where('branch_id', $branchId);
             });
-            
+
         if ($selectedOutletId) {
-            $schedulesQuery->whereHas('employee', function($q) use ($selectedOutletId) {
+            $schedulesQuery->whereHas('employee', function ($q) use ($selectedOutletId) {
                 $q->where('outlet_id', $selectedOutletId);
             });
         }
 
         $schedules = $schedulesQuery->whereBetween('date', [now()->startOfMonth()->subWeek(), now()->endOfMonth()->addWeek()])
             ->get();
-            
-        $branches = Branch::where('id', $branchId)->get(); 
-        $selectedBranchId = $branchId; 
 
-        $isEss = true; 
+        $branches = Branch::where('id', $branchId)->get();
+        $selectedBranchId = $branchId;
+
+        $isEss = true;
 
         return view('schedule', compact(
-            'branches', 'outlets', 'selectedBranchId', 'selectedOutletId', 
-            'employees', 'shifts', 'schedules', 'isEss'
+            'branches',
+            'outlets',
+            'selectedBranchId',
+            'selectedOutletId',
+            'employees',
+            'shifts',
+            'schedules',
+            'isEss'
         ));
     }
 
-    public function coordinatorStoreSchedule(Request $request) 
+    public function coordinatorStoreSchedule(Request $request)
     {
         $coordinator = $this->checkCoordinator();
         $userCompany = $coordinator->compani;
 
         $request->validate([
             'employee_ids'   => 'required|array',
-            'employee_ids.*' => 'exists:employees,id', 
+            'employee_ids.*' => 'exists:employees,id',
             'shift_id'       => 'required|exists:shifts,id',
             'start_date'     => 'required|date',
             'end_date'       => 'required|date|after_or_equal:start_date',
@@ -334,7 +340,7 @@ class EssController extends Controller
 
                 $targetEmp = Employee::find($empId);
 
-                if($targetEmp->branch_id != $coordinator->branch_id) continue;
+                if ($targetEmp->branch_id != $coordinator->branch_id) continue;
 
                 foreach ($period as $date) {
                     Schedule::updateOrCreate(
@@ -350,7 +356,6 @@ class EssController extends Controller
 
             return redirect()->route('ess-coordinator-schedule', ['outlet_id' => $request->outlet_id])
                 ->with('success', "Schedule updated! $count shifts assigned.");
-
         } catch (\Exception $e) {
             DB::rollBack();
             return back()->withErrors(['msg' => $e->getMessage()]);
@@ -373,7 +378,7 @@ class EssController extends Controller
             ->firstOrFail();
 
         if ($schedule->employee->branch_id != $coordinator->branch_id) {
-             abort(403, 'Anda tidak memiliki akses untuk mengedit jadwal karyawan cabang lain.');
+            abort(403, 'Anda tidak memiliki akses untuk mengedit jadwal karyawan cabang lain.');
         }
 
         if ($request->employee_id != $schedule->employee_id) {
@@ -431,7 +436,7 @@ class EssController extends Controller
         $coordinator = $this->checkCoordinator();
 
         $leaves = Leave::with(['employee', 'employee.position'])
-            ->whereHas('employee', function($q) use ($coordinator) {
+            ->whereHas('employee', function ($q) use ($coordinator) {
                 $q->where('branch_id', $coordinator->branch_id);
             })
             ->orderByRaw("FIELD(status, 'pending') DESC")
@@ -449,7 +454,7 @@ class EssController extends Controller
     public function storeCoordinatorLeave(Request $request)
     {
         $coordinator = $this->checkCoordinator();
-        
+
         $request->validate([
             'employee_id' => 'required|exists:employees,id',
             'start_date'  => 'required|date',
@@ -481,7 +486,7 @@ class EssController extends Controller
     public function coordinatorUpdateLeave(Request $request, $id)
     {
         $coordinator = $this->checkCoordinator();
-        
+
         $request->validate([
             'status' => 'required|in:approved,rejected,pending',
         ]);
@@ -497,8 +502,8 @@ class EssController extends Controller
         ]);
 
         $this->logActivity(
-            'Leave Approval', 
-            "Mengubah status cuti {$leave->employee->name} menjadi {$request->status}", 
+            'Leave Approval',
+            "Mengubah status cuti {$leave->employee->name} menjadi {$request->status}",
             $coordinator->compani_id
         );
 
@@ -508,25 +513,30 @@ class EssController extends Controller
     public function coordinatorOvertime()
     {
         $coordinator = $this->checkCoordinator();
-        
+
         $rawOvertimes = Overtime::with(['employee', 'employee.position'])
-            ->whereHas('employee', function($q) use ($coordinator) {
+            ->whereHas('employee', function ($q) use ($coordinator) {
                 $q->where('branch_id', $coordinator->branch_id);
             })
-            ->orderBy('overtime_date', 'desc') 
-            ->orderBy('start_time', 'asc')   
+            ->orderBy('overtime_date', 'desc')
+            ->orderBy('start_time', 'asc')
             ->get();
 
-        $overtimes = $rawOvertimes->groupBy(function($item) {
+        $overtimes = $rawOvertimes->groupBy(function ($item) {
             return $item->overtime_date . '|' . $item->start_time . '|' . $item->end_time;
         });
 
-        $employees = Employee::where('branch_id', $coordinator->branch_id)
+        $employees = Employee::with('outlet')
+            ->where('branch_id', $coordinator->branch_id)
             ->where('compani_id', $coordinator->compani_id)
             ->orderBy('name')
             ->get();
 
-        return view('ess.coor_overtime', compact('overtimes', 'employees'));
+        $outlets = Outlet::where('branch_id', $coordinator->branch_id)
+            ->orderBy('name')
+            ->get();
+
+        return view('ess.coor_overtime', compact('overtimes', 'employees', 'outlets'));
     }
 
     public function storeCoordinatorOvertime(Request $request)
@@ -534,116 +544,138 @@ class EssController extends Controller
         $coordinator = $this->checkCoordinator();
         
         $request->validate([
-            'employee_ids'  => 'required|array',   
-            'employee_ids.*'=> 'exists:employees,id',
-            'overtime_date' => 'required|date',
-            'start_time'    => 'required',
-            'end_time'      => 'required',
-            'overtime_pay'  => 'nullable|numeric'
+            'employee_ids'   => 'required|array',   
+            'employee_ids.*' => 'exists:employees,id',
+            'overtime_date'  => 'required|date',
+            'start_time'     => 'required',
+            'end_time'       => 'required',
         ]);
-
+    
         DB::beginTransaction();
         try {
             $count = 0;
             foreach ($request->employee_ids as $empId) {
                 $targetEmp = Employee::find($empId);
-
+    
                 if (!$targetEmp || $targetEmp->branch_id != $coordinator->branch_id) continue;
-
+    
                 Overtime::create([
                     'employee_id'   => $empId,
                     'overtime_date' => $request->overtime_date,
                     'start_time'    => $request->start_time,
                     'end_time'      => $request->end_time,
-                    'overtime_pay'  => $request->overtime_pay ?? 0,
+                    'overtime_pay'  => null,    
                     'compani_id'    => $coordinator->compani_id,
-                    'status'        => 'approved',
+                    'status'        => 'pending', 
                 ]);
                 $count++;
             }
             
             DB::commit();
             
-            $this->logActivity('Create Overtime (Batch)', "Koordinator input lembur untuk {$count} orang", $coordinator->compani_id);
+            $this->logActivity('Create Overtime Request', "Koordinator mengajukan lembur untuk {$count} orang", $coordinator->compani_id);
             
-            return redirect()->back()->with('success', "$count Overtime requests created & approved.");
-
+            return redirect()->back()->with('success', "$count Permintaan lembur berhasil dibuat.");
+    
         } catch (\Exception $e) {
             DB::rollBack();
             return back()->withErrors(['msg' => 'Error: ' . $e->getMessage()]);
         }
     }
-    
-    public function coordinatorUpdateOvertime(Request $request, $id)
+
+    public function coordinatorBatchUpdate(Request $request)
     {
         $coordinator = $this->checkCoordinator();
-        
+
         $request->validate([
-            'status' => 'required|in:approved,rejected,pending',
-            'overtime_pay' => 'nullable|numeric' 
+            'original_date'  => 'required|date',
+            'original_start' => 'required',
+            'original_end'   => 'required',
+            'overtime_date'  => 'required|date',
+            'start_time'     => 'required',
+            'end_time'       => 'required',
+            'employee_ids'   => 'array', 
         ]);
 
-        $overtime = Overtime::with('employee')->findOrFail($id);
+        $newEmployeeIds = $request->employee_ids ?? [];
 
-        if ($overtime->employee->branch_id != $coordinator->branch_id) {
-            abort(403, 'Akses Ditolak.');
-        }
-
-        $updateData = ['status' => $request->status];
-
-        if ($request->has('overtime_pay')) {
-            $updateData['overtime_pay'] = $request->overtime_pay;
-        }
-
-        $overtime->update($updateData);
-
-        $this->logActivity(
-            'Overtime Approval', 
-            "Mengubah status lembur {$overtime->employee->name} menjadi {$request->status}", 
-            $coordinator->compani_id
-        );
-
-        return redirect()->back()->with('success', 'Overtime status updated successfully.');
-    }
-
-    public function printOvertimeReport(Request $request, $date)
-    {
-        $coordinator = $this->checkCoordinator();
-        
-        $startTime = $request->query('start_time');
-        $endTime = $request->query('end_time');
-
-        $query = Overtime::with(['employee.position', 'employee.branch'])
-            ->whereDate('overtime_date', $date)
-            ->where('status', 'approved')
+        $existingRecords = Overtime::where('compani_id', $coordinator->compani_id)
             ->whereHas('employee', function($q) use ($coordinator) {
                 $q->where('branch_id', $coordinator->branch_id);
-            });
+            })
+            ->where('overtime_date', $request->original_date)
+            ->where('start_time', $request->original_start)
+            ->where('end_time', $request->original_end)
+            ->where('status', 'pending') 
+            ->get();
 
-        if ($startTime && $endTime) {
-            $query->where('start_time', $startTime)
-                  ->where('end_time', $endTime);
+        if($existingRecords->isEmpty()) {
+             return back()->withErrors(['msg' => 'Data tidak ditemukan atau sudah diproses Admin.']);
         }
 
-        $overtimes = $query->orderBy('employee_id')->get();
-            
-        if ($overtimes->isEmpty()) {
-            return back()->withErrors(['msg' => 'No approved overtime records found for this session.']);
-        }
+        $existingEmployeeIds = $existingRecords->pluck('employee_id')->toArray();
 
-        // Load View PDF
-        $pdf = Pdf::loadView('ess.overtime_report', [
-            'date' => $date,
-            'start_time' => $startTime, 
-            'end_time' => $endTime,  
-            'overtimes' => $overtimes,
-            'coordinator' => $coordinator,
-            'company' => $coordinator->compani
-        ]);
+        DB::beginTransaction();
+        try {
+            foreach ($existingRecords as $record) {
+                if (in_array($record->employee_id, $newEmployeeIds)) {
+                    $record->update([
+                        'overtime_date' => $request->overtime_date,
+                        'start_time'    => $request->start_time,
+                        'end_time'      => $request->end_time,
+                    ]);
+                } else {
+                    $record->delete();
+                }
+            }
+
+            $toCreate = array_diff($newEmployeeIds, $existingEmployeeIds);
+            foreach ($toCreate as $empId) {
+                $emp = Employee::find($empId);
+                if($emp && $emp->branch_id == $coordinator->branch_id) {
+                    Overtime::create([
+                        'compani_id'    => $coordinator->compani_id,
+                        'employee_id'   => $empId,
+                        'overtime_date' => $request->overtime_date,
+                        'start_time'    => $request->start_time,
+                        'end_time'      => $request->end_time,
+                        'status'        => 'pending',
+                        'overtime_pay'  => null
+                    ]);
+                }
+            }
+
+            DB::commit();
+            $this->logActivity('Batch Edit Overtime', "Koordinator mengubah kelompok lembur {$request->original_date}", $coordinator->compani_id);
+
+            return redirect()->back()->with('success', 'Permintaan lembur berhasil diperbarui.');
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->withErrors(['msg' => 'Update failed: ' . $e->getMessage()]);
+        }
+    }
+
+    public function coordinatorBatchDelete(Request $request)
+    {
+        $coordinator = $this->checkCoordinator();
+
+        $deleted = Overtime::where('compani_id', $coordinator->compani_id)
+            ->whereHas('employee', function($q) use ($coordinator) {
+                $q->where('branch_id', $coordinator->branch_id);
+            })
+            ->where('overtime_date', $request->date)
+            ->where('start_time', $request->start)
+            ->where('end_time', $request->end)
+            ->where('status', 'pending') 
+            ->delete();
+
+        if ($deleted) {
+            $this->logActivity('Batch Delete Overtime', "Koordinator membatalkan pengajuan lembur tgl {$request->date}", $coordinator->compani_id);
+            return redirect()->back()->with('success', 'Pengajuan lembur dibatalkan.');
+        }
         
-        $pdf->setPaper('A4', 'portrait');
-        
-        return $pdf->stream('Lembur_' . $date . '_' . str_replace(':', '', $startTime) . '.pdf');
+        return back()->withErrors(['msg' => 'Gagal menghapus atau data sudah diproses.']);
     }
 
     private function logActivity($type, $description, $companyId)

@@ -88,21 +88,15 @@
         <tr>
             <td width="33%">
                 <div class="info-label">Cabang / Area</div>
-                <div class="info-value">{{ $coordinator->branch->name ?? '-' }}</div>
+                <div class="info-value">{{ $overtimes->first()->employee->branch->name ?? '-' }}</div>
             </td>
             <td width="33%">
                 <div class="info-label">Tanggal</div>
                 <div class="info-value">{{ \Carbon\Carbon::parse($date)->format('d F Y') }}</div>
             </td>
-            <td width="33%">
-                <div class="info-label">Laporan dari</div>
-                <div class="info-value">{{ $coordinator->name }}</div>
-            </td>
-        </tr>
 
-        @if($start_time && $end_time)
-        <tr>
-            <td colspan="3" style="padding-top: 10px;">
+            @if($start_time && $end_time)
+            <td width="33%">
                 <div class="info-label">Waktu Lembur</div>
                 <div class="info-value">
                     {{ \Carbon\Carbon::parse($start_time)->format('H:i') }} 
@@ -170,13 +164,13 @@
     <table class="signature-table">
         <tr>
             <td class="sig-cell">
-                <div class="sig-title">Koordinator</div>
+                <div class="sig-title">Sumber Daya Insani</div>
                 <br><br><br>
-                <div class="sig-line">{{ $coordinator->name }}</div>
+                <div class="sig-line">_______________________</div>
             </td>
             <td width="40%"></td>
             <td class="sig-cell">
-                <div class="sig-title">Tandatangan (HR/Finance)</div>
+                <div class="sig-title">Bendahara</div>
                 <br><br><br>
                 <div class="sig-line">_______________________</div>
             </td>

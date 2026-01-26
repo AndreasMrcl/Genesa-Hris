@@ -75,6 +75,10 @@ Route::middleware('auth:web')->group(function () {
     Route::get('/editovertime/{id}', [OvertimeController::class, 'edit'])->name('editovertime');
     Route::put('/overtime/{id}/update', [OvertimeController::class, 'update'])->name('updateovertime');
     Route::delete('/overtime/{id}/delete', [OvertimeController::class, 'destroy'])->name('delovertime');
+    Route::put('/overtime/batch-update', [OvertimeController::class, 'batchUpdate'])->name('updateovertimebatch');
+    Route::delete('/overtime/batch-delete', [OvertimeController::class, 'batchDelete'])->name('delovertimebatch');
+    Route::get('/overtime/export', [OvertimeController::class, 'printReport'])->name('printovertimereport');
+    
 
     // NOTE
     Route::get('/note', [NoteController::class, 'index'])->name('note');
@@ -206,8 +210,8 @@ Route::middleware('auth:employee')->group(function () {
     Route::post('/req-overtime', [EssController::class, 'reqOvertime'])->name('req-overtime');
     Route::get('/coordinator/overtime', [EssController::class, 'coordinatorOvertime'])->name('ess-coordinator-overtime');
     Route::post('/coordinator/overtime', [EssController::class, 'storeCoordinatorOvertime'])->name('ess-coordinator-overtime-store');
-    Route::put('/coordinator/overtime/{id}', [EssController::class, 'coordinatorUpdateOvertime'])->name('ess-coordinator-overtime-update');
-    Route::get('/coordinator/overtime/print/{date}', [EssController::class, 'printOvertimeReport'])->name('ess-coordinator-overtime-print');
+    Route::put('/coordinator/overtime', [EssController::class, 'coordinatorBatchUpdate'])->name('ess-coordinator-overtime-batch-update');
+    Route::delete('/coordinator/overtime', [EssController::class, 'coordinatorBatchDelete'])->name('ess-coordinator-overtime-batch-delete');
 
     Route::get('/ess-note', [EssController::class, 'note'])->name('ess-note');
 

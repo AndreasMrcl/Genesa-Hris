@@ -92,11 +92,7 @@
                                     <tr>
                                         <th class="p-4 w-12 bg-gray-100 border-b">No</th>
                                         <th class="p-4 w-64 bg-gray-100 border-b">Nama</th>
-                                        <th class="p-4 text-center w-20 bg-orange-100 border-b text-orange-800">Terlambat
-                                        </th>
                                         <th class="p-4 text-center w-24 bg-red-50 border-b text-red-800">Alpha</th>
-                                        <th class="p-4 text-center w-24 bg-indigo-50 border-b text-indigo-800">Izin
-                                            (Surat)</th>
                                         <th class="p-4 text-center w-24 bg-gray-50 border-b text-gray-800">Izin</th>
                                         <th class="p-4 text-center w-24 bg-yellow-50 border-b text-yellow-800">Sakit</th>
                                         <th class="p-4 text-center w-20 bg-blue-100 border-b text-blue-800">Cuti</th>
@@ -112,13 +108,10 @@
                                             $existing = $attendances[$emp->id] ?? null;
 
                                             $machineVal = $machineData[$emp->id]['present'] ?? 0;
-                                            $machineLate = $machineData[$emp->id]['late'] ?? 0;
 
                                             $savedVal = $existing ? $existing->total_present : 0;
-                                            $savedLate = $existing ? $existing->total_late : 0;
 
                                             $displayVal = $existing ? $savedVal : $machineVal;
-                                            $displayLate = $existing ? $savedLate : $machineLate;
                                         @endphp
                                         <tr class="hover:bg-blue-50 transition group">
                                             <td class="p-4 text-center text-gray-400 font-medium">{{ $no++ }}
@@ -130,23 +123,11 @@
                                             </td>
 
                                             <!-- Inputs -->
-                                            <td class="p-2 text-center bg-orange-50/50">
-                                                <input type="number" min="0"
-                                                    name="data[{{ $emp->id }}][late]"
-                                                    value="{{ $existing->total_late ?? 0 }}"
-                                                    class="w-20 text-center text-orange-700 border-orange-300 rounded focus:ring-orange-500 p-2 border">
-                                            </td>
                                             <td class="p-2 text-center bg-red-50/30">
                                                 <input type="number" min="0"
                                                     name="data[{{ $emp->id }}][alpha]"
                                                     value="{{ $existing->total_alpha ?? 0 }}"
                                                     class="w-20 text-center text-red-700 border-red-200 rounded focus:ring-red-500 p-2 border shadow-sm">
-                                            </td>
-                                            <td class="p-2 text-center">
-                                                <input type="number" min="0"
-                                                    name="data[{{ $emp->id }}][permission_letter]"
-                                                    value="{{ $existing->total_permission_letter ?? 0 }}"
-                                                    class="w-20 text-center text-indigo-700 border-indigo-200 rounded focus:ring-indigo-500 p-2 border">
                                             </td>
                                             <td class="p-2 text-center">
                                                 <input type="number" min="0"
