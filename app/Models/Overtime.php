@@ -18,6 +18,7 @@ class Overtime extends Model
             'end_time',
             'status',
             'overtime_pay',
+            'note'
         ];
 
     public function compani()

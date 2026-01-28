@@ -549,6 +549,7 @@ class EssController extends Controller
             'overtime_date'  => 'required|date',
             'start_time'     => 'required',
             'end_time'       => 'required',
+            'note'           => 'nullable|string|max:1000',
         ]);
     
         DB::beginTransaction();
@@ -567,6 +568,7 @@ class EssController extends Controller
                     'overtime_pay'  => null,    
                     'compani_id'    => $coordinator->compani_id,
                     'status'        => 'pending', 
+                    'note'          => $request->note,
                 ]);
                 $count++;
             }
@@ -595,6 +597,7 @@ class EssController extends Controller
             'start_time'     => 'required',
             'end_time'       => 'required',
             'employee_ids'   => 'array', 
+            'note'           => 'nullable|string|max:1000',
         ]);
 
         $newEmployeeIds = $request->employee_ids ?? [];
@@ -623,6 +626,7 @@ class EssController extends Controller
                         'overtime_date' => $request->overtime_date,
                         'start_time'    => $request->start_time,
                         'end_time'      => $request->end_time,
+                        'note'          => $request->note,
                     ]);
                 } else {
                     $record->delete();
@@ -640,7 +644,8 @@ class EssController extends Controller
                         'start_time'    => $request->start_time,
                         'end_time'      => $request->end_time,
                         'status'        => 'pending',
-                        'overtime_pay'  => null
+                        'overtime_pay'  => null,
+                        'note'          => $request->note,
                     ]);
                 }
             }

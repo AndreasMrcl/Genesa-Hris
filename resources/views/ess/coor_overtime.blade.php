@@ -101,6 +101,7 @@
                                 data-date="{{ $firstItem->overtime_date }}"
                                 data-start="{{ $firstItem->start_time }}"
                                 data-end="{{ $firstItem->end_time }}"
+                                data-note="{{ $firstItem->note }}"
                                 data-employees="{{ $groupEmpIds }}"
                                 title="Edit Kelompok">
                                 <i class="fas fa-pencil-alt text-xs"></i>
@@ -120,6 +121,12 @@
                         <span class="text-[10px] font-bold text-gray-400 bg-gray-100 px-2 py-1 rounded">Selesai</span>
                     @endif
                 </div>
+
+                @if($firstItem->note)
+                    <div class="mt-2 bg-white/60 rounded p-2 text-xs text-gray-600 italic border-l-2 border-gray-300">
+                        "{{ $firstItem->note }}"
+                    </div>
+                @endif
 
                 <!-- Card Body: List Employees -->
                 <div class="divide-y divide-gray-50">
@@ -231,6 +238,10 @@
                             <input type="time" name="end_time" class="w-full rounded-xl border-gray-300 shadow-sm p-3 border focus:ring-2 focus:ring-purple-500 text-sm" required>
                         </div>
                     </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1.5">Target Capaian</label>
+                        <textarea name="note" class="w-full rounded-xl border-gray-300 shadow-sm p-3 border focus:ring-2 focus:ring-purple-500 text-sm" rows="2" placeholder="Contoh: Stok Opname Gudang A"></textarea>
+                    </div>
                     <button type="submit" class="w-full py-3 bg-purple-600 text-white font-bold rounded-xl shadow-lg hover:bg-purple-700 transition">
                         Ajukan Permintaan
                     </button>
@@ -300,6 +311,10 @@
                             <input type="time" name="end_time" id="be_end" class="w-full rounded-xl border-gray-300 shadow-sm p-3 border focus:ring-2 focus:ring-indigo-500 text-sm" required>
                         </div>
                     </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1.5">Target Capaian</label>
+                        <textarea name="note" id="be_note" class="w-full rounded-xl border-gray-300 shadow-sm p-3 border focus:ring-2 focus:ring-indigo-500 text-sm" rows="2"></textarea>
+                    </div>
 
                     <button type="submit" class="w-full py-3 bg-indigo-600 text-white font-bold rounded-xl shadow-lg hover:bg-indigo-700 transition">
                         Simpan Perubahan
@@ -330,13 +345,16 @@
             $('#outletFilter').change(function() {
                 const selectedOutlet = $(this).val();
                 let hasVisible = false;
+                
+                $('#employeeList input[type="checkbox"]').prop('checked', false);
+
                 $('#employeeList .employee-item').each(function() {
                     const empOutlet = $(this).data('outlet');
-                    const checkbox = $(this).find('input[type="checkbox"]');
+                    
                     if (selectedOutlet === "" || empOutlet == selectedOutlet) {
                         $(this).removeClass('hidden'); hasVisible = true;
                     } else {
-                        $(this).addClass('hidden'); checkbox.prop('checked', false);
+                        $(this).addClass('hidden');
                     }
                 });
                 $('#emptyMsg').toggleClass('hidden', hasVisible);
@@ -353,6 +371,7 @@
                 $('#be_date').val(btn.data('date'));
                 $('#be_start').val(btn.data('start'));
                 $('#be_end').val(btn.data('end'));
+                $('#be_note').val(btn.data('note'));
 
                 $('#editOutletFilter').val(''); 
                 $('.batch-emp-check').prop('checked', false);
@@ -376,8 +395,12 @@
 
             $('#editOutletFilter').change(function() {
                 const selectedOutlet = $(this).val();
+                
+                $('#editEmployeeList input[type="checkbox"]').prop('checked', false);
+
                 $('#editEmployeeList .employee-item').each(function() {
                     const empOutlet = $(this).data('outlet');
+                    
                     if (selectedOutlet === "" || empOutlet == selectedOutlet) {
                         $(this).removeClass('hidden');
                     } else {

@@ -55,7 +55,6 @@
                 $date = \Carbon\Carbon::parse($item->overtime_date);
                 $start = \Carbon\Carbon::parse($item->start_time);
                 $end = \Carbon\Carbon::parse($item->end_time);
-
                 $duration = $start->diff($end)->format('%H:%I'); 
 
                 $statusColor = match($item->status) {

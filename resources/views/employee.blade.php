@@ -372,10 +372,9 @@
                                     class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-indigo-500 bg-white">
                             </div>
                             <div>
-                                <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Fingerprint.
-                                    Id <span class="text-red-500">*</span></label>
+                                <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Fingerprint.Id
                                 <input type="number" name="fingerprint_id"
-                                    class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-indigo-500 bg-white" required>
+                                    class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-indigo-500 bg-white">
                             </div>
                         </div>
 
@@ -616,7 +615,7 @@
                                 <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Fingerprint.
                                     Id</label>
                                 <input type="number" id="editFingerprint" name="fingerprint_id"
-                                    class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-indigo-500 bg-white" required>
+                                    class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-indigo-500 bg-white">
                             </div>
 
                         </div>

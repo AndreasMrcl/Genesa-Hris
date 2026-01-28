@@ -43,9 +43,14 @@
                         <thead class="bg-gray-100 text-gray-600 text-sm leading-normal">
                             <tr>
                                 <th class="p-4 font-bold" width="5%">No</th>
-                                <th class="p-4 font-bold" width="20%">
+                                <th class="p-4 font-bold" width="15%">
                                     <div class="flex items-center justify-center">
                                         Jadwal
+                                    </div>
+                                </th>
+                                <th class="p-4 font-bold" width="15%">
+                                    <div class="flex items-center justify-center">
+                                        Target Capaian
                                     </div>
                                 </th>
                                 <th class="p-4 font-bold">
@@ -87,6 +92,7 @@
                                             {{ \Carbon\Carbon::parse($header->start_time)->format('H:i') }} - 
                                             {{ \Carbon\Carbon::parse($header->end_time)->format('H:i') }}
                                         </div>
+                                        
                                         <div class="mt-2 text-xs font-semibold text-gray-600">
                                             Total: Rp {{ number_format($totalNominal, 0, ',', '.') }}
                                         </div>
@@ -95,6 +101,12 @@
                                                 {{ $header->employee->branch->name }}
                                             </div>
                                         @endif
+                                    </td>
+
+                                    <td class="p-4">
+                                        <div class="text-sm text-gray-600 italic whitespace-pre-wrap break-words max-w-[200px] md:max-w-[250px] text-center">
+                                            {{ $header->note ?? '-' }}
+                                        </div>
                                     </td>
 
                                     <!-- Daftar Karyawan -->
@@ -158,6 +170,7 @@
                                                 data-date="{{ $header->overtime_date }}"
                                                 data-start="{{ $header->start_time }}"
                                                 data-end="{{ $header->end_time }}"
+                                                data-note="{{ $header->note }}"
                                                 data-employees="{{ $groupEmpIds }}"
                                                 data-branch="{{ $groupBranchId }}"
                                                 data-outlet="{{ $groupOutletId }}">
@@ -264,6 +277,10 @@
                         <input type="text" name="overtime_pay" class="currency w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-purple-500" placeholder="0">
                     </div>
                 </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">Target Capaian</label>
+                    <textarea name="note" class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-purple-500" rows="2" placeholder="Masukkan detail target atau catatan..."></textarea>
+                </div>
                 <button type="submit" class="w-full py-3 bg-purple-600 text-white font-bold rounded-lg shadow-md hover:bg-purple-700 transition">Simpan</button>
             </form>
         </div>
@@ -339,6 +356,10 @@
                         <input type="time" name="end_time" id="be_end" class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-blue-500" required>
                     </div>
                 </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">Target Capaian</label>
+                    <textarea name="note" id="be_note" class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-blue-500" rows="2"></textarea>
+                </div>
 
                 <button type="submit" class="w-full py-3 bg-blue-600 text-white font-bold rounded-lg shadow-md hover:bg-blue-700 transition">Simpan Perubahan</button>
             </form>
@@ -380,7 +401,7 @@
                 items.each(function() {
                     const item = $(this);
                     const empBranch = item.data('branch');
-                    const empOutlet = item.data('outlet');
+                    const empOutlet = item.data('outlet'); 
                     const checkbox = item.find('input[type="checkbox"]');
 
                     var matchBranch = (branchId === "" || empBranch == branchId);
@@ -390,26 +411,36 @@
                         item.removeClass('hidden');
                     } else {
                         item.addClass('hidden');
-                        if(containerId === '#addEmployeeList') {
-                            checkbox.prop('checked', false);
-                        }
+                        checkbox.prop('checked', false);
                     }
                 });
             }
 
-            $('#addBranchFilter').change(function() {
+           $('#addBranchFilter').change(function() {
+                $('#addEmployeeList input[type="checkbox"]').prop('checked', false);
+                
                 let bId = $(this).val();
                 updateOutletDropdown(bId, '#addOutletFilter');
                 filterEmployees('#addEmployeeList');
             });
-            $('#addOutletFilter').change(function() { filterEmployees('#addEmployeeList'); });
+
+            $('#addOutletFilter').change(function() { 
+                $('#addEmployeeList input[type="checkbox"]').prop('checked', false);
+                filterEmployees('#addEmployeeList'); 
+            });
 
             $('#editBranchFilter').change(function() {
+                $('#editEmployeeList input[type="checkbox"]').prop('checked', false);
+
                 let bId = $(this).val();
                 updateOutletDropdown(bId, '#editOutletFilter');
                 filterEmployees('#editEmployeeList');
             });
-            $('#editOutletFilter').change(function() { filterEmployees('#editEmployeeList'); });
+
+            $('#editOutletFilter').change(function() { 
+                $('#editEmployeeList input[type="checkbox"]').prop('checked', false);
+                filterEmployees('#editEmployeeList'); 
+            });
 
             $(document).on('click', '.btn-approve, .btn-reject', function() {
                 const isApprove = $(this).hasClass('btn-approve');
@@ -453,8 +484,13 @@
                 const groupBranchId = btn.data('branch'); 
                 const groupOutletId = btn.data('outlet');
 
-                $('#be_orig_date').val(btn.data('date')); $('#be_orig_start').val(btn.data('start')); $('#be_orig_end').val(btn.data('end'));
-                $('#be_date').val(btn.data('date')); $('#be_start').val(btn.data('start')); $('#be_end').val(btn.data('end'));
+                $('#be_orig_date').val(btn.data('date')); 
+                $('#be_orig_start').val(btn.data('start')); 
+                $('#be_orig_end').val(btn.data('end'));
+                $('#be_date').val(btn.data('date')); 
+                $('#be_start').val(btn.data('start')); 
+                $('#be_end').val(btn.data('end'));
+                $('#be_note').val(btn.data('note'));
 
                 $('#editBranchFilter').val(groupBranchId);
                 updateOutletDropdown(groupBranchId, '#editOutletFilter', groupOutletId);
@@ -471,7 +507,8 @@
             const addModal = $('#addModal');
             $('#addBtn').click(() => { 
                 addModal.removeClass('hidden'); 
-                $('#addBranchFilter').val(''); 
+                $('#addBranchFilter').val('');  
+                $('#addEmployeeList input[type="checkbox"]').prop('checked', false);
                 updateOutletDropdown('', '#addOutletFilter');
                 $('#addOutletFilter').val(''); 
                 filterEmployees('#addEmployeeList');
