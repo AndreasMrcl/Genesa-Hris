@@ -46,17 +46,15 @@ class BranchController extends Controller
             'address' => 'required',
             'phone' => 'required',
             'category' => 'required',
+            'latitude' => 'nullable|numeric',
+            'longitude' => 'nullable|numeric',
+            'gps_radius' => 'nullable|integer|min:100|max:50000',
         ]);
 
         $data['compani_id'] = $userCompany->id;
+        $data['gps_radius'] = $data['gps_radius'] ?? 5000;
 
-        $branch = Branch::create([
-            'name' => $data['name'],
-            'address' => $data['address'],
-            'phone' => $data['phone'],
-            'category' => $data['category'],
-            'compani_id' => $userCompany->id,
-        ]);
+        $branch = Branch::create($data);
 
         $this->logActivity(
             'Create Branch',
@@ -93,6 +91,9 @@ class BranchController extends Controller
             'address' => 'required',
             'phone' => 'required',
             'category' => 'required',
+            'latitude' => 'nullable|numeric',
+            'longitude' => 'nullable|numeric',
+            'gps_radius' => 'nullable|integer|min:100|max:50000',
         ]);
 
         $branch = Branch::where('id', $id)
@@ -101,12 +102,7 @@ class BranchController extends Controller
 
         $oldContent = $branch->name;
 
-        $branch->update([
-            'name' => $data['name'],
-            'address' => $data['address'],
-            'phone' => $data['phone'],
-            'category' => $data['category'],
-        ]);
+        $branch->update($data);
 
         $this->logActivity(
             'Update Branch',

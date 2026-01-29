@@ -24,6 +24,7 @@ use App\Http\Controllers\ScheduleController;
 use App\Http\Controllers\ShiftController;
 use App\Http\Controllers\TaxConfigController;
 use App\Http\Controllers\OutletController;
+use App\Http\Controllers\GpsAttendanceController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [AuthController::class, 'login'])->name('login');
@@ -191,6 +192,9 @@ Route::middleware('auth:web')->group(function () {
 
     // FINGERSPOT SYNC
     Route::post('/fingerspot/fetch', [FingerspotController::class, 'fetchFromApi'])->name('fingerspotFetch');
+
+    // GPS ATTENDANCE
+    Route::get('/gps-attendance', [GpsAttendanceController::class, 'adminIndex'])->name('gps-attendance');
 });
 
 Route::middleware('auth:employee')->group(function () {
@@ -224,4 +228,8 @@ Route::middleware('auth:employee')->group(function () {
     Route::post('/coordinator/schedule/assign', [EssController::class, 'coordinatorStoreSchedule'])->name('ess-coordinator-schedule-store');
     Route::put('/coordinator/schedule/{id}', [EssController::class, 'coordinatorUpdateSchedule'])->name('ess-coordinator-schedule-update');
     Route::delete('/coordinator/schedule/{id}', [EssController::class, 'coordinatorDestroySchedule'])->name('ess-coordinator-schedule-destroy');
+
+    Route::get('/ess-gps-attendance', [GpsAttendanceController::class, 'index'])->name('ess-gps-attendance');
+    Route::post('/ess-gps-check-in', [GpsAttendanceController::class, 'checkIn'])->name('ess-gps-check-in');
+    Route::post('/ess-gps-check-out', [GpsAttendanceController::class, 'checkOut'])->name('ess-gps-check-out');
 });

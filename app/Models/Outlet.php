@@ -13,7 +13,10 @@ class Outlet extends Model
         'branch_id',
         'name',
         'phone',
-        'address'
+        'address',
+        'latitude',     
+        'longitude',    
+        'gps_radius',    
     ];
 
     public function branch()

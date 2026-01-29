@@ -108,22 +108,22 @@
                 </a>
 
                 <!-- Leave -->
-                <a href="{{ route('ess-leave') }}" class="flex flex-col items-center gap-2">
+                {{-- <a href="{{ route('ess-leave') }}" class="flex flex-col items-center gap-2">
                     <div
                         class="w-14 h-14 flex items-center justify-center bg-sky-100 text-sky-600 rounded-xl shadow-sm">
                         <i class="fas fa-calendar-check text-xl"></i>
                     </div>
                     <p class="text-xs font-semibold text-gray-600">Cuti</p>
-                </a>
+                </a> --}}
 
                 <!-- Overtime -->
-                <a href="{{ route('ess-overtime') }}" class="flex flex-col items-center gap-2">
+                {{-- <a href="{{ route('ess-overtime') }}" class="flex flex-col items-center gap-2">
                     <div
                         class="w-14 h-14 flex items-center justify-center bg-emerald-100 text-emerald-600 rounded-xl shadow-sm">
                         <i class="fas fa-business-time text-xl"></i>
                     </div>
                     <p class="text-xs font-semibold text-gray-600">Lembur</p>
-                </a>
+                </a> --}}
 
                 <!-- Note -->
                 <a href="{{ route('ess-note') }}" class="flex flex-col items-center gap-2">
@@ -141,6 +141,17 @@
                         <i class="fas fa-wallet text-xl"></i>
                     </div>
                     <p class="text-xs font-semibold text-gray-600">Gaji</p>
+                </a>
+
+                <a href="{{ route('ess-gps-attendance') }}" 
+                    class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex items-center gap-3 hover:shadow-md transition">
+                    <div class="w-12 h-12 bg-indigo-100 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-map-marker-alt text-indigo-600 text-xl"></i>
+                    </div>
+                    <div>
+                        <p class="font-bold text-gray-800">GPS Attendance</p>
+                        <p class="text-xs text-gray-500">Check-in dengan lokasi</p>
+                    </div>
                 </a>
             </div>
 

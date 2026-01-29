@@ -14,6 +14,9 @@ class Branch extends Model
         'compani_id',
         'name',
         'address',
+        'latitude',
+        'longitude', 
+        'gps_radius',
         'phone',
         'category',
     ];

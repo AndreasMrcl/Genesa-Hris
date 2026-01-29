@@ -51,6 +51,9 @@ class OutletController extends Controller
             'name' => 'required|string|max:255',
             'phone' => 'nullable|string',
             'address' => 'nullable|string',
+            'latitude' => 'nullable|numeric',
+            'longitude' => 'nullable|numeric',
+            'gps_radius' => 'nullable|integer|min:100|max:50000',
         ]);
 
         Outlet::create($request->all());
@@ -69,15 +72,24 @@ class OutletController extends Controller
 
         if($outlet->branch->compani_id != $userCompany->id) abort(403);
 
-        $request->validate([
+       $request->validate([
             'name' => 'required|string|max:255',
-            'phone' => 'nullable|string',
+            'phone' => 'nullable|string|max:20',
             'address' => 'nullable|string',
+            'latitude' => 'nullable|numeric',
+            'longitude' => 'nullable|numeric',
+            'gps_radius' => 'nullable|integer|min:100|max:50000',
         ]);
 
-        $outlet->update($request->only(['name', 'phone', 'address']));
+        $oldName = $outlet->name;
 
-        $this->logActivity('Update Outlet', "Mengubah outlet: {$outlet->name}", $userCompany->id);
+        $outlet->update($request->only(['name', 'phone', 'address', 'latitude', 'longitude', 'gps_radius']));
+
+        $this->logActivity(
+            'Update Outlet',
+            "Mengubah outlet dari '{$oldName}' menjadi '{$outlet->name}'",
+            $userCompany->id
+        );
         $this->clearCache($outlet->branch_id);
 
         return redirect()->back()->with('success', 'Outlet updated');
