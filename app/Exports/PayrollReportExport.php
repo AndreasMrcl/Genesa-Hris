@@ -23,11 +23,10 @@ class PayrollReportExport implements FromView, ShouldAutoSize, WithTitle
 
     public function view(): View
     {
-        // 1. Ambil semua payroll dengan relasi
         $payrolls = Payroll::with([
             'employee.branch',
             'employee.outlet',
-            'payrollDetails',  // Untuk ambil allowance dan benefit
+            'payrollDetails',
         ])
         ->where('payrolls.compani_id', $this->companyId)
         ->where('payrolls.pay_period_start', $this->start)
@@ -39,21 +38,16 @@ class PayrollReportExport implements FromView, ShouldAutoSize, WithTitle
         ->select('payrolls.*')
         ->get();
 
-        // 2. Kalkulasi untuk setiap payroll
         $payrolls->each(function ($payroll) {
             $details = $payroll->payrollDetails;
             
-            // Tunjangan Jabatan (allowance dengan nama "Jabatan")
             $tunjanganJabatan = $details->filter(function ($detail) {
                 return $detail->category == 'allowance' && 
                        stripos($detail->name, 'jabatan') !== false;
             })->sum('amount');
             
-            // Cast ke float untuk memastikan tidak ter-truncate
             $payroll->tunjangan_jabatan = (float) $tunjanganJabatan;
             
-            // === BPJS TK ===
-            // BPJS TK Perusahaan (benefit: JKK, JKM, JHT, JP)
             $bpjsTkPerusahaan = $details->filter(function ($detail) {
                 return $detail->category == 'benefit' && 
                        (stripos($detail->name, 'JKK') !== false ||
@@ -63,7 +57,6 @@ class PayrollReportExport implements FromView, ShouldAutoSize, WithTitle
             })->sum('amount');
             $payroll->bpjs_tk_perusahaan = (float) $bpjsTkPerusahaan;
             
-            // BPJS TK Karyawan (deduction: JHT, JP)
             $bpjsTkKaryawan = $details->filter(function ($detail) {
                 return $detail->category == 'deduction' && 
                        (stripos($detail->name, 'JHT') !== false ||
@@ -71,54 +64,46 @@ class PayrollReportExport implements FromView, ShouldAutoSize, WithTitle
             })->sum('amount');
             $payroll->bpjs_tk_karyawan = (float) $bpjsTkKaryawan;
             
-            // === BPJS KESEHATAN ===
-            // BPJS Kesehatan Perusahaan (benefit: Kesehatan)
             $bpjsKesPerusahaan = $details->filter(function ($detail) {
                 return $detail->category == 'benefit' && 
                        stripos($detail->name, 'Kesehatan') !== false;
             })->sum('amount');
             $payroll->bpjs_kes_perusahaan = (float) $bpjsKesPerusahaan;
             
-            // BPJS Kesehatan Karyawan (deduction: Kesehatan)
             $bpjsKesKaryawan = $details->filter(function ($detail) {
                 return $detail->category == 'deduction' && 
                        stripos($detail->name, 'Kesehatan') !== false;
             })->sum('amount');
             $payroll->bpjs_kes_karyawan = (float) $bpjsKesKaryawan;
             
-            // Total BPJS Benefit (untuk Total Gaji + BPJS)
             $bpjsBenefit = $bpjsTkPerusahaan + $bpjsKesPerusahaan;
             $payroll->bpjs_benefit = (float) $bpjsBenefit;
             
-            // Total Gaji + BPJS
             $payroll->gaji_plus_bpjs = (float) ($payroll->base_salary + $payroll->bpjs_benefit);
             
-            // === INFAQ ===
-            // Infaq (deduction dengan nama "Infaq")
             $infaq = $details->filter(function ($detail) {
                 return $detail->category == 'deduction' && 
                        stripos($detail->name, 'Infaq') !== false;
             })->sum('amount');
             $payroll->infaq = (float) $infaq;
+
+            $takeHomePay = $payroll->net_salary + $infaq;
             
-            // === THP (Take Home Pay) ===
-            // THP sudah ada di database, tapi kita bisa gunakan net_salary
-            $payroll->thp = (float) $payroll->net_salary;
+            $payroll->thp = (float) $takeHomePay;
+
+            $payroll->realPayroll = (float) $payroll->net_salary;
         });
 
-        // 3. Grouping per Branch
         $groupedByBranch = $payrolls->groupBy(function ($payroll) {
             return $payroll->employee->branch_id;
         });
 
-        // 3. Susun data per branch dengan subtotal
         $branches = [];
         
         foreach ($groupedByBranch as $branchId => $payrollsInBranch) {
             $firstPayroll = $payrollsInBranch->first();
             $branchName = $firstPayroll->employee->branch->name;
             
-            // Hitung subtotal untuk branch ini
             $subtotal = [
                 'count' => $payrollsInBranch->count(),
                 'total_gaji' => $payrollsInBranch->sum('base_salary'),
@@ -130,6 +115,7 @@ class PayrollReportExport implements FromView, ShouldAutoSize, WithTitle
                 'total_gaji_plus_bpjs' => $payrollsInBranch->sum('gaji_plus_bpjs'),
                 'total_thp' => $payrollsInBranch->sum('thp'),
                 'total_infaq' => $payrollsInBranch->sum('infaq'),
+                'total_payroll' => $payrollsInBranch->sum('realPayroll')
             ];
             
             $branches[] = [
@@ -139,7 +125,6 @@ class PayrollReportExport implements FromView, ShouldAutoSize, WithTitle
             ];
         }
 
-        // 4. Grand Total
         $grandTotal = [
             'count' => $payrolls->count(),
             'total_gaji' => $payrolls->sum('base_salary'),
@@ -151,6 +136,7 @@ class PayrollReportExport implements FromView, ShouldAutoSize, WithTitle
             'total_gaji_plus_bpjs' => $payrolls->sum('gaji_plus_bpjs'),
             'total_thp' => $payrolls->sum('thp'),
             'total_infaq' => $payrolls->sum('infaq'),
+            'total_payroll' => $payrolls->sum('realPayroll')
         ];
 
         return view('exports.payrollReport', [

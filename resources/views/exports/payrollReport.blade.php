@@ -1,39 +1,40 @@
 <table>
     <thead>
         <tr>
-            <th colspan="11" style="font-weight: bold; font-size: 14px; text-align: center; background-color: #1e40af; color: #ffffff;">
+            <th colspan="12" style="font-weight: bold; font-size: 14px; text-align: center; background-color: #1e40af; color: #ffffff;">
                 LAPORAN PENGGAJIAN KARYAWAN
             </th>
         </tr>
         <tr>
-            <th colspan="11" style="font-weight: bold; font-size: 12px; text-align: center; background-color: #3b82f6; color: #ffffff;">
-                {{ $companyName }}
+            <th colspan="12" style="font-weight: bold; font-size: 12px; text-align: center; background-color: #3b82f6; color: #ffffff;">
+                {{ Auth::user()->compani->company ?? 'Company Name' }}
             </th>
         </tr>
         <tr>
-            <th colspan="11" style="font-size: 10px; text-align: center; background-color: #60a5fa; color: #ffffff;">
-                Periode: {{ \Carbon\Carbon::parse($start)->format('d M Y') }} - {{ \Carbon\Carbon::parse($end)->format('d M Y') }}
+            <th colspan="12" style="font-size: 10px; text-align: center; background-color: #60a5fa; color: #ffffff;">
+                Periode: {{ \Carbon\Carbon::parse($end)->format('M Y') }}
             </th>
         </tr>
-        <tr><th colspan="11"></th></tr>
+        <tr><th colspan="12"></th></tr>
 
         {{-- Header Row 1 (Main Headers) --}}
         <tr>
             <th rowspan="2" style="border: 1px solid #000; font-weight: bold; background-color: #e5e7eb; text-align: center; vertical-align: middle;">NAMA</th>
             <th rowspan="2" style="border: 1px solid #000; font-weight: bold; background-color: #e5e7eb; text-align: center; vertical-align: middle;">UNIT</th>
             <th rowspan="2" style="border: 1px solid #000; font-weight: bold; background-color: #e5e7eb; text-align: center; vertical-align: middle;">GAJI</th>
-            <th rowspan="2" style="border: 1px solid #000; font-weight: bold; background-color: #dbeafe; text-align: center; vertical-align: middle;">TUNJANGAN<br>JABATAN</th>
-            <th colspan="2" style="border: 1px solid #000; font-weight: bold; background-color: #fef3c7; text-align: center;">BPJS TK</th>
+            <th rowspan="2" style="border: 1px solid #000; font-weight: bold; background-color: #dbeafe; text-align: center; vertical-align: middle;">TUNJ. JABATAN</th>
+            <th colspan="2" style="border: 1px solid #000; font-weight: bold; background-color: #fde68a; text-align: center;">BPJS TK</th>
             <th colspan="2" style="border: 1px solid #000; font-weight: bold; background-color: #fde68a; text-align: center;">BPJS KESEHATAN</th>
             <th rowspan="2" style="border: 1px solid #000; font-weight: bold; background-color: #a7f3d0; text-align: center; vertical-align: middle;">TOTAL GAJI<br>+ BPJS</th>
             <th rowspan="2" style="border: 1px solid #000; font-weight: bold; background-color: #86efac; text-align: center; vertical-align: middle;">THP</th>
             <th rowspan="2" style="border: 1px solid #000; font-weight: bold; background-color: #fde68a; text-align: center; vertical-align: middle;">INFAQ</th>
+            <th rowspan="2" style="border: 1px solid #000; font-weight: bold; background-color: #a7f3d0; text-align: center; vertical-align: middle;">PAYROLL</th>
         </tr>
         
         {{-- Header Row 2 (Sub Headers) --}}
         <tr>
-            <th style="border: 1px solid #000; font-weight: bold; background-color: #fef3c7; text-align: center; font-size: 9px;">Perusahaan</th>
-            <th style="border: 1px solid #000; font-weight: bold; background-color: #fef3c7; text-align: center; font-size: 9px;">Karyawan</th>
+            <th style="border: 1px solid #000; font-weight: bold; background-color: #fde68a; text-align: center; font-size: 9px;">Perusahaan</th>
+            <th style="border: 1px solid #000; font-weight: bold; background-color: #fde68a; text-align: center; font-size: 9px;">Karyawan</th>
             <th style="border: 1px solid #000; font-weight: bold; background-color: #fde68a; text-align: center; font-size: 9px;">Perusahaan</th>
             <th style="border: 1px solid #000; font-weight: bold; background-color: #fde68a; text-align: center; font-size: 9px;">Karyawan</th>
         </tr>
@@ -43,7 +44,7 @@
         @foreach($branches as $branch)
             {{-- Branch Header --}}
             <tr>
-                <td colspan="11" style="border: 1px solid #000; font-weight: bold; background-color: #f3f4f6; padding: 5px;">
+                <td colspan="12" style="border: 1px solid #000; font-weight: bold; background-color: #f3f4f6; padding: 5px;">
                     {{ strtoupper($branch['branch_name']) }}
                 </td>
             </tr>
@@ -67,14 +68,14 @@
                         -
                     @endif
                 </td>
-                <td style="border: 1px solid #000; text-align: right; padding-right: 5px; background-color: #fffbeb; mso-number-format:'\@';">
+                <td style="border: 1px solid #000; text-align: right; padding-right: 5px; background-color: #fef9c3; mso-number-format:'\@';">
                     @if($payroll->bpjs_tk_perusahaan > 0)
                         &#8203;{{ number_format($payroll->bpjs_tk_perusahaan, 0, ',', '.') }}
                     @else
                         -
                     @endif
                 </td>
-                <td style="border: 1px solid #000; text-align: right; padding-right: 5px; background-color: #fffbeb; mso-number-format:'\@';">
+                <td style="border: 1px solid #000; text-align: right; padding-right: 5px; background-color: #fef9c3; mso-number-format:'\@';">
                     @if($payroll->bpjs_tk_karyawan > 0)
                         &#8203;{{ number_format($payroll->bpjs_tk_karyawan, 0, ',', '.') }}
                     @else
@@ -101,12 +102,15 @@
                 <td style="border: 1px solid #000; text-align: right; padding-right: 5px; font-weight: bold; background-color: #bbf7d0; mso-number-format:'\@';">
                     &#8203;{{ number_format($payroll->thp, 0, ',', '.') }}
                 </td>
-                <td style="border: 1px solid #000; text-align: right; padding-right: 5px; background-color: #fef3c7; mso-number-format:'\@';">
+                <td style="border: 1px solid #000; text-align: right; padding-right: 5px; background-color: #fde68a; mso-number-format:'\@';">
                     @if($payroll->infaq > 0)
                         &#8203;{{ number_format($payroll->infaq, 0, ',', '.') }}
                     @else
                         -
                     @endif
+                </td>
+                <td style="border: 1px solid #000; text-align: right; padding-right: 5px; background-color: #d1fae5; mso-number-format:'\@';">
+                    &#8203;{{ number_format($payroll->realPayroll, 0, ',', '.') }}
                 </td>
             </tr>
             @endforeach
@@ -122,10 +126,10 @@
                 <td style="border: 1px solid #000; font-weight: bold; text-align: right; padding-right: 5px; background-color: #e5e7eb; mso-number-format:'\@';">
                     &#8203;{{ number_format($branch['subtotal']['total_tunjangan_jabatan'], 0, ',', '.') }}
                 </td>
-                <td style="border: 1px solid #000; font-weight: bold; text-align: right; padding-right: 5px; background-color: #fef3c7; mso-number-format:'\@';">
+                <td style="border: 1px solid #000; font-weight: bold; text-align: right; padding-right: 5px; background-color: #fde68a; mso-number-format:'\@';">
                     &#8203;{{ number_format($branch['subtotal']['total_bpjs_tk_perusahaan'], 0, ',', '.') }}
                 </td>
-                <td style="border: 1px solid #000; font-weight: bold; text-align: right; padding-right: 5px; background-color: #fef3c7; mso-number-format:'\@';">
+                <td style="border: 1px solid #000; font-weight: bold; text-align: right; padding-right: 5px; background-color: #fde68a; mso-number-format:'\@';">
                     &#8203;{{ number_format($branch['subtotal']['total_bpjs_tk_karyawan'], 0, ',', '.') }}
                 </td>
                 <td style="border: 1px solid #000; font-weight: bold; text-align: right; padding-right: 5px; background-color: #fde68a; mso-number-format:'\@';">
@@ -143,10 +147,13 @@
                 <td style="border: 1px solid #000; font-weight: bold; text-align: right; padding-right: 5px; background-color: #fde68a; mso-number-format:'\@';">
                     &#8203;{{ number_format($branch['subtotal']['total_infaq'], 0, ',', '.') }}
                 </td>
+                <td style="border: 1px solid #000; font-weight: bold; text-align: right; padding-right: 5px; background-color: #a7f3d0; mso-number-format:'\@';">
+                    &#8203;{{ number_format($branch['subtotal']['total_payroll'], 0, ',', '.') }}
+                </td>
             </tr>
 
             {{-- Spacing --}}
-            <tr><td colspan="11" style="height: 5px;"></td></tr>
+            <tr><td colspan="12" style="height: 5px;"></td></tr>
         @endforeach
 
         {{-- Grand Total --}}
@@ -180,6 +187,9 @@
             </td>
             <td style="border: 2px solid #000; font-weight: bold; text-align: right; padding-right: 5px; background-color: #eab308; color: white; mso-number-format:'\@';">
                 &#8203;{{ number_format($grandTotal['total_infaq'], 0, ',', '.') }}
+            </td>
+            <td style="border: 2px solid #000; font-weight: bold; text-align: right; padding-right: 5px; background-color: #10b981; color: white; mso-number-format:'\@';">
+                &#8203;{{ number_format($grandTotal['total_payroll'], 0, ',', '.') }}
             </td>
         </tr>
     </tbody>
