@@ -195,6 +195,9 @@ Route::middleware('auth:web')->group(function () {
 
     // GPS ATTENDANCE
     Route::get('/gps-attendance', [GpsAttendanceController::class, 'adminIndex'])->name('gps-attendance');
+
+    // ATTENDANCE AUTO GENERATE
+    Route::post('/attendance/auto-generate', [AttendanceController::class, 'autoGenerate'])->name('attendance-auto-generate');
 });
 
 Route::middleware('auth:employee')->group(function () {

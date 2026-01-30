@@ -154,13 +154,13 @@
                     <p id="distanceText" class="text-xs font-bold text-indigo-600 mt-1"></p>
                 </div>
 
-                <div class="mb-4">
+                {{-- <div class="mb-4">
                     <label class="block text-xs font-bold text-gray-600 mb-2">
                         <i class="fas fa-camera"></i> Foto Selfie (Opsional)
                     </label>
                     <input type="file" name="photo" accept="image/*" capture="user" 
                         class="w-full border rounded-lg p-2 text-sm">
-                </div>
+                </div> --}}
 
                 <div class="flex gap-2">
                     <button type="button" onclick="closeModal('checkInModal')" 
@@ -197,13 +197,13 @@
                     <p id="distanceTextOut" class="text-xs font-bold text-indigo-600 mt-1"></p>
                 </div>
 
-                <div class="mb-4">
+                {{-- <div class="mb-4">
                     <label class="block text-xs font-bold text-gray-600 mb-2">
                         <i class="fas fa-camera"></i> Foto Selfie (Opsional)
                     </label>
                     <input type="file" name="photo" accept="image/*" capture="user" 
                         class="w-full border rounded-lg p-2 text-sm">
-                </div>
+                </div> --}}
 
                 <div class="flex gap-2">
                     <button type="button" onclick="closeModal('checkOutModal')" 

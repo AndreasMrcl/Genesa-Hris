@@ -104,7 +104,7 @@
                         class="w-14 h-14 flex items-center justify-center bg-cyan-100 text-cyan-600 rounded-xl shadow-sm">
                         <i class="fas fa-fingerprint text-xl"></i>
                     </div>
-                    <p class="text-xs font-semibold text-gray-600">Absensi</p>
+                    <p class="text-xs font-semibold text-gray-600">Riwayat Absensi</p>
                 </a>
 
                 <!-- Leave -->
@@ -142,16 +142,12 @@
                     </div>
                     <p class="text-xs font-semibold text-gray-600">Gaji</p>
                 </a>
-
-                <a href="{{ route('ess-gps-attendance') }}" 
-                    class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex items-center gap-3 hover:shadow-md transition">
-                    <div class="w-12 h-12 bg-indigo-100 rounded-xl flex items-center justify-center">
+                <a href="{{ route('ess-gps-attendance') }}" class="flex flex-col items-center gap-2">
+                    <div
+                        class="w-14 h-14 flex items-center justify-center bg-indigo-100 text-indigo-600 rounded-xl shadow-sm">
                         <i class="fas fa-map-marker-alt text-indigo-600 text-xl"></i>
                     </div>
-                    <div>
-                        <p class="font-bold text-gray-800">GPS Attendance</p>
-                        <p class="text-xs text-gray-500">Check-in dengan lokasi</p>
-                    </div>
+                    <p class="text-xs font-semibold text-gray-600">Absensi</p>
                 </a>
             </div>
 

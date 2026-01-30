@@ -31,7 +31,7 @@ return new class extends Migration
             $table->string('check_out_photo')->nullable();
             
             // Status & Notes
-            $table->enum('status', ['present', 'late', 'early_leave', 'incomplete'])->default('present');
+            $table->enum('status', ['present', 'late', 'sick', 'incomplete'])->default('present');
             $table->text('notes')->nullable();
             
             $table->timestamps();

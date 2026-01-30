@@ -5,10 +5,14 @@ namespace App\Http\Controllers;
 use App\Models\ActivityLog;
 use App\Models\Attendance;
 use App\Models\AttendanceLog;
+use App\Models\GpsAttendanceLog;
+use App\Models\Leave;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
+use App\Services\AttendanceProcessorService;
 
 class AttendanceController extends Controller
 {
@@ -58,38 +62,159 @@ class AttendanceController extends Controller
         $end = $request->get('end');
         $employees = [];
         $attendances = [];
-        $machineData = [];
+
+        $gpsData = [];
+        $fingerspotData = [];
+        $leaveData = [];
+        $detectionStats = [
+            'total_gps' => 0,
+            'total_fingerspot' => 0,
+            'total_leaves' => 0,
+        ];
 
         if ($start && $end) {
-            // Ambil daftar karyawan langsung dari database (realtime)
-            $employees = $userCompany->employees()->orderBy('name')->get();
+            $employees = $userCompany->employees()
+                ->with(['position', 'branch', 'outlet'])
+                ->orderBy('name')
+                ->get();
 
-            // Ambil attendances existing untuk periode
             $attendances = $userCompany->attendances()
                 ->where('period_start', $start)
                 ->where('period_end', $end)
                 ->get()
                 ->keyBy('employee_id');
 
-            // Ambil logs dari device / Fingerspot, hitung per hari
-            $rawLogs = AttendanceLog::where('compani_id', $userCompany->id)
-                ->whereBetween('scan_time', [$start.' 00:00:00', $end.' 23:59:59'])
+            $employeeIds = $employees->pluck('id')->toArray();
+
+            $gpsLogs = GpsAttendanceLog::whereIn('employee_id', $employeeIds)
+                ->whereBetween('attendance_date', [$start, $end])
+                ->whereNotNull('check_in_time')
+                ->select('employee_id', 'attendance_date', 'status')
+                ->get();
+
+            foreach ($gpsLogs as $log) {
+                if (!isset($gpsData[$log->employee_id])) {
+                    $gpsData[$log->employee_id] = [
+                        'count' => 0,
+                        'late_count' => 0,
+                        'dates' => [],
+                    ];
+                }
+
+                if (!in_array($log->attendance_date, $gpsData[$log->employee_id]['dates'])) {
+                    $gpsData[$log->employee_id]['dates'][] = $log->attendance_date;
+                    $gpsData[$log->employee_id]['count']++;
+
+                    if ($log->status == 'late') {
+                        $gpsData[$log->employee_id]['late_count']++;
+                    }
+                }
+            }
+
+            $detectionStats['total_gps'] = $gpsLogs->count();
+
+            $fingerspotLogs = AttendanceLog::whereIn('employee_id', $employeeIds)
+                ->whereBetween(DB::raw('DATE(scan_time)'), [$start, $end])
                 ->select('employee_id', DB::raw('DATE(scan_time) as scan_date'))
                 ->distinct()
                 ->get();
 
-            // Group logs per employee dan hitung kehadiran per hari
-            foreach ($rawLogs->groupBy('employee_id') as $empId => $logs) {
-                $uniqueDays = $logs->pluck('scan_date')->unique()->count();
+            foreach ($fingerspotLogs as $log) {
+                if (!isset($fingerspotData[$log->employee_id])) {
+                    $fingerspotData[$log->employee_id] = [
+                        'count' => 0,
+                        'dates' => [],
+                    ];
+                }
 
-                $machineData[$empId] = [
-                    'present' => $uniqueDays,
-                ];
+                if (!in_array($log->scan_date, $fingerspotData[$log->employee_id]['dates'])) {
+                    $fingerspotData[$log->employee_id]['dates'][] = $log->scan_date;
+                    $fingerspotData[$log->employee_id]['count']++;
+                }
+            }
+
+            $detectionStats['total_fingerspot'] = $fingerspotLogs->count();
+
+            $leaves = Leave::whereIn('employee_id', $employeeIds)
+                ->where('status', 'approved')
+                ->where(function ($q) use ($start, $end) {
+                    $q->whereBetween('start_date', [$start, $end])
+                        ->orWhereBetween('end_date', [$start, $end])
+                        ->orWhere(function ($q2) use ($start, $end) {
+                            $q2->where('start_date', '<=', $start)
+                                ->where('end_date', '>=', $end);
+                        });
+                })
+                ->get();
+
+            foreach ($leaves as $leave) {
+                if (!isset($leaveData[$leave->employee_id])) {
+                    $leaveData[$leave->employee_id] = [
+                        'sick' => 0,
+                        'permission' => 0,
+                        'leave' => 0,
+                    ];
+                }
+
+                $leaveStart = Carbon::parse($leave->start_date);
+                $leaveEnd = Carbon::parse($leave->end_date);
+                $periodStart = Carbon::parse($start);
+                $periodEnd = Carbon::parse($end);
+
+                $actualStart = $leaveStart->greaterThan($periodStart) ? $leaveStart : $periodStart;
+                $actualEnd = $leaveEnd->lessThan($periodEnd) ? $leaveEnd : $periodEnd;
+
+                $leaveDays = $actualStart->diffInDays($actualEnd) + 1;
+
+                if ($leave->type == 'sakit') {
+                    $leaveData[$leave->employee_id]['sick'] += $leaveDays;
+                } elseif ($leave->type == 'izin') {
+                    $leaveData[$leave->employee_id]['permission'] += $leaveDays;
+                } elseif ($leave->type == 'cuti') {
+                    $leaveData[$leave->employee_id]['leave'] += $leaveDays;
+                }
+            }
+
+            $detectionStats['total_leaves'] = $leaves->count();
+
+            foreach ($employees as $emp) {
+                $empId = $emp->id;
+
+                $gpsCount = isset($gpsData[$empId]) ? $gpsData[$empId]['count'] : 0;
+                $gpsLateCount = isset($gpsData[$empId]) ? $gpsData[$empId]['late_count'] : 0;
+
+                $fingerspotCount = isset($fingerspotData[$empId]) ? $fingerspotData[$empId]['count'] : 0;
+
+                $autoPresent = max($gpsCount, $fingerspotCount);
+
+                $source = '';
+                if ($gpsCount > 0 && $fingerspotCount > 0) {
+                    $source = 'mixed';
+                } elseif ($gpsCount > 0) {
+                    $source = 'gps';
+                } elseif ($fingerspotCount > 0) {
+                    $source = 'fingerspot';
+                }
+
+                $emp->auto_present = $autoPresent;
+                $emp->gps_count = $gpsCount;
+                $emp->gps_late_count = $gpsLateCount;
+                $emp->fingerspot_count = $fingerspotCount;
+                $emp->detection_source = $source;
+
+                $emp->auto_sick = isset($leaveData[$empId]) ? $leaveData[$empId]['sick'] : 0;
+                $emp->auto_permission = isset($leaveData[$empId]) ? $leaveData[$empId]['permission'] : 0;
+                $emp->auto_leave = isset($leaveData[$empId]) ? $leaveData[$empId]['leave'] : 0;
             }
         }
 
-        // Tidak ada cache, jadi semua realtime
-        return view('manageAttendance', compact('start', 'end', 'employees', 'attendances', 'machineData'));
+        return view('manageAttendance', compact(
+            'start',
+            'end',
+            'employees',
+            'attendances',
+            'detectionStats'
+        ));
     }
 
     public function storeBatch(Request $request)
@@ -106,6 +231,24 @@ class AttendanceController extends Controller
         DB::beginTransaction();
         try {
             foreach ($request->data as $empId => $row) {
+                $hasGps = GpsAttendanceLog::where('employee_id', $empId)
+                    ->whereBetween('attendance_date', [$request->period_start, $request->period_end])
+                    ->whereNotNull('check_in_time')
+                    ->exists();
+
+                $hasFingerspot = AttendanceLog::where('employee_id', $empId)
+                    ->whereBetween(DB::raw('DATE(scan_time)'), [$request->period_start, $request->period_end])
+                    ->exists();
+
+                $source = 'manual';
+                if ($hasGps && $hasFingerspot) {
+                    $source = 'mixed';
+                } elseif ($hasGps) {
+                    $source = 'gps';
+                } elseif ($hasFingerspot) {
+                    $source = 'fingerspot';
+                }
+
                 Attendance::updateOrCreate(
                     [
                         'compani_id' => $userCompany->id,
@@ -114,6 +257,7 @@ class AttendanceController extends Controller
                         'period_end' => $request->period_end,
                     ],
                     [
+                        'source' => $source,
                         'total_present' => $row['present'] ?? 0,
                         'total_sick' => $row['sick'] ?? 0,
                         'total_permission' => $row['permission'] ?? 0,
@@ -138,7 +282,7 @@ class AttendanceController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
 
-            return back()->withErrors(['msg' => 'Error saving data: '.$e->getMessage()])->withInput();
+            return back()->withErrors(['msg' => 'Error saving data: ' . $e->getMessage()])->withInput();
         }
     }
 
@@ -165,6 +309,39 @@ class AttendanceController extends Controller
         $this->clearCache($userCompany->id);
 
         return redirect()->route('attendance')->with('success', 'Attendance data deleted successfully!');
+    }
+
+    public function autoGenerate(Request $request)
+    {
+        $userCompany = Auth::user()->compani;
+
+        $request->validate([
+            'start_date' => 'required|date',
+            'end_date' => 'required|date|after_or_equal:start_date',
+        ]);
+
+        $start = $request->start_date;
+        $end = $request->end_date;
+
+        try {
+            $processor = new AttendanceProcessorService();
+
+            $results = $processor->generateAttendanceRecap($userCompany->id, $start, $end);
+
+            $processor->saveAttendanceRecap($userCompany->id, $start, $end, $results);
+
+            $this->logActivity(
+                'Auto-Generate Attendance',
+                "Generate rekap absensi otomatis periode {$start} s/d {$end} dari Fingerspot & GPS",
+                $userCompany->id
+            );
+
+            $this->clearCache($userCompany->id);
+
+            return redirect()->route('attendance')->with('success', 'Attendance auto-generated successfully from Fingerspot & GPS data!');
+        } catch (\Exception $e) {
+            return back()->withErrors(['msg' => 'Error: ' . $e->getMessage()]);
+        }
     }
 
     private function clearCache($companyId)
