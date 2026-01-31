@@ -48,8 +48,9 @@ class GpsAttendanceLog extends Model
     public function getWorkDurationAttribute()
     {
         if ($this->check_in_time && $this->check_out_time) {
-            $hours = $this->check_in_time->diffInHours($this->check_out_time);
-            $minutes = $this->check_in_time->diffInMinutes($this->check_out_time) % 60;
+            $totalMinutes = $this->check_in_time->diffInMinutes($this->check_out_time);
+            $hours = intdiv($totalMinutes, 60);
+            $minutes = $totalMinutes % 60;
             return "{$hours}h {$minutes}m";
         }
         return '-';

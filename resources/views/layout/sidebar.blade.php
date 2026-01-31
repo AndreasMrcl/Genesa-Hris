@@ -110,6 +110,14 @@
                 </li>
 
                 <li class="p-4 mx-2 ml-16 md:ml-14">
+                    <a href="{{ route('gps-attendance') }}">
+                        <h1 class="text-gray-500 hover:text-black text-base font-normal">
+                            Catatan Absensi
+                        </h1>
+                    </a>
+                </li>
+
+                <li class="p-4 mx-2 ml-16 md:ml-14">
                     <a href="{{ route('overtime') }}">
                         <h1 class="text-gray-500 hover:text-black text-base font-normal">
                             Lembur
