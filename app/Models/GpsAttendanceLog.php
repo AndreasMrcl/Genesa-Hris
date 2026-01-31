@@ -67,4 +67,9 @@ class GpsAttendanceLog extends Model
         
         return $badges[$this->status] ?? 'bg-gray-100 text-gray-700 border-gray-200';
     }
+
+    public function countsAsPresent()
+    {
+        return in_array($this->status, ['present', 'late', 'early_leave', 'incomplete']);
+    }
 }

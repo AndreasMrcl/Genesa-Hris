@@ -5,6 +5,20 @@
     @include('ess.layout.head')
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <style>
+        .modal-overlay {
+            z-index: 9999 !important;
+        }
+        #map {
+            z-index: 1;
+        }
+        .leaflet-container {
+            z-index: 1 !important;
+        }
+        .leaflet-control-container {
+            z-index: 2 !important;
+        }
+    </style>
 </head>
 <body class="bg-gray-50 font-sans w-full md:max-w-sm mx-auto min-h-screen flex flex-col shadow-lg border-x border-gray-100">
 
@@ -58,7 +72,7 @@
 
         <!-- Map Preview -->
         @if($workLocation && $workLocation->latitude && $workLocation->longitude)
-        <div class="bg-white rounded-xl overflow-hidden shadow-md border border-gray-100">
+        <div class="bg-white rounded-xl overflow-hidden shadow-md border border-gray-100" id="mapContainer">
             <div id="map" class="h-56 w-full"></div>
             <div class="p-3 bg-gray-50 border-t border-gray-100">
                 <div class="flex items-start gap-2 text-xs">
@@ -134,7 +148,7 @@
     </div>
 
     <!-- Check-In Modal -->
-    <div id="checkInModal" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm flex items-end justify-center z-50">
+    <div id="checkInModal" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm flex items-end justify-center modal-overlay">
         <div class="bg-white rounded-t-3xl w-full max-w-sm p-6 pb-8 transform transition-all">
             <div class="flex justify-between items-center mb-4">
                 <h2 class="text-lg font-bold text-gray-800">Konfirmasi Check-In</h2>
@@ -154,14 +168,6 @@
                     <p id="distanceText" class="text-xs font-bold text-indigo-600 mt-1"></p>
                 </div>
 
-                {{-- <div class="mb-4">
-                    <label class="block text-xs font-bold text-gray-600 mb-2">
-                        <i class="fas fa-camera"></i> Foto Selfie (Opsional)
-                    </label>
-                    <input type="file" name="photo" accept="image/*" capture="user" 
-                        class="w-full border rounded-lg p-2 text-sm">
-                </div> --}}
-
                 <div class="flex gap-2">
                     <button type="button" onclick="closeModal('checkInModal')" 
                         class="flex-1 py-3 bg-gray-200 text-gray-700 rounded-xl font-bold">
@@ -177,7 +183,7 @@
     </div>
 
     <!-- Check-Out Modal -->
-    <div id="checkOutModal" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm flex items-end justify-center z-50">
+    <div id="checkOutModal" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm flex items-end justify-center modal-overlay">
         <div class="bg-white rounded-t-3xl w-full max-w-sm p-6 pb-8">
             <div class="flex justify-between items-center mb-4">
                 <h2 class="text-lg font-bold text-gray-800">Konfirmasi Check-Out</h2>
@@ -186,7 +192,7 @@
                 </button>
             </div>
             
-            <form action="{{ route('ess-gps-check-out') }}" method="POST" enctype="multipart/form-data">
+            <form action="{{ route('ess-gps-check-out') }}" method="POST" enctype="multipart/form-data" id="checkOutForm">
                 @csrf
                 <input type="hidden" name="latitude" id="checkOutLat">
                 <input type="hidden" name="longitude" id="checkOutLon">
@@ -197,13 +203,27 @@
                     <p id="distanceTextOut" class="text-xs font-bold text-indigo-600 mt-1"></p>
                 </div>
 
-                {{-- <div class="mb-4">
+                <!-- Early Leave Warning -->
+                <div id="earlyLeaveWarning" class="hidden mb-4 bg-yellow-50 border border-yellow-200 rounded-lg p-3">
+                    <div class="flex items-start gap-2">
+                        <i class="fas fa-exclamation-triangle text-yellow-600 mt-0.5"></i>
+                        <div class="flex-grow">
+                            <p class="text-xs font-bold text-yellow-800">Peringatan: Pulang Lebih Awal</p>
+                            <p class="text-xs text-yellow-700 mt-1">Anda pulang sebelum jam kerja berakhir. Mohon berikan alasan.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Notes Field (untuk early leave WAJIB, untuk normal opsional) -->
+                <div class="mb-4">
                     <label class="block text-xs font-bold text-gray-600 mb-2">
-                        <i class="fas fa-camera"></i> Foto Selfie (Opsional)
+                        <i class="fas fa-clipboard-list"></i> Catatan <span id="notesRequired" class="text-red-500 hidden">*</span>
                     </label>
-                    <input type="file" name="photo" accept="image/*" capture="user" 
-                        class="w-full border rounded-lg p-2 text-sm">
-                </div> --}}
+                    <textarea name="notes" id="notesField" rows="3" 
+                        class="w-full border border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-indigo-500"
+                        placeholder="Tambahkan catatan (opsional)"></textarea>
+                    <p class="text-xs text-gray-400 mt-1" id="notesHint">Catatan bersifat opsional</p>
+                </div>
 
                 <div class="flex gap-2">
                     <button type="button" onclick="closeModal('checkOutModal')" 
@@ -229,6 +249,7 @@
         // Initialize Map
         const map = L.map('map').setView([workLat, workLon], 14);
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
             attribution: '© OpenStreetMap'
         }).addTo(map);
 
@@ -301,7 +322,10 @@
             document.getElementById('userLocationText').textContent = `Lat: ${userLat.toFixed(6)}, Lon: ${userLon.toFixed(6)}`;
             document.getElementById('distanceText').textContent = `Jarak dari kantor: ${formatDistance(distance)}`;
             
+            // Show modal
             document.getElementById('checkInModal').classList.remove('hidden');
+            // Prevent body scroll
+            document.body.style.overflow = 'hidden';
         }
 
         function openCheckOutModal() {
@@ -317,12 +341,83 @@
             document.getElementById('userLocationTextOut').textContent = `Lat: ${userLat.toFixed(6)}, Lon: ${userLon.toFixed(6)}`;
             document.getElementById('distanceTextOut').textContent = `Jarak dari kantor: ${formatDistance(distance)}`;
             
+            // Check if early leave
+            checkEarlyLeave();
+            
+            // Show modal
             document.getElementById('checkOutModal').classList.remove('hidden');
+            // Prevent body scroll
+            document.body.style.overflow = 'hidden';
+        }
+
+        function checkEarlyLeave() {
+            @if($todayAttendance)
+                @php
+                    $schedule = $todayAttendance->employee->schedules()->where('date', Carbon\Carbon::today())->first();
+                @endphp
+                
+                @if($schedule && $schedule->shift)
+                    const now = new Date();
+                    const shiftEnd = new Date();
+                    const shiftEndTime = "{{ $schedule->shift->end_time }}".split(':');
+                    shiftEnd.setHours(parseInt(shiftEndTime[0]), parseInt(shiftEndTime[1]), 0);
+                    
+                    const thirtyMinsBefore = new Date(shiftEnd.getTime() - 30 * 60000);
+                    
+                    if (now < thirtyMinsBefore) {
+                        // Early leave detected
+                        document.getElementById('earlyLeaveWarning').classList.remove('hidden');
+                        document.getElementById('notesRequired').classList.remove('hidden');
+                        document.getElementById('notesField').required = true;
+                        document.getElementById('notesField').placeholder = 'Alasan pulang lebih awal (wajib diisi, min. 10 karakter)';
+                        document.getElementById('notesHint').textContent = 'Wajib diisi karena Anda pulang lebih awal';
+                        document.getElementById('notesHint').classList.remove('text-gray-400');
+                        document.getElementById('notesHint').classList.add('text-red-500');
+                    } else {
+                        // Normal check-out
+                        resetNotesField();
+                    }
+                @else
+                    resetNotesField();
+                @endif
+            @else
+                resetNotesField();
+            @endif
+        }
+
+        function resetNotesField() {
+            document.getElementById('earlyLeaveWarning').classList.add('hidden');
+            document.getElementById('notesRequired').classList.add('hidden');
+            document.getElementById('notesField').required = false;
+            document.getElementById('notesField').placeholder = 'Tambahkan catatan (opsional)';
+            document.getElementById('notesHint').textContent = 'Catatan bersifat opsional';
+            document.getElementById('notesHint').classList.remove('text-red-500');
+            document.getElementById('notesHint').classList.add('text-gray-400');
         }
 
         function closeModal(id) {
             document.getElementById(id).classList.add('hidden');
+            // Restore body scroll
+            document.body.style.overflow = 'auto';
+            // Reset form when closing
+            if (id === 'checkOutModal') {
+                document.getElementById('checkOutForm').reset();
+                resetNotesField();
+            }
         }
+
+        // Close modal when clicking outside
+        document.getElementById('checkInModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal('checkInModal');
+            }
+        });
+
+        document.getElementById('checkOutModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal('checkOutModal');
+            }
+        });
 
         // Update user location every 10 seconds
         setInterval(() => {

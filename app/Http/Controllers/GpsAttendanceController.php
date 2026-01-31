@@ -64,7 +64,7 @@ class GpsAttendanceController extends Controller
             $workLocation->longitude
         );
 
-        $radius = $workLocation->gps_radius ?? 5000;
+        $radius = $workLocation->gps_radius ?? 1000;
 
         if ($distance > $radius) {
             return back()->withErrors([
@@ -136,7 +136,7 @@ class GpsAttendanceController extends Controller
             $workLocation->longitude
         );
 
-        $radius = $workLocation->gps_radius ?? 5000;
+        $radius = $workLocation->gps_radius ?? 1000;
 
         if ($distance > $radius) {
             return back()->withErrors([
@@ -149,26 +149,51 @@ class GpsAttendanceController extends Controller
             $photoPath = $request->file('photo')->store('attendance-photos', 'public');
         }
 
+        $isEarlyLeave = false;
         $schedule = $employee->schedules()->where('date', $today)->first();
+        
         if ($schedule && $schedule->shift) {
             $shiftEnd = Carbon::parse($schedule->shift->end_time);
             $now = Carbon::now();
             
             if ($now->lessThan($shiftEnd->subMinutes(30))) {
-                $attendance->status = 'early_leave';
+                $isEarlyLeave = true;
+                
+                $request->validate([
+                    'notes' => 'required|string|min:10|max:500'
+                ], [
+                    'notes.required' => 'Anda pulang lebih awal. Mohon berikan alasan di kolom catatan.',
+                    'notes.min' => 'Alasan minimal 10 karakter.',
+                    'notes.max' => 'Alasan maksimal 500 karakter.',
+                ]);
             }
         }
 
-        $attendance->update([
+        $updateData = [
             'check_out_time' => Carbon::now(),
             'check_out_latitude' => $request->latitude,
             'check_out_longitude' => $request->longitude,
             'check_out_address' => "Lat: {$request->latitude}, Lon: {$request->longitude}",
             'check_out_distance' => $distance,
             'check_out_photo' => $photoPath,
-        ]);
+        ];
 
-        return redirect()->route('ess-gps-attendance')->with('success', 'Check-out berhasil!');
+        if ($isEarlyLeave) {
+            $updateData['status'] = 'early_leave';
+            $updateData['notes'] = $request->notes;
+        } else {
+            if ($request->filled('notes')) {
+                $updateData['notes'] = $request->notes;
+            }
+        }
+
+        $attendance->update($updateData);
+
+        $message = $isEarlyLeave 
+            ? 'Check-out berhasil! Status: Pulang Awal (Admin akan memeriksa alasan Anda)' 
+            : 'Check-out berhasil!';
+
+        return redirect()->route('ess-gps-attendance')->with('success', $message);
     }
 
     public function adminIndex(Request $request)

@@ -63,6 +63,7 @@
                                 <th class="p-4 font-bold text-center">Durasi</th>
                                 <th class="p-4 font-bold text-center">Jarak (m)</th>
                                 <th class="p-4 font-bold text-center">Status</th>
+                                <th class="p-4 font-bold text-center">Catatan</th>
                                 <th class="p-4 font-bold text-center">Aksi</th>
                             </tr>
                         </thead>
@@ -109,6 +110,16 @@
                                     </span>
                                 </td>
                                 <td class="p-4 text-center">
+                                    @if($log->notes)
+                                        <button onclick="showNotes('{{ addslashes($log->employee->name) }}', '{{ addslashes($log->notes) }}', '{{ $log->status }}')" 
+                                            class="text-xs text-blue-600 hover:text-blue-800 bg-blue-50 px-2 py-1 rounded">
+                                            <i class="fas fa-comment-alt"></i> Lihat
+                                        </button>
+                                    @else
+                                        <span class="text-gray-400 text-xs">-</span>
+                                    @endif
+                                </td>
+                                <td class="p-4 text-center">
                                     <button onclick="viewDetails({{ $log->id }})" 
                                         class="text-blue-600 hover:text-blue-800 p-2 bg-blue-50 rounded-lg hover:bg-blue-100">
                                         <i class="fas fa-eye"></i>
@@ -117,33 +128,37 @@
                             </tr>
                             @empty
                             <tr>
-                                <td colspan="7" class="p-8 text-center text-gray-400">
+                                <td colspan="8" class="p-8 text-center text-gray-400">
                                     <i class="fas fa-inbox text-4xl mb-2 block"></i>
                                     Tidak ada data absensi pada tanggal ini
                                 </td>
                             </tr>
                             @endforelse
                         </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </main>
 
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-    <script src="//cdn.datatables.net/2.0.2/js/dataTables.min.js"></script>
-    <script>
-        $(document).ready(function() {
-            new DataTable('#myTable', {
-                order: [[1, 'asc']] // Sort by check-in time
-            });
-        });
+                        <script>
+                        function showNotes(employeeName, notes, status) {
+                            let title = 'Catatan - ' + employeeName;
+                            let icon = 'info';
+                            
+                            if (status === 'early_leave') {
+                                title = 'Alasan Pulang Awal - ' + employeeName;
+                                icon = 'warning';
+                            }
+                            
+                            Swal.fire({
+                                title: title,
+                                text: notes,
+                                icon: icon,
+                                confirmButtonText: 'OK'
+                            });
+                        }
 
-        function viewDetails(id) {
-            // Implement detail view modal or redirect
-            alert('Detail view for attendance ID: ' + id);
-        }
-    </script>
+                        function viewDetails(id) {
+                            // Implement detail view modal or redirect
+                            alert('Detail view for attendance ID: ' + id);
+                        }
+                        </script>
 
     @include('sweetalert::alert')
     @include('layout.loading')
