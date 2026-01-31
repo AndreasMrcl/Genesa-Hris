@@ -36,6 +36,63 @@
     <!-- CONTENT -->
     <div class="p-4 flex-grow space-y-4">
         
+        @if(isset($todaySchedule))
+            @if($todaySchedule && $todaySchedule->shift)
+                <div class="bg-gradient-to-br from-green-50 to-emerald-50 rounded-2xl p-4 border border-green-200 shadow-sm">
+                    <div class="flex items-center gap-3">
+                        <div class="w-12 h-12 bg-green-600 rounded-full flex items-center justify-center flex-shrink-0">
+                            <i class="fas fa-calendar-check text-white text-xl"></i>
+                        </div>
+                        <div class="flex-grow">
+                            <p class="text-xs uppercase font-bold text-green-600 mb-1">Jadwal Hari Ini</p>
+                            <p class="text-lg font-bold text-gray-800">{{ $todaySchedule->shift->name }}</p>
+                            <p class="text-xs text-gray-600 mt-1">
+                                <i class="fas fa-clock"></i> 
+                                {{ \Carbon\Carbon::parse($todaySchedule->shift->start_time)->format('H:i') }} - 
+                                {{ \Carbon\Carbon::parse($todaySchedule->shift->end_time)->format('H:i') }}
+                                @if($todaySchedule->shift->is_cross_day)
+                                    <span class="text-purple-600 font-bold">(+1 Hari)</span>
+                                @endif
+                            </p>
+                        </div>
+                        <div class="text-center">
+                            <div class="w-8 h-8 rounded-full" style="background-color: {{ $todaySchedule->shift->color }}"></div>
+                        </div>
+                    </div>
+                </div>
+            @elseif($todaySchedule && !$todaySchedule->shift)
+                <div class="bg-gradient-to-br from-orange-50 to-yellow-50 rounded-2xl p-4 border border-orange-200 shadow-sm">
+                    <div class="flex items-center gap-3">
+                        <div class="w-12 h-12 bg-orange-500 rounded-full flex items-center justify-center flex-shrink-0">
+                            <i class="fas fa-coffee text-white text-xl"></i>
+                        </div>
+                        <div class="flex-grow">
+                            <p class="text-xs uppercase font-bold text-orange-600 mb-1">Status Hari Ini</p>
+                            <p class="text-lg font-bold text-gray-800">Hari Libur</p>
+                            <p class="text-xs text-gray-600 mt-1">
+                                <i class="fas fa-info-circle"></i> Tidak perlu melakukan absensi
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            @endif
+        @else
+            <div class="bg-gradient-to-br from-red-50 to-pink-50 rounded-2xl p-4 border border-red-200 shadow-sm">
+                <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 bg-red-600 rounded-full flex items-center justify-center flex-shrink-0">
+                        <i class="fas fa-exclamation-triangle text-white text-xl"></i>
+                    </div>
+                    <div class="flex-grow">
+                        <p class="text-xs uppercase font-bold text-red-600 mb-1">Tidak Ada Jadwal</p>
+                        <p class="text-sm font-bold text-gray-800">Anda tidak memiliki jadwal hari ini</p>
+                        <p class="text-xs text-gray-600 mt-1">
+                            <i class="fas fa-info-circle"></i> Silakan hubungi Admin/Koordinator
+                        </p>
+                    </div>
+                </div>
+            </div>
+        @endif
+
         <!-- Status Card -->
         <div class="bg-gradient-to-br from-indigo-600 to-indigo-700 rounded-2xl p-5 text-white shadow-lg">
             <p class="text-xs uppercase font-bold text-indigo-200 mb-2">Status Hari Ini</p>
@@ -95,21 +152,35 @@
 
         <!-- Action Buttons -->
         @if($workLocation && $workLocation->latitude && $workLocation->longitude)
-        <div class="space-y-3">
-            @if(!$todayAttendance || !$todayAttendance->check_in_time)
-                <button onclick="openCheckInModal()" class="w-full py-4 bg-green-600 text-white font-bold rounded-xl shadow-lg hover:bg-green-700 transition flex items-center justify-center gap-2">
-                    <i class="fas fa-sign-in-alt"></i> Check-In Sekarang
-                </button>
-            @elseif(!$todayAttendance->check_out_time)
-                <button onclick="openCheckOutModal()" class="w-full py-4 bg-orange-600 text-white font-bold rounded-xl shadow-lg hover:bg-orange-700 transition flex items-center justify-center gap-2">
-                    <i class="fas fa-sign-out-alt"></i> Check-Out Sekarang
-                </button>
+            @if(isset($todaySchedule) && $todaySchedule && $todaySchedule->shift)
+                <div class="space-y-3">
+                    @if(!$todayAttendance || !$todayAttendance->check_in_time)
+                        <button onclick="openCheckInModal()" class="w-full py-4 bg-green-600 text-white font-bold rounded-xl shadow-lg hover:bg-green-700 transition flex items-center justify-center gap-2">
+                            <i class="fas fa-sign-in-alt"></i> Check-In Sekarang
+                        </button>
+                    @elseif(!$todayAttendance->check_out_time)
+                        <button onclick="openCheckOutModal()" class="w-full py-4 bg-orange-600 text-white font-bold rounded-xl shadow-lg hover:bg-orange-700 transition flex items-center justify-center gap-2">
+                            <i class="fas fa-sign-out-alt"></i> Check-Out Sekarang
+                        </button>
+                    @else
+                        <div class="w-full py-4 bg-gray-100 text-gray-500 font-bold rounded-xl text-center border-2 border-dashed border-gray-300">
+                            <i class="fas fa-check-circle"></i> Absensi Hari Ini Selesai
+                        </div>
+                    @endif
+                </div>
             @else
-                <div class="w-full py-4 bg-gray-100 text-gray-500 font-bold rounded-xl text-center border-2 border-dashed border-gray-300">
-                    <i class="fas fa-check-circle"></i> Absensi Hari Ini Selesai
+                <div class="bg-orange-50 border border-orange-200 rounded-xl p-4 text-center">
+                    <i class="fas fa-ban text-orange-600 text-2xl mb-2"></i>
+                    <p class="text-sm font-bold text-orange-800">Tidak Dapat Absen</p>
+                    <p class="text-xs text-orange-600 mt-1">
+                        @if(!isset($todaySchedule) || !$todaySchedule)
+                            Anda tidak memiliki jadwal hari ini
+                        @else
+                            Hari ini adalah hari libur Anda
+                        @endif
+                    </p>
                 </div>
             @endif
-        </div>
         @endif
 
         <!-- Recent Logs -->
@@ -214,14 +285,13 @@
                     </div>
                 </div>
 
-                <!-- Notes Field (untuk early leave WAJIB, untuk normal opsional) -->
                 <div class="mb-4">
                     <label class="block text-xs font-bold text-gray-600 mb-2">
                         <i class="fas fa-clipboard-list"></i> Catatan <span id="notesRequired" class="text-red-500 hidden">*</span>
                     </label>
                     <textarea name="notes" id="notesField" rows="3" 
                         class="w-full border border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-indigo-500"
-                        placeholder="Tambahkan catatan (opsional)"></textarea>
+                        placeholder="Tambahkan catatan"></textarea>
                     <p class="text-xs text-gray-400 mt-1" id="notesHint">Catatan bersifat opsional</p>
                 </div>
 
@@ -246,18 +316,16 @@
         const workRadius = {{ $workLocation->gps_radius ?? 5000 }};
 
         @if($workLocation && $workLocation->latitude && $workLocation->longitude)
-        // Initialize Map
+
         const map = L.map('map').setView([workLat, workLon], 14);
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             maxZoom: 19,
             attribution: '© OpenStreetMap'
         }).addTo(map);
 
-        // Work Location Marker
         L.marker([workLat, workLon]).addTo(map)
             .bindPopup('<b>{{ $workLocation->name ?? "Lokasi Kerja" }}</b>').openPopup();
 
-        // Radius Circle
         L.circle([workLat, workLon], {
             color: 'red',
             fillColor: '#f03',
@@ -265,13 +333,11 @@
             radius: workRadius
         }).addTo(map);
 
-        // Get User Location
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition((position) => {
                 userLat = position.coords.latitude;
                 userLon = position.coords.longitude;
 
-                // User marker (blue)
                 L.marker([userLat, userLon], {
                     icon: L.icon({
                         iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-blue.png',
@@ -280,7 +346,6 @@
                     })
                 }).addTo(map).bindPopup('Lokasi Anda');
 
-                // Fit bounds to show both markers
                 map.fitBounds([
                     [workLat, workLon],
                     [userLat, userLon]
@@ -292,7 +357,7 @@
         @endif
 
         function calculateDistance(lat1, lon1, lat2, lon2) {
-            const R = 6371000; // meters
+            const R = 6371000;
             const dLat = (lat2 - lat1) * Math.PI / 180;
             const dLon = (lon2 - lon1) * Math.PI / 180;
             const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
@@ -322,9 +387,7 @@
             document.getElementById('userLocationText').textContent = `Lat: ${userLat.toFixed(6)}, Lon: ${userLon.toFixed(6)}`;
             document.getElementById('distanceText').textContent = `Jarak dari kantor: ${formatDistance(distance)}`;
             
-            // Show modal
             document.getElementById('checkInModal').classList.remove('hidden');
-            // Prevent body scroll
             document.body.style.overflow = 'hidden';
         }
 
@@ -341,45 +404,53 @@
             document.getElementById('userLocationTextOut').textContent = `Lat: ${userLat.toFixed(6)}, Lon: ${userLon.toFixed(6)}`;
             document.getElementById('distanceTextOut').textContent = `Jarak dari kantor: ${formatDistance(distance)}`;
             
-            // Check if early leave
             checkEarlyLeave();
             
-            // Show modal
             document.getElementById('checkOutModal').classList.remove('hidden');
-            // Prevent body scroll
             document.body.style.overflow = 'hidden';
         }
 
         function checkEarlyLeave() {
-            @if($todayAttendance)
-                @php
-                    $schedule = $todayAttendance->employee->schedules()->where('date', Carbon\Carbon::today())->first();
-                @endphp
+            @if($todayAttendance && isset($todaySchedule) && $todaySchedule && $todaySchedule->shift)
+                const now = new Date();
+                let shiftEnd = new Date();
+                const shiftEndTime = "{{ $todaySchedule->shift->end_time }}".split(':');
+                shiftEnd.setHours(parseInt(shiftEndTime[0]), parseInt(shiftEndTime[1]), 0);
                 
-                @if($schedule && $schedule->shift)
-                    const now = new Date();
-                    const shiftEnd = new Date();
-                    const shiftEndTime = "{{ $schedule->shift->end_time }}".split(':');
-                    shiftEnd.setHours(parseInt(shiftEndTime[0]), parseInt(shiftEndTime[1]), 0);
+                const isCrossDay = {{ $todaySchedule->shift->is_cross_day ? 'true' : 'false' }};
+                if (isCrossDay) {
+                    shiftEnd.setDate(shiftEnd.getDate() + 1);
+                }
+                
+                const toleranceMs = 15 * 60000;
+                const earliestAllowedCheckout = new Date(shiftEnd.getTime() - toleranceMs);
+                
+                if (now < earliestAllowedCheckout) {
+                    const minutesEarly = Math.floor((shiftEnd - now) / 60000);
+                    const hoursEarly = Math.floor(minutesEarly / 60);
+                    const remainingMinutes = minutesEarly % 60;
                     
-                    const thirtyMinsBefore = new Date(shiftEnd.getTime() - 30 * 60000);
-                    
-                    if (now < thirtyMinsBefore) {
-                        // Early leave detected
-                        document.getElementById('earlyLeaveWarning').classList.remove('hidden');
-                        document.getElementById('notesRequired').classList.remove('hidden');
-                        document.getElementById('notesField').required = true;
-                        document.getElementById('notesField').placeholder = 'Alasan pulang lebih awal (wajib diisi, min. 10 karakter)';
-                        document.getElementById('notesHint').textContent = 'Wajib diisi karena Anda pulang lebih awal';
-                        document.getElementById('notesHint').classList.remove('text-gray-400');
-                        document.getElementById('notesHint').classList.add('text-red-500');
+                    let earlyText = '';
+                    if (hoursEarly > 0) {
+                        earlyText = `${hoursEarly} jam ${remainingMinutes} menit`;
                     } else {
-                        // Normal check-out
-                        resetNotesField();
+                        earlyText = `${minutesEarly} menit`;
                     }
-                @else
+                    
+                    document.getElementById('earlyLeaveWarning').classList.remove('hidden');
+                    document.getElementById('notesRequired').classList.remove('hidden');
+                    document.getElementById('notesField').required = true;
+                    document.getElementById('notesHint').textContent = 'Wajib diisi karena Anda pulang lebih awal';
+                    document.getElementById('notesHint').classList.remove('text-gray-400');
+                    document.getElementById('notesHint').classList.add('text-red-500');
+                    
+                    const warningText = document.querySelector('#earlyLeaveWarning p.text-yellow-700');
+                    if (warningText) {
+                        warningText.textContent = `Anda pulang ${earlyText} sebelum jam kerja berakhir. Mohon berikan alasan.`;
+                    }
+                } else {
                     resetNotesField();
-                @endif
+                }
             @else
                 resetNotesField();
             @endif
@@ -397,16 +468,14 @@
 
         function closeModal(id) {
             document.getElementById(id).classList.add('hidden');
-            // Restore body scroll
             document.body.style.overflow = 'auto';
-            // Reset form when closing
+
             if (id === 'checkOutModal') {
                 document.getElementById('checkOutForm').reset();
                 resetNotesField();
             }
         }
 
-        // Close modal when clicking outside
         document.getElementById('checkInModal').addEventListener('click', function(e) {
             if (e.target === this) {
                 closeModal('checkInModal');
@@ -419,7 +488,6 @@
             }
         });
 
-        // Update user location every 10 seconds
         setInterval(() => {
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition((position) => {

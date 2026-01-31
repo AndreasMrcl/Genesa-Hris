@@ -29,7 +29,9 @@ class GpsAttendanceController extends Controller
             ->orderBy('attendance_date', 'desc')
             ->get();
 
-        return view('ess.gpsAttendance', compact('employee', 'todayAttendance', 'workLocation', 'recentLogs'));
+        $todaySchedule = $employee->schedules()->where('date', $today)->first();
+
+        return view('ess.gpsAttendance', compact('employee', 'todayAttendance', 'workLocation', 'recentLogs', 'todaySchedule'));
     }
 
     public function checkIn(Request $request)
@@ -42,6 +44,16 @@ class GpsAttendanceController extends Controller
 
         $employee = Auth::guard('employee')->user();
         $today = Carbon::today();
+
+        $schedule = $employee->schedules()->where('date', $today)->first();
+        
+        if (!$schedule) {
+            return back()->withErrors(['msg' => 'Anda tidak memiliki jadwal kerja hari ini. Silakan hubungi Admin/Koordinator.']);
+        }
+
+        if (!$schedule->shift) {
+            return back()->withErrors(['msg' => 'Hari ini adalah hari libur Anda. Tidak perlu melakukan absensi.']);
+        }
 
         $existing = GpsAttendanceLog::where('employee_id', $employee->id)
             ->where('attendance_date', $today)
@@ -77,7 +89,6 @@ class GpsAttendanceController extends Controller
             $photoPath = $request->file('photo')->store('attendance-photos', 'public');
         }
 
-        $schedule = $employee->schedules()->where('date', $today)->first();
         $status = 'present';
         
         if ($schedule && $schedule->shift) {
@@ -116,6 +127,16 @@ class GpsAttendanceController extends Controller
         $employee = Auth::guard('employee')->user();
         $today = Carbon::today();
 
+        $schedule = $employee->schedules()->where('date', $today)->first();
+        
+        if (!$schedule) {
+            return back()->withErrors(['msg' => 'Anda tidak memiliki jadwal kerja hari ini. Tidak dapat check-out.']);
+        }
+
+        if (!$schedule->shift) {
+            return back()->withErrors(['msg' => 'Hari ini adalah hari libur Anda. Tidak perlu check-out.']);
+        }
+
         $attendance = GpsAttendanceLog::where('employee_id', $employee->id)
             ->where('attendance_date', $today)
             ->first();
@@ -150,19 +171,25 @@ class GpsAttendanceController extends Controller
         }
 
         $isEarlyLeave = false;
-        $schedule = $employee->schedules()->where('date', $today)->first();
         
         if ($schedule && $schedule->shift) {
-            $shiftEnd = Carbon::parse($schedule->shift->end_time);
             $now = Carbon::now();
+            $shiftEnd = Carbon::parse($schedule->shift->end_time);
             
-            if ($now->lessThan($shiftEnd->subMinutes(30))) {
+            if ($schedule->shift->is_cross_day) {
+                $shiftEnd->addDay();
+            }
+
+            $toleranceMinutes = 15;
+            $earliestAllowedCheckout = $shiftEnd->copy()->subMinutes($toleranceMinutes);
+            
+            if ($now->lessThan($earliestAllowedCheckout)) {
                 $isEarlyLeave = true;
                 
                 $request->validate([
                     'notes' => 'required|string|min:10|max:500'
                 ], [
-                    'notes.required' => 'Anda pulang lebih awal. Mohon berikan alasan di kolom catatan.',
+                    'notes.required' => "Anda pulang lebih awal. Mohon berikan alasan di kolom catatan.",
                     'notes.min' => 'Alasan minimal 10 karakter.',
                     'notes.max' => 'Alasan maksimal 500 karakter.',
                 ]);
