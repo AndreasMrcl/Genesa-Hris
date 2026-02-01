@@ -119,7 +119,7 @@
                                                 data-category="{{ $item->category }}"
                                                 data-latitude="{{ $item->latitude }}"
                                                 data-longitude="{{ $item->longitude }}"
-                                                data-gps-radius="{{ $item->gps_radius ?? 5000 }}"
+                                                data-gps-radius="{{ $item->gps_radius ?? 1000 }}"
                                                 title="Edit">
                                                 <i class="fas fa-edit text-lg"></i>
                                             </button>
@@ -190,16 +190,15 @@
                         </div>
                         
                         <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-1">Nomor Telepon <span class="text-red-500">*</span></label>
+                            <label class="block text-sm font-semibold text-gray-700 mb-1">Nomor Telepon</label>
                             <input type="text" name="phone"
-                                class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-cyan-500"
-                                required>
+                                class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-cyan-500">
                         </div>
                         
                         <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-1">Alamat <span class="text-red-500">*</span></label>
+                            <label class="block text-sm font-semibold text-gray-700 mb-1">Alamat</label>
                             <textarea name="address" rows="2"
-                                class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-cyan-500" required></textarea>
+                                class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-cyan-500"></textarea>
                         </div>
                     </div>
 
@@ -236,9 +235,9 @@
                             
                             <div>
                                 <label class="block text-sm font-semibold text-gray-700 mb-1">Radius GPS (meter)</label>
-                                <input type="number" name="gps_radius" value="5000" min="100" max="50000"
+                                <input type="number" name="gps_radius" value="1000" min="100" max="5000"
                                     class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-indigo-500">
-                                <p class="text-xs text-gray-400 mt-1">Jarak maksimal karyawan dapat absen (Default: 5000m = 5km)</p>
+                                <p class="text-xs text-gray-400 mt-1">Jarak maksimal karyawan dapat absen (Default: 1000m = 1km)</p>
                             </div>
                         </div>
                     </div>
@@ -303,16 +302,15 @@
                         </div>
                         
                         <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-1">Nomor Telepon <span class="text-red-500">*</span></label>
+                            <label class="block text-sm font-semibold text-gray-700 mb-1">Nomor Telepon</label>
                             <input type="text" id="editPhone" name="phone"
-                                class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-blue-500"
-                                required>
+                                class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-blue-500">
                         </div>
                         
                         <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-1">Alamat <span class="text-red-500">*</span></label>
+                            <label class="block text-sm font-semibold text-gray-700 mb-1">Alamat</label>
                             <textarea id="editAddress" name="address" rows="2"
-                                class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-blue-500" required></textarea>
+                                class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-blue-500"></textarea>
                         </div>
                     </div>
 
@@ -349,9 +347,9 @@
                             
                             <div>
                                 <label class="block text-sm font-semibold text-gray-700 mb-1">Radius GPS (meter)</label>
-                                <input type="number" id="editGpsRadius" name="gps_radius" value="5000" min="100" max="50000"
+                                <input type="number" id="editGpsRadius" name="gps_radius" value="1000" min="100" max="5000"
                                     class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-blue-500">
-                                <p class="text-xs text-gray-400 mt-1">Jarak maksimal karyawan dapat absen (Default: 5000m = 5km)</p>
+                                <p class="text-xs text-gray-400 mt-1">Jarak maksimal karyawan dapat absen (Default: 1000m = 1km)</p>
                             </div>
                         </div>
                     </div>

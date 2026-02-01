@@ -28,9 +28,10 @@ class AllowController extends Controller
 
         $cacheKey = "allowances_{$userCompany->id}";
 
-        $allowances = Cache::remember($cacheKey, 180, function () use ($userCompany) {
-            return $userCompany->allows()->get();
-        });
+        $allowances = Cache::tags(['allowances', "company_{$userCompany->id}"])
+            ->remember($cacheKey, 180, function () use ($userCompany) {
+                return $userCompany->allows()->get();
+            });
 
         return view('allowance', compact('allowances'));
     }
@@ -45,7 +46,6 @@ class AllowController extends Controller
         ]);
 
         $data['compani_id'] = $userCompany->id;
-
         $data['is_taxable'] = $request->boolean('is_taxable');
 
         $allow = Allow::create($data);
@@ -134,7 +134,7 @@ class AllowController extends Controller
 
     private function clearCache($companyId)
     {
-        Cache::forget("allowances_{$companyId}");
+        Cache::tags(["company_{$companyId}", 'allowances'])->flush();
     }
 
     private function logActivity($type, $description, $companyId)

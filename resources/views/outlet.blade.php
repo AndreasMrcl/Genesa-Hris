@@ -94,7 +94,7 @@
                                                 data-address="{{ $item->address }}"
                                                 data-latitude="{{ $item->latitude }}"
                                                 data-longitude="{{ $item->longitude }}"
-                                                data-gps-radius="{{ $item->gps_radius ?? 5000 }}"
+                                                data-gps-radius="{{ $item->gps_radius ?? 1000 }}"
                                                 title="Edit">
                                                 <i class="fas fa-edit"></i>
                                             </button>
@@ -184,9 +184,9 @@
                             
                             <div>
                                 <label class="block text-sm font-semibold text-gray-700 mb-1">Radius GPS (meter)</label>
-                                <input type="number" name="gps_radius" value="5000" min="100" max="50000"
+                                <input type="number" name="gps_radius" value="1000" min="100" max="5000"
                                     class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-indigo-500">
-                                <p class="text-xs text-gray-400 mt-1">Jarak maksimal karyawan dapat absen (Default: 5000m = 5km)</p>
+                                <p class="text-xs text-gray-400 mt-1">Jarak maksimal karyawan dapat absen (Default: 1000m = 1km)</p>
                             </div>
                         </div>
                     </div>
@@ -273,9 +273,9 @@
                             
                             <div>
                                 <label class="block text-sm font-semibold text-gray-700 mb-1">Radius GPS (meter)</label>
-                                <input type="number" id="editGpsRadius" name="gps_radius" value="5000" min="100" max="50000"
+                                <input type="number" id="editGpsRadius" name="gps_radius" value="1000" min="100" max="5000"
                                     class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-blue-500">
-                                <p class="text-xs text-gray-400 mt-1">Jarak maksimal karyawan dapat absen (Default: 5000m = 5km)</p>
+                                <p class="text-xs text-gray-400 mt-1">Jarak maksimal karyawan dapat absen (Default: 1000m = 1km)</p>
                             </div>
                         </div>
                     </div>

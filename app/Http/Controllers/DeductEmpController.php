@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\ActivityLog;
-use App\Models\Deduct;
 use App\Models\DeductEmp;
 use App\Models\Employee;
 use Illuminate\Http\Request;
@@ -34,10 +33,9 @@ class DeductEmpController extends Controller
 
         $cacheKey = "deduct_emp_{$employeeId}";
 
-        $employeeDeductions = Cache::remember($cacheKey, 180, function () use ($employeeId) {
-            return DeductEmp::with('deduct')
-                ->where('employee_id', $employeeId)
-                ->get();
+        $employeeDeductions = Cache::tags(['deductions', "company_{$userCompany->id}", "employee_{$employeeId}"])
+            ->remember($cacheKey, 180, function () use ($employee) {
+            return $employee->deductEmps()->with('deduct')->get();
         });
 
         $deducts = $userCompany->deducts()->get();
@@ -145,7 +143,7 @@ class DeductEmpController extends Controller
 
     private function clearCache($employeeId)
     {
-        Cache::forget("deduct_emp_{$employeeId}");
+        Cache::tags(["employee_{$employeeId}"])->flush();
     }
 
     private function logActivity($type, $description, $companyId)

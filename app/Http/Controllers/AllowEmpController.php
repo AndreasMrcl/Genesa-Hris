@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\ActivityLog;
-use App\Models\Allow;
 use App\Models\AllowEmp;
 use App\Models\Employee;
 use Illuminate\Http\Request;
@@ -32,9 +31,10 @@ class AllowEmpController extends Controller
 
         $cacheKey = "allow_emp_{$employeeId}";
 
-        $employeeAllowances = Cache::remember($cacheKey, 180, function () use ($employee) {
-            return $employee->allowEmps()->with('allow')->get();
-        });
+        $employeeAllowances = Cache::tags(['allowances', "company_{$userCompany->id}", "employee_{$employeeId}"])
+            ->remember($cacheKey, 180, function () use ($employee) {
+                return $employee->allowEmps()->with('allow')->get();
+            });
 
         $allows = $userCompany->allows()->get();
 
@@ -143,7 +143,7 @@ class AllowEmpController extends Controller
 
     private function clearCache($employeeId)
     {
-        Cache::forget("allow_emp_{$employeeId}");
+        Cache::tags(["employee_{$employeeId}"])->flush();
     }
 
     private function logActivity($type, $description, $companyId)

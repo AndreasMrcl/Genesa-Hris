@@ -30,7 +30,8 @@ class DeductController extends Controller
 
         $cacheKey = "deductions_{$userCompany->id}";
 
-        $deductions = Cache::remember($cacheKey, 180, function () use ($userCompany) {
+        $deductions =Cache::tags(['deductions', "company_{$userCompany->id}"])
+            ->remember($cacheKey, 180, function () use ($userCompany) {
             return $userCompany->deducts()->get();
         });
 
@@ -119,7 +120,7 @@ class DeductController extends Controller
 
     private function clearCache($companyId)
     {
-        Cache::forget("deductions_{$companyId}");
+        Cache::tags(["company_{$companyId}", 'deductions'])->flush();
     }
 
     private function logActivity($type, $description, $companyId)
